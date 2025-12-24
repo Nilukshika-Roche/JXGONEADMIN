@@ -236,7 +236,7 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
     const subPages = [
         { id: 'page-view', label: 'Page View', icon: <Layout size={16} /> },
         { id: 'analytics', label: 'Analytics', icon: <BarChart size={16} /> },
-        { id: 'content', label: 'Content Management', icon: <Edit3 size={16} /> },
+        { id: 'page-content', label: 'Page Content', icon: <Edit3 size={16} /> },
         { id: 'page-people', label: 'People Management', icon: <Users size={16} /> },
         { id: 'page-events', label: 'Events', icon: <Calendar size={16} /> },
         { id: 'page-csr', label: 'CSR', icon: <Heart size={16} /> },

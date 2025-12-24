@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
-import Breadcrumbs from './components/ui/Breadcrumbs';
+
 import Shell from './components/layout/Shell';
 
 // Pages
@@ -20,6 +20,7 @@ import Games from './pages/Games';
 import PageEvents from './pages/PageEvents';
 import PagePeople from './pages/PagePeople';
 import PageCSR from './pages/PageCSR';
+import MediaHubPage from './pages/MediaHubPage.jsx';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -41,13 +42,14 @@ function AppContent() {
       case 'page-events': return <PageEvents />;
       case 'page-people': return <PagePeople />;
       case 'page-csr': return <PageCSR />;
+      case 'page-content': return <MediaHubPage />;
       default: return <Dashboard />;
     }
   };
 
   return (
     <Shell activeTab={activeTab} setActiveTab={setActiveTab}>
-      <Breadcrumbs activeTab={activeTab} />
+
       <div className="pb-10">
         {renderContent()}
       </div>
