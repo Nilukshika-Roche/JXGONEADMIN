@@ -24,18 +24,54 @@ import MediaHubPage from './pages/MediaHubPage.jsx';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [prevTab, setPrevTab] = useState('dashboard');
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'dashboard': return <Dashboard setActiveTab={setActiveTab} />;
-      case 'page-view': return <PageView />;
+  const [companyData, setCompanyData] = useState({
+    name: 'Janashakthi Group',
+    location: 'Colombo, Sri Lanka',
+    description: 'Leading the future of insurance and financial services with innovation and integrity. Transforming lives through sustainable business practices and community engagement.',
+    tagline: 'Stronger Together Stronger Than Ever',
+    website: 'www.janashakthi.com',
+    phone: '+94 11 234 5678',
+    industry: 'Insurance & Financial Services',
+    companySize: '1,001-5,000 employees',
+    founded: '1994',
+    headquarters: 'Colombo, Sri Lanka',
+    linkedinUrl: 'janashakthi-group',
+    logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=300&q=80',
+    coverPhoto: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1600&q=80',
+    overview: 'Janashakthi Group is a prominent financial services conglomerate in Sri Lanka, with a strong presence in the insurance, finance, and investment sectors. Established in 1994, the group has grown into a diversified entity that focuses on delivering innovative solutions and superior service to its customers.',
+    products: [
+      { id: 1, name: 'Life Insurance' },
+      { id: 2, name: 'General Insurance' },
+      { id: 3, name: 'Vehicle Leasing' }
+    ],
+    services: [
+      { id: 1, name: 'Financial Planning' },
+      { id: 2, name: 'Investment Advisory' },
+      { id: 3, name: 'Risk Management' }
+    ],
+    awards: [
+      { id: 1, title: 'Best Insurance Company', date: '2024', description: 'Awarded for excellence in customer service and claim settlement.' },
+      { id: 2, title: 'Sustainability Leader', date: '2023', description: 'Recognized for eco-friendly initiatives and community support.' }
+    ]
+  });
+
+  const handleTabChange = (tab) => {
+    setPrevTab(activeTab);
+    setActiveTab(tab);
+  };
+
+  const renderContent = (tab) => {
+    switch (tab) {
+      case 'dashboard': return <Dashboard setActiveTab={handleTabChange} />;
+      case 'page-view': return <PageView setActiveTab={handleTabChange} companyData={companyData} />;
       case 'analytics': return <Analytics />;
       case 'content': return <ContentManagement />;
       case 'people': return <PeopleManagement />;
       case 'csr': return <CSR />;
       case 'feed': return <Feed />;
       case 'activity': return <Activity />;
-      case 'edit': return <EditPage />;
       case 'app-settings': return <AppSettings />;
       case 'events': return <Events />;
       case 'games': return <Games />;
@@ -48,11 +84,17 @@ function AppContent() {
   };
 
   return (
-    <Shell activeTab={activeTab} setActiveTab={setActiveTab}>
-
+    <Shell activeTab={activeTab === 'edit' ? prevTab : activeTab} setActiveTab={handleTabChange}>
       <div className="pb-10">
-        {renderContent()}
+        {renderContent(activeTab === 'edit' ? prevTab : activeTab)}
       </div>
+      {activeTab === 'edit' && (
+        <EditPage
+          companyData={companyData}
+          setCompanyData={setCompanyData}
+          onClose={() => setActiveTab(prevTab)}
+        />
+      )}
     </Shell>
   );
 }

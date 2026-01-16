@@ -1,128 +1,1092 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Plus,
-    MessageSquare,
-    Share2,
-    Heart,
-    Play,
-    MoreHorizontal,
+    Search,
     Calendar,
+    MoreVertical,
+    Heart,
+    MessageSquare,
+    Repeat2,
+    Share2,
+    Users,
+    TrendingUp,
+    Zap,
+    Filter,
+    ChevronDown,
+    Image as ImageIcon,
+    Video,
+    FileText,
+    Play,
+    Send,
     Eye,
-    Send
+    Globe,
+    Download,
+    Paperclip,
+    Tag,
+    Clock,
+    Target,
+    Bookmark,
+    ChevronRight,
+    Award,
+    Hash
 } from 'lucide-react';
 
+// --- Post Composer Component ---
+const PostComposer = () => {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="composer-card"
+        >
+            <div className="composer-content">
+                <div className="composer-header">
+                    <div className="composer-badge">
+                        <div className="composer-badge-line"></div>
+                        <span className="composer-badge-text">Create Post</span>
+                    </div>
+                    <div className="composer-title">
+                        <Zap size={20} />
+                        <h3>Share your update</h3>
+                    </div>
+                </div>
+
+                <div className="composer-body">
+                    <div className="composer-input-section">
+                        <div className="composer-avatar">
+                            <div className="avatar-initial">JS</div>
+                        </div>
+                        <div className="composer-input-wrapper">
+                            <textarea
+                                placeholder="What's on your mind, Janashakthi?"
+                                className="composer-textarea"
+                                rows={3}
+                            />
+                            <div className="composer-input-actions">
+                                <div className="composer-visibility">
+                                    <Globe size={14} />
+                                    <span>Everyone</span>
+                                    <ChevronDown size={12} />
+                                </div>
+                                <div className="composer-char-count">
+                                    <span>0/280</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="composer-actions">
+                        <div className="composer-media-buttons">
+                            <button className="media-button">
+                                <ImageIcon size={18} />
+                                <span>Image</span>
+                            </button>
+                            <button className="media-button">
+                                <Video size={18} />
+                                <span>Video</span>
+                            </button>
+                            <button className="media-button">
+                                <Paperclip size={18} />
+                                <span>Attachment</span>
+                            </button>
+                            <button className="media-button">
+                                <Tag size={18} />
+                                <span>Tag</span>
+                            </button>
+                        </div>
+                        <button className="composer-submit">
+                            <Send size={16} />
+                            <span>Publish</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+// --- Post Card Component ---
+const PostCard = ({ post, index }) => {
+    const [isLiked, setIsLiked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [showOptions, setShowOptions] = useState(false);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="post-card"
+        >
+            <div className="post-card-bg"></div>
+
+            <div className="post-header">
+                <div className="post-author">
+                    <div className="post-avatar">
+                        <div className="post-avatar-initial">{post.company.charAt(0)}</div>
+                        {post.performance === 'High' && (
+                            <div className="post-verified">
+                                <TrendingUp size={10} />
+                            </div>
+                        )}
+                    </div>
+                    <div className="post-author-info">
+                        <div className="post-author-name">
+                            <h4>{post.company}</h4>
+                            {post.performance === 'High' && (
+                                <span className="post-trending-badge">
+                                    <TrendingUp size={10} />
+                                    Trending
+                                </span>
+                            )}
+                        </div>
+                        <div className="post-meta">
+                            <span className="post-followers">
+                                <Users size={12} />
+                                {post.followers} followers
+                            </span>
+                            <span className="post-date">
+                                <Clock size={12} />
+                                {post.postedDate}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="post-actions-header">
+                    <button
+                        className={`bookmark-btn ${isBookmarked ? 'active' : ''}`}
+                        onClick={() => setIsBookmarked(!isBookmarked)}
+                    >
+                        <Bookmark size={18} />
+                    </button>
+                    <div className="post-options">
+                        <button
+                            className="options-btn"
+                            onClick={() => setShowOptions(!showOptions)}
+                        >
+                            <MoreVertical size={20} />
+                        </button>
+                        <AnimatePresence>
+                            {showOptions && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="options-dropdown"
+                                >
+                                    <button className="option-item">
+                                        <Share2 size={14} />
+                                        <span>Share</span>
+                                    </button>
+                                    <button className="option-item">
+                                        <Repeat2 size={14} />
+                                        <span>Repost</span>
+                                    </button>
+                                    <button className="option-item">
+                                        <Download size={14} />
+                                        <span>Save</span>
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
+            </div>
+
+            <div className="post-content">
+                <p>{post.description}</p>
+                <div className="post-tags">
+                    <span className="post-tag primary">
+                        <Hash size={12} />
+                        {post.category}
+                    </span>
+                    <span className="post-tag secondary">
+                        {post.type}
+                    </span>
+                </div>
+            </div>
+
+            <div className="post-media">
+                <div className="post-media-container">
+                    <img
+                        src={post.thumbnail}
+                        alt="Post content"
+                        className="post-media-image"
+                    />
+                    {post.type === 'video' && (
+                        <div className="post-media-overlay">
+                            <button className="play-button">
+                                <Play size={24} />
+                            </button>
+                        </div>
+                    )}
+                    <div className="post-media-badge">
+                        <TrendingUp size={14} />
+                        <span>{post.engagement}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="post-stats">
+                <div className="post-stat">
+                    <Eye size={16} />
+                    <span>2.4K views</span>
+                </div>
+                <div className="post-stat">
+                    <MessageSquare size={16} />
+                    <span>142 comments</span>
+                </div>
+                <div className="post-stat">
+                    <Share2 size={16} />
+                    <span>84 shares</span>
+                </div>
+            </div>
+
+            <div className="post-actions">
+                <button
+                    className={`post-action-btn ${isLiked ? 'liked' : ''}`}
+                    onClick={() => setIsLiked(!isLiked)}
+                >
+                    <Heart size={18} />
+                    <span>Like</span>
+                    <span className="action-count">245</span>
+                </button>
+                <button className="post-action-btn">
+                    <MessageSquare size={18} />
+                    <span>Comment</span>
+                </button>
+                <button className="post-action-btn">
+                    <Repeat2 size={18} />
+                    <span>Repost</span>
+                </button>
+                <button className="post-action-btn primary">
+                    <Share2 size={16} />
+                    <span>Share</span>
+                </button>
+            </div>
+        </motion.div>
+    );
+};
+
+
+
+// --- Main Page Component ---
 const MediaHubPage = () => {
-    const posts = [
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const posts = useMemo(() => [
         {
             id: 1,
-            type: 'video',
-            caption: 'Celebrating our annual achievement award ceremony! Proud of our team of innovators.',
-            date: 'Dec 22, 2025',
-            likes: '1.2K',
-            comments: '45',
-            shares: '12',
-            views: '5.6K',
-            status: 'Published',
-            thumbnail: 'https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?auto=format&fit=crop&w=800&q=80'
+            company: 'Janashakthi Group',
+            followers: '45.8K',
+            postedDate: '2 hours ago',
+            description: 'Redefining excellence in digital insurance. Our latest mobile-first approach is setting new industry standards. Proud of our tech innovators who are revolutionizing the landscape!',
+            thumbnail: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=80',
+            type: 'image',
+            engagement: '+12.5%',
+            performance: 'High',
+            category: 'Corporate'
         },
         {
             id: 2,
+            company: 'Janashakthi Life',
+            followers: '32.1K',
+            postedDate: '5 hours ago',
+            description: 'Community at the heart of everything we do. Our annual outreach program has touched over 5,000 lives this quarter. Witness the journey of care.',
+            thumbnail: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
+            type: 'video',
+            engagement: '+8.2%',
+            performance: 'Medium',
+            category: 'CSR'
+        },
+        {
+            id: 3,
+            company: 'Janashakthi Finance',
+            followers: '12.5K',
+            postedDate: '1 day ago',
+            description: 'Strategic growth and financial resilience. Unveiling our performance metrics for Q4 2024. A robust path forward for our shareholders.',
+            thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
             type: 'image',
-            caption: 'New office opening in the heart of Colombo. A milestone for Janashakthi Group expansion.',
-            date: 'Dec 20, 2025',
-            likes: '850',
-            comments: '22',
-            shares: '5',
-            views: '2.1K',
-            status: 'Draft',
-            thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'
+            engagement: '+15.3%',
+            performance: 'High',
+            category: 'Finance'
         }
-    ];
+    ], []);
+
+    const filteredPosts = useMemo(() => posts.filter(post =>
+        post.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.description.toLowerCase().includes(searchQuery.toLowerCase())
+    ), [posts, searchQuery]);
+
+
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                    <span className="text-orange-600 font-black uppercase tracking-[0.3em] text-[10px]">Media Hub</span>
-                    <h1 className="text-4xl font-black text-slate-800 dark:text-white mt-1 uppercase tracking-tighter italic">Content <span className="gradient-text">Management</span></h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Create, publish, and monitor your social interaction.</p>
-                </div>
-                <button className="btn-primary shadow-orange-200">
-                    <Plus size={20} /> Create New Post
-                </button>
-            </div>
+        <div className="analytics-container">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="analytics-content"
+            >
 
-            <div className="flex gap-4 border-b border-orange-100 dark:border-slate-800 pb-2 overflow-x-auto touch-pan-x no-scrollbar">
-                {['All Posts', 'Published', 'Drafts', 'Scheduled', 'Archives'].map((tab, i) => (
-                    <button key={tab} className={`px-6 py-3 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all rounded-t-xl ${i === 0 ? 'bg-orange-600 text-white shadow-lg' : 'text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-800/50 italic'}`}>
-                        {tab}
-                    </button>
-                ))}
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {posts.map((post) => (
-                    <div key={post.id} className="card !p-0 overflow-hidden flex flex-col group hover:-translate-y-2">
-                        <div className="relative aspect-[16/10] bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                            <img src={post.thumbnail} alt="Post" className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="mediahub-layout">
+                    <div className="mediahub-main">
 
-                            {post.type === 'video' && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-14 h-14 bg-orange-gradient rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white/30 transform group-hover:scale-125 transition-all duration-300">
-                                        <Play size={24} className="text-white ml-1 fill-white" />
+
+
+                        {/* Post Composer */}
+                        <PostComposer />
+
+                        {/* Feed Header */}
+                        <div className="feed-header">
+                            <div className="feed-header-left">
+                                <div className="feed-icon">
+                                    <Target size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="feed-title">Latest Feed</h3>
+                                    <p className="feed-subtitle">Recent posts from your network</p>
+                                </div>
+                            </div>
+                            <div className="feed-header-right">
+                                <div className="feed-search-bar">
+                                    <Search size={16} className="feed-search-icon" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search feed..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="feed-search-input"
+                                    />
+                                </div>
+                                <button className="date-btn">
+                                    <Calendar size={16} />
+                                    <span>Dec 01 - 24, 2024</span>
+                                    <ChevronDown size={12} />
+                                </button>
+                                <button className="filter-btn">
+                                    <Filter size={16} />
+                                    <span>Filters</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Posts Feed */}
+                        <div className="posts-feed">
+                            {filteredPosts.map((post, index) => (
+                                <PostCard key={post.id} post={post} index={index} />
+                            ))}
+
+                            {filteredPosts.length === 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="empty-state"
+                                >
+                                    <div className="empty-icon">
+                                        <Search size={32} />
                                     </div>
-                                </div>
+                                    <h3>No posts found</h3>
+                                    <p>Try adjusting your search terms</p>
+                                </motion.div>
                             )}
-
-                            <div className="absolute top-4 right-4 flex gap-2">
-                                <div className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md border border-white/20 ${post.status === 'Published' ? 'bg-emerald-500/80 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-orange-500/80'}`}>
-                                    {post.status}
-                                </div>
-                                <button className="bg-white/20 backdrop-blur-md p-1.5 rounded-lg border border-white/20 text-white hover:bg-orange-600 transition-colors">
-                                    <MoreHorizontal size={18} />
-                                </button>
-                            </div>
-
-                            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center text-white">
-                                <div className="flex items-center gap-1.5 font-black text-[10px] uppercase">
-                                    <Calendar size={12} className="text-orange-400" /> {post.date}
-                                </div>
-                                <div className="flex items-center gap-1.5 font-black text-[10px] uppercase">
-                                    <Eye size={12} className="text-orange-400" /> {post.views}
-                                </div>
-                            </div>
                         </div>
 
-                        <div className="p-8 flex-1 flex flex-col bg-white dark:bg-slate-800/40">
-                            <p className="text-slate-800 dark:text-slate-200 font-black text-sm leading-relaxed line-clamp-2 mb-8 group-hover:text-orange-600 transition-colors uppercase tracking-tight italic">{post.caption}</p>
-
-                            <div className="grid grid-cols-3 gap-3 mt-auto">
-                                <button className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-transparent hover:border-orange-100 dark:hover:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-800 group/btn transition-all">
-                                    <Heart size={16} className="text-slate-300 group-hover/btn:text-orange-500 transition-colors" />
-                                    <span className="text-xs font-black text-slate-800 dark:text-slate-300">{post.likes}</span>
-                                </button>
-                                <button className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-transparent hover:border-orange-100 dark:hover:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-800 group/btn transition-all">
-                                    <MessageSquare size={16} className="text-slate-300 group-hover/btn:text-orange-500 transition-colors" />
-                                    <span className="text-xs font-black text-slate-800 dark:text-slate-300">{post.comments}</span>
-                                </button>
-                                <button className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-transparent hover:border-orange-100 dark:hover:border-slate-700 hover:bg-orange-50 dark:hover:bg-slate-800 group/btn transition-all">
-                                    <Send size={16} className="text-slate-300 group-hover/btn:text-orange-500 transition-colors" />
-                                    <span className="text-xs font-black text-slate-800 dark:text-slate-300">{post.shares}</span>
+                        {/* Load More */}
+                        {filteredPosts.length > 0 && (
+                            <div className="load-more">
+                                <button className="load-more-btn">
+                                    <span>Load more posts</span>
+                                    <ChevronDown size={16} />
                                 </button>
                             </div>
-                        </div>
+                        )}
                     </div>
-                ))}
 
-                <div className="card flex flex-col items-center justify-center border-4 border-dashed border-orange-100 dark:border-slate-800 bg-orange-50/20 dark:bg-slate-900/20 shadow-none cursor-pointer hover:bg-orange-100/30 dark:hover:bg-orange-950/10 transition-all group min-h-[400px]">
-                    <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-6 shadow-soft dark:shadow-none group-hover:scale-110 transition-transform duration-500 border border-orange-50 dark:border-slate-700">
-                        <Plus size={32} className="text-orange-400 group-hover:text-orange-600 transition-colors" />
-                    </div>
-                    <p className="text-orange-600 dark:text-orange-400 font-black uppercase tracking-[0.2em] text-xs italic">Upload New Assets</p>
-                    <p className="text-slate-400 dark:text-slate-500 text-[10px] mt-2 font-bold uppercase tracking-widest">DRAG AND DROP MEDIA</p>
+
                 </div>
-            </div>
+            </motion.div>
+
+            <style jsx>{`
+                /* Container */
+                .analytics-container {
+                    min-height: 100vh;
+                    background: #f8fafc;
+                }
+                .analytics-content {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 1rem;
+                }
+
+
+
+                /* Layout */
+                .mediahub-layout {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+
+
+
+                /* Composer Card */
+                .composer-card {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 2rem;
+                    margin-bottom: 2rem;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+                }
+
+
+                .composer-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+                .composer-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                .composer-badge-line {
+                    width: 16px;
+                    height: 2px;
+                    background: linear-gradient(90deg, #f97316, #fbbf24);
+                    border-radius: 2px;
+                }
+                .composer-badge-text {
+                    color: #f97316;
+                    font-size: 10px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                .composer-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: #0f172a;
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+                .composer-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                }
+                .composer-input-section {
+                    display: flex;
+                    gap: 1rem;
+                }
+                .composer-avatar {
+                    flex-shrink: 0;
+                }
+                .avatar-initial {
+                    width: 48px;
+                    height: 48px;
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 18px;
+                }
+                .composer-input-wrapper {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                .composer-textarea {
+                    width: 100%;
+                    min-height: 100px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 16px;
+                    font-size: 16px;
+                    color: #0f172a;
+                    resize: vertical;
+                    outline: none;
+                }
+                .composer-textarea:focus {
+                    border-color: #f97316;
+                }
+                .composer-input-actions {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .composer-visibility {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    background: #f1f5f9;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    color: #64748b;
+                }
+                .composer-char-count {
+                    font-size: 12px;
+                    color: #94a3b8;
+                }
+                .composer-actions {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .composer-media-buttons {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+                .media-button {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    color: #64748b;
+                    cursor: pointer;
+                }
+                .media-button:hover {
+                    border-color: #f97316;
+                    color: #f97316;
+                }
+                .composer-submit {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 24px;
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    border: none;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
+
+                /* Feed Header */
+                .feed-header {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 2rem;
+                    margin-bottom: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                @media (min-width: 768px) {
+                    .feed-header {
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                }
+                .feed-header-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                }
+                .feed-icon {
+                    width: 36px;
+                    height: 36px;
+                    background: #fff7ed;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #f97316;
+                }
+                .feed-title {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0;
+                }
+                .feed-subtitle {
+                    font-size: 12px;
+                    color: #64748b;
+                    margin: 0;
+                }
+                 .feed-header-right {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                }
+                .feed-search-bar {
+                    display: flex;
+                    align-items: center;
+                    background: #f1f5f9;
+                    border-radius: 8px;
+                    padding: 8px 12px;
+                    gap: 8px;
+                    width: 300px;
+                    transition: all 0.2s;
+                }
+                .feed-search-bar:focus-within {
+                    background: white;
+                    box-shadow: 0 0 0 2px rgba(249,115,22,0.1);
+                    width: 400px;
+                }
+                .feed-search-icon {
+                    color: #94a3b8;
+                }
+                .feed-search-input {
+                    border: none;
+                    background: none;
+                    outline: none;
+                    font-size: 13px;
+                    color: #0f172a;
+                    width: 100%;
+                }
+                .date-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    color: #475569;
+                    cursor: pointer;
+                }
+                .filter-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    color: #475569;
+                    cursor: pointer;
+                }
+
+                /* Post Card */
+                .post-card {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 2rem;
+                    margin-bottom: 1.5rem;
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+                }
+                .post-card-bg {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 100px;
+                    height: 100px;
+                    background: linear-gradient(135deg, rgba(249,115,22,0.05), rgba(251,191,36,0.05));
+                    border-radius: 0 16px 0 100px;
+                }
+                .post-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 1.25rem;
+                }
+                .post-author {
+                    display: flex;
+                    gap: 1rem;
+                }
+                .post-avatar {
+                    position: relative;
+                }
+                .post-avatar-initial {
+                    width: 48px;
+                    height: 48px;
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 18px;
+                }
+                .post-verified {
+                    position: absolute;
+                    bottom: -4px;
+                    right: -4px;
+                    width: 20px;
+                    height: 20px;
+                    background: #10b981;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    border: 2px solid white;
+                }
+                .post-author-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                }
+                .post-author-name {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .post-author-name h4 {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0;
+                }
+                .post-trending-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 4px 8px;
+                    background: #d1fae5;
+                    border-radius: 12px;
+                    font-size: 10px;
+                    font-weight: 700;
+                    color: #065f46;
+                }
+                .post-meta {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                .post-followers, .post-date {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    font-size: 11px;
+                    color: #64748b;
+                }
+                .post-actions-header {
+                    display: flex;
+                    gap: 8px;
+                }
+                .bookmark-btn {
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 8px;
+                    color: #94a3b8;
+                    cursor: pointer;
+                }
+                .bookmark-btn.active {
+                    background: #fef3c7;
+                    color: #f97316;
+                }
+                .post-options {
+                    position: relative;
+                }
+                .options-btn {
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 8px;
+                    color: #94a3b8;
+                    cursor: pointer;
+                }
+                .options-dropdown {
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    margin-top: 8px;
+                    background: white;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                    border: 1px solid #e2e8f0;
+                    padding: 8px;
+                    z-index: 10;
+                    min-width: 140px;
+                }
+                .option-item {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px 12px;
+                    background: none;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    color: #475569;
+                    cursor: pointer;
+                }
+                .option-item:hover {
+                    background: #f1f5f9;
+                }
+
+                .post-content {
+                    margin-bottom: 1.5rem;
+                }
+                .post-content p {
+                    font-size: 16px;
+                    line-height: 1.6;
+                    color: #475569;
+                    margin-bottom: 1rem;
+                }
+                .post-tags {
+                    display: flex;
+                    gap: 8px;
+                }
+                .post-tag {
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 700;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+                .post-tag.primary {
+                    background: #fff7ed;
+                    color: #f97316;
+                }
+                .post-tag.secondary {
+                    background: #f1f5f9;
+                    color: #64748b;
+                }
+
+                .post-media {
+                    margin-bottom: 1.5rem;
+                }
+                .post-media-container {
+                    position: relative;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    background: #f1f5f9;
+                }
+                .post-media-image {
+                    width: 100%;
+                    height: 500px;
+                    object-fit: cover;
+                }
+                .post-media-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(0,0,0,0.1);
+                }
+                .play-button {
+                    width: 60px;
+                    height: 60px;
+                    background: rgba(249,115,22,0.9);
+                    border: none;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    cursor: pointer;
+                }
+                .post-media-badge {
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    background: rgba(255,255,255,0.9);
+                    backdrop-filter: blur(4px);
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #f97316;
+                }
+
+                .post-stats {
+                    display: flex;
+                    gap: 24px;
+                    padding: 16px 0;
+                    border-top: 1px solid #f1f5f9;
+                    border-bottom: 1px solid #f1f5f9;
+                    margin-bottom: 16px;
+                }
+                .post-stat {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 12px;
+                    color: #64748b;
+                }
+
+                .post-actions {
+                    display: flex;
+                    gap: 8px;
+                }
+                .post-action-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 16px;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #64748b;
+                    cursor: pointer;
+                    flex: 1;
+                    justify-content: center;
+                }
+                .post-action-btn:hover {
+                    background: #e2e8f0;
+                }
+                .post-action-btn.liked {
+                    background: #fef2f2;
+                    color: #dc2626;
+                }
+                .post-action-btn.primary {
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    color: white;
+                }
+                .action-count {
+                    margin-left: auto;
+                    font-size: 10px;
+                }
+
+                /* Empty State */
+                .empty-state {
+                    text-align: center;
+                    padding: 60px 20px;
+                    background: white;
+                    border-radius: 16px;
+                    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+                }
+                .empty-icon {
+                    width: 64px;
+                    height: 64px;
+                    background: #f1f5f9;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 20px;
+                    color: #94a3b8;
+                }
+                .empty-state h3 {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0 0 8px;
+                }
+                .empty-state p {
+                    font-size: 14px;
+                    color: #64748b;
+                    margin: 0;
+                }
+
+                /* Load More */
+                .load-more {
+                    text-align: center;
+                    padding: 20px;
+                }
+                .load-more-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 24px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #475569;
+                    cursor: pointer;
+                }
+
+
+
+                .dark .analytics-container {
+                    background: #0f172a;
+                }
+
+                .dark .composer-card,
+                .dark .feed-header,
+                .dark .post-card,
+                .dark .composer-title,
+                .dark .feed-title,
+                .dark .post-author-name h4,
+                .dark .empty-state h3 {
+                    color: white;
+                }
+                .dark .composer-textarea {
+                    background: #334155;
+                    border-color: #475569;
+                    color: white;
+                }
+                .dark .media-button {
+                    background: #334155;
+                    border-color: #475569;
+                    color: #94a3b8;
+                }
+                .dark .feed-search-bar {
+                    background: #334155;
+                }
+                .dark .feed-search-input {
+                    color: white;
+                }
+                .dark .post-content p,
+                .dark .feed-subtitle,
+                .dark .post-followers,
+                .dark .post-date,
+                .dark .sidebar-subtitle,
+                .dark .empty-state p {
+                    color: #94a3b8;
+                }
+                .dark .post-tag.primary {
+                    background: #334155;
+                    color: #fb923c;
+                }
+                .dark .post-tag.secondary {
+                    background: #334155;
+                    color: #94a3b8;
+                }
+                .dark .post-media-container {
+                    background: #334155;
+                }
+                .dark .post-stats {
+                    border-color: #334155;
+                }
+                .dark .post-action-btn {
+                    background: #334155;
+                    color: #94a3b8;
+                }
+                .dark .post-action-btn:hover {
+                    background: #475569;
+                }
+                .dark .load-more-btn {
+                    background: #334155;
+                    border-color: #475569;
+                    color: #cbd5e1;
+                }
+            `}</style>
         </div>
     );
 };
