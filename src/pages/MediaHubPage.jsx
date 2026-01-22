@@ -32,123 +32,77 @@ import {
     Hash
 } from 'lucide-react';
 
-// --- Following Modal Component ---
-const FollowingModal = ({ onClose }) => {
-    const [activeTab, setActiveTab] = useState('members'); // 'members' or 'pages'
-
-    const members = [
-        { id: 1, name: 'Sarah Miller', role: 'Content Manager', subsidiary: 'Janashakthi Life', joinedDate: 'Jan 12, 2023', avatar: 'S' },
-        { id: 2, name: 'David Chen', role: 'System Admin', subsidiary: 'Janashakthi Finance', joinedDate: 'Mar 05, 2022', avatar: 'D' },
-        { id: 3, name: 'Emma Watson', role: 'HR Specialist', subsidiary: 'Janashakthi Group', joinedDate: 'Nov 18, 2023', avatar: 'E' },
-        { id: 4, name: 'Michael Ross', role: 'Lead Developer', subsidiary: 'Janashakthi Life', joinedDate: 'Jun 30, 2021', avatar: 'M' },
-    ];
-
-    const pages = [
-        { id: 1, name: 'Janashakthi Life', category: 'Insurance', followers: '32K', avatar: 'JL' },
-        { id: 2, name: 'Janashakthi Finance', category: 'Finance', followers: '12K', avatar: 'JF' },
-    ];
-    const totalCount = members.length + pages.length;
-
-    const handleExport = () => {
-        alert(`Exporting data for ${totalCount} connections...`);
-    };
-
+// --- Post Composer Component ---
+const PostComposer = () => {
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="following-modal"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="modal-header">
-                    <div className="modal-title-section">
-                        <Users className="modal-icon" size={24} />
-                        <div>
-                            <div className="modal-title-group">
-                                <h3>All Followings</h3>
-                                <div className="total-badge">{totalCount} total</div>
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="composer-card"
+        >
+            <div className="composer-content">
+                <div className="composer-header">
+                    <div className="composer-badge">
+                        <div className="composer-badge-line"></div>
+                        <span className="composer-badge-text">Create Post</span>
+                    </div>
+                    <div className="composer-title">
+                        <Zap size={20} />
+                        <h3>Share your update</h3>
+                    </div>
+                </div>
+
+                <div className="composer-body">
+                    <div className="composer-input-section">
+                        <div className="composer-avatar">
+                            <div className="avatar-initial">JS</div>
+                        </div>
+                        <div className="composer-input-wrapper">
+                            <textarea
+                                placeholder="What's on your mind, Janashakthi?"
+                                className="composer-textarea"
+                                rows={3}
+                            />
+                            <div className="composer-input-actions">
+                                <div className="composer-visibility">
+                                    <Globe size={14} />
+                                    <span>Everyone</span>
+                                    <ChevronDown size={12} />
+                                </div>
+                                <div className="composer-char-count">
+                                    <span>0/280</span>
+                                </div>
                             </div>
-                            <p>Manage your network and interests</p>
                         </div>
                     </div>
-                    <div className="modal-header-actions">
-                        <button className="btn-export" onClick={handleExport}>
-                            <Download size={16} />
-                            <span>Export report</span>
-                        </button>
-                        <button className="modal-close" onClick={onClose}>
-                            <Plus style={{ transform: 'rotate(45deg)' }} size={20} />
+
+                    <div className="composer-actions">
+                        <div className="composer-media-buttons">
+                            <button className="media-button">
+                                <ImageIcon size={18} />
+                                <span>Image</span>
+                            </button>
+                            <button className="media-button">
+                                <Video size={18} />
+                                <span>Video</span>
+                            </button>
+                            <button className="media-button">
+                                <Paperclip size={18} />
+                                <span>Attachment</span>
+                            </button>
+                            <button className="media-button">
+                                <Tag size={18} />
+                                <span>Tag</span>
+                            </button>
+                        </div>
+                        <button className="composer-submit">
+                            <Send size={16} />
+                            <span>Publish</span>
                         </button>
                     </div>
                 </div>
-
-                <div className="modal-tabs">
-                    <button
-                        className={`modal-tab ${activeTab === 'members' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('members')}
-                    >
-                        Members <span className="tab-count">{members.length}</span>
-                    </button>
-                    <button
-                        className={`modal-tab ${activeTab === 'pages' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('pages')}
-                    >
-                        Pages <span className="tab-count">{pages.length}</span>
-                    </button>
-                </div>
-
-                <div className="modal-body">
-                    {activeTab === 'members' ? (
-                        <div className="members-list">
-                            {members.map(member => (
-                                <div key={member.id} className="member-item">
-                                    <div className="member-info-left">
-                                        <div className="member-avatar">
-                                            <span>{member.avatar}</span>
-                                        </div>
-                                        <div className="member-details">
-                                            <h4>{member.name}</h4>
-                                            <p className="member-role">{member.role}</p>
-                                        </div>
-                                    </div>
-                                    <div className="member-info-right">
-                                        <div className="member-meta">
-                                            <span className="member-subsidiary">{member.subsidiary}</span>
-                                            <span className="member-joined">Joined {member.joinedDate}</span>
-                                        </div>
-                                        <button className="btn-following">Following</button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="pages-list">
-                            {pages.map(page => (
-                                <div key={page.id} className="member-item">
-                                    <div className="member-info-left">
-                                        <div className="member-avatar page-avatar">
-                                            <span>{page.avatar}</span>
-                                        </div>
-                                        <div className="member-details">
-                                            <h4>{page.name}</h4>
-                                            <p className="member-role">{page.category}</p>
-                                        </div>
-                                    </div>
-                                    <div className="member-info-right">
-                                        <div className="member-meta">
-                                            <span className="member-subsidiary">{page.followers} followers</span>
-                                        </div>
-                                        <button className="btn-following">Following</button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </motion.div>
-        </div>
+            </div>
+        </motion.div>
     );
 };
 
@@ -321,7 +275,6 @@ const PostCard = ({ post, index }) => {
 // --- Main Page Component ---
 const MediaHubPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
 
     const posts = useMemo(() => [
         {
@@ -383,28 +336,42 @@ const MediaHubPage = () => {
 
 
 
-                        {/* Followings Button Section */}
-                        <div className="followings-trigger-section">
-                            <button
-                                className="followings-btn-large"
-                                onClick={() => setIsFollowingModalOpen(true)}
-                            >
-                                <div className="btn-content">
-                                    <div className="btn-icon-group">
-                                        <Users size={24} />
-                                        <div className="btn-badge">
-                                            <TrendingUp size={12} />
-                                        </div>
-                                    </div>
-                                    <div className="btn-text">
-                                        <span className="btn-label">Network Insights</span>
-                                        <span className="btn-title">Followings</span>
-                                    </div>
-                                </div>
-                                <ChevronRight size={20} className="arrow-icon" />
-                            </button>
-                        </div>
+                        {/* Post Composer */}
+                        <PostComposer />
 
+                        {/* Feed Header */}
+                        <div className="feed-header">
+                            <div className="feed-header-left">
+                                <div className="feed-icon">
+                                    <Target size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="feed-title">Latest Feed</h3>
+                                    <p className="feed-subtitle">Recent posts from your network</p>
+                                </div>
+                            </div>
+                            <div className="feed-header-right">
+                                <div className="feed-search-bar">
+                                    <Search size={16} className="feed-search-icon" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search feed..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="feed-search-input"
+                                    />
+                                </div>
+                                <button className="date-btn">
+                                    <Calendar size={16} />
+                                    <span>Dec 01 - 24, 2024</span>
+                                    <ChevronDown size={12} />
+                                </button>
+                                <button className="filter-btn">
+                                    <Filter size={16} />
+                                    <span>Filters</span>
+                                </button>
+                            </div>
+                        </div>
 
                         {/* Posts Feed */}
                         <div className="posts-feed">
@@ -436,13 +403,6 @@ const MediaHubPage = () => {
                                 </button>
                             </div>
                         )}
-
-                        {/* Following Modal */}
-                        <AnimatePresence>
-                            {isFollowingModalOpen && (
-                                <FollowingModal onClose={() => setIsFollowingModalOpen(false)} />
-                            )}
-                        </AnimatePresence>
                     </div>
 
 
@@ -1063,322 +1023,6 @@ const MediaHubPage = () => {
 
 
 
-                /* Followings Trigger */
-                .followings-trigger-section {
-                    margin-bottom: 2rem;
-                }
-                .followings-btn-large {
-                    width: 100%;
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 16px;
-                    padding: 1.5rem 2rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                }
-                .followings-btn-large:hover {
-                    border-color: #f97316;
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 30px rgba(249,115,22,0.1);
-                }
-                .btn-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 1.5rem;
-                }
-                .btn-icon-group {
-                    position: relative;
-                    width: 56px;
-                    height: 56px;
-                    background: #fff7ed;
-                    border-radius: 14px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #f97316;
-                }
-                .btn-badge {
-                    position: absolute;
-                    top: -6px;
-                    right: -6px;
-                    width: 24px;
-                    height: 24px;
-                    background: #10b981;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    border: 2px solid white;
-                    box-shadow: 0 2px 8px rgba(16,185,129,0.3);
-                }
-                .btn-text {
-                    text-align: left;
-                    display: flex;
-                    flex-direction: column;
-                }
-                .btn-label {
-                    font-size: 11px;
-                    font-weight: 700;
-                    color: #f97316;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    margin-bottom: 4px;
-                }
-                .btn-title {
-                    font-size: 20px;
-                    font-weight: 800;
-                    color: #0f172a;
-                }
-                .arrow-icon {
-                    color: #94a3b8;
-                    transition: transform 0.3s ease;
-                }
-                .followings-btn-large:hover .arrow-icon {
-                    transform: translateX(4px);
-                    color: #f97316;
-                }
-
-                /* Following Modal */
-                .following-modal {
-                    background: white;
-                    width: 90%;
-                    max-width: 650px;
-                    border-radius: 20px;
-                    overflow: hidden;
-                    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-                    z-index: 1001;
-                    display: flex;
-                    flex-direction: column;
-                    max-height: 80vh;
-                }
-                .modal-header {
-                    padding: 2rem;
-                    background: #fff;
-                    border-bottom: 1px solid #f1f5f9;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-                .modal-title-section {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                }
-                .modal-icon {
-                    padding: 12px;
-                    background: #fff7ed;
-                    border-radius: 12px;
-                    color: #f97316;
-                }
-                .modal-title-section h3 {
-                    font-size: 20px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .modal-title-group {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
-                .total-badge {
-                    padding: 2px 10px;
-                    background: #f1f5f9;
-                    border-radius: 100px;
-                    font-size: 11px;
-                    font-weight: 700;
-                    color: #475569;
-                    border: 1px solid #e2e8f0;
-                }
-                .modal-title-section p {
-                    font-size: 13px;
-                    color: #64748b;
-                    margin: 2px 0 0 0;
-                }
-                .modal-header-actions {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-                .btn-export {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 8px 16px;
-                    background: #f97316;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    font-size: 12px;
-                    font-weight: 700;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    box-shadow: 0 4px 12px rgba(249,115,22,0.2);
-                }
-                .btn-export:hover {
-                    background: #ea580c;
-                    transform: translateY(-1px);
-                    box-shadow: 0 6px 15px rgba(249,115,22,0.3);
-                }
-                .modal-close {
-                    background: #f1f5f9;
-                    border: none;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #64748b;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .modal-close:hover {
-                    background: #fee2e2;
-                    color: #ef4444;
-                }
-                .modal-tabs {
-                    display: flex;
-                    padding: 0 2rem;
-                    background: #fff;
-                    border-bottom: 1px solid #f1f5f9;
-                }
-                .modal-tab {
-                    padding: 1.25rem 1.5rem;
-                    background: none;
-                    border: none;
-                    font-size: 14px;
-                    font-weight: 700;
-                    color: #64748b;
-                    cursor: pointer;
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .modal-tab.active {
-                    color: #f97316;
-                }
-                .modal-tab.active::after {
-                    content: '';
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    height: 3px;
-                    background: #f97316;
-                    border-radius: 3px 3px 0 0;
-                }
-                .tab-count {
-                    font-size: 11px;
-                    padding: 2px 8px;
-                    background: #f1f5f9;
-                    border-radius: 10px;
-                    color: #475569;
-                }
-                .modal-tab.active .tab-count {
-                    background: #fff7ed;
-                    color: #f97316;
-                }
-                .modal-body {
-                    padding: 1.5rem;
-                    overflow-y: auto;
-                    background: #f8fafc;
-                    flex: 1;
-                }
-                .members-list, .pages-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-                .member-item {
-                    background: white;
-                    padding: 1.25rem;
-                    border-radius: 12px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    border: 1px solid #e2e8f0;
-                    transition: all 0.2s;
-                }
-                .member-item:hover {
-                    transform: scale(1.01);
-                    border-color: #fbbf24;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-                }
-                .member-info-left {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                }
-                .member-avatar {
-                    width: 48px;
-                    height: 48px;
-                    background: linear-gradient(135deg, #f97316, #fbbf24);
-                    border-radius: 10px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-weight: 700;
-                    font-size: 18px;
-                }
-                .page-avatar {
-                    background: linear-gradient(135deg, #0a66c2, #004182);
-                }
-                .member-details h4 {
-                    font-size: 15px;
-                    font-weight: 700;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .member-role {
-                    font-size: 12px;
-                    color: #64748b;
-                    margin: 2px 0 0 0;
-                }
-                .member-info-right {
-                    display: flex;
-                    align-items: center;
-                    gap: 1.5rem;
-                }
-                .member-meta {
-                    text-align: right;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                }
-                .member-subsidiary {
-                    font-size: 12px;
-                    font-weight: 600;
-                    color: #0f172a;
-                }
-                .member-joined {
-                    font-size: 10px;
-                    color: #94a3b8;
-                }
-                .btn-following {
-                    padding: 8px 16px;
-                    background: #f1f5f9;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #475569;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .btn-following:hover {
-                    background: #fee2e2;
-                    color: #ef4444;
-                    border-color: #fecaca;
-                }
-
                 .dark .analytics-container {
                     background: #0f172a;
                 }
@@ -1441,77 +1085,6 @@ const MediaHubPage = () => {
                     background: #334155;
                     border-color: #475569;
                     color: #cbd5e1;
-                }
-
-                .dark .followings-btn-large {
-                    background: #1e293b;
-                    border-color: #334155;
-                }
-                .dark .btn-title {
-                    color: white;
-                }
-                .dark .btn-icon-group {
-                    background: rgba(249,115,22,0.1);
-                }
-                .dark .following-modal {
-                    background: #1e293b;
-                }
-                .dark .modal-header, .dark .modal-tabs {
-                    background: #1e293b;
-                    border-color: #334155;
-                }
-                .dark .modal-title-section h3 {
-                    color: white;
-                }
-                .dark .modal-tab.active {
-                    color: #fb923c;
-                }
-                .dark .modal-tab.active::after {
-                    background: #fb923c;
-                }
-                .dark .tab-count {
-                    background: #334155;
-                    color: #94a3b8;
-                }
-                .dark .modal-body {
-                    background: #0f172a;
-                }
-                .dark .member-item {
-                    background: #1e293b;
-                    border-color: #334155;
-                }
-                .dark .member-details h4, .dark .member-subsidiary {
-                    color: white;
-                }
-                .dark .btn-following {
-                    background: #334155;
-                    border-color: #475569;
-                    color: #94a3b8;
-                }
-
-                .dark .total-badge {
-                    background: #334155;
-                    color: #cbd5e1;
-                    border-color: #475569;
-                }
-
-                .dark .btn-export {
-                    box-shadow: 0 4px 12px rgba(249,115,22,0.1);
-                }
-
-                .modal-backdrop {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(15, 23, 42, 0.4);
-                    backdrop-filter: blur(8px);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                    padding: 1rem;
                 }
             `}</style>
         </div>

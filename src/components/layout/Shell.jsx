@@ -65,14 +65,14 @@ const styles = {
         top: 0,
         backgroundColor: 'white',
         borderBottom: '1px solid #e2e8f0',
-        padding: '16px 24px',
+        padding: '10px 24px',
         zIndex: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
     },
     content: {
-        padding: '24px',
+        padding: '12px',
         flex: 1
     },
     logo: {
@@ -236,11 +236,10 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
     const subPages = [
         { id: 'page-view', label: 'Page View', icon: <Layout size={16} /> },
         { id: 'analytics', label: 'Analytics', icon: <BarChart size={16} /> },
-        { id: 'content', label: 'Content Management', icon: <Edit3 size={16} /> },
+        { id: 'page-content', label: 'Page Content', icon: <Edit3 size={16} /> },
         { id: 'page-people', label: 'People Management', icon: <Users size={16} /> },
         { id: 'page-events', label: 'Events', icon: <Calendar size={16} /> },
         { id: 'page-csr', label: 'CSR', icon: <Heart size={16} /> },
-        { id: 'feed', label: 'Feed', icon: <ActivityIcon size={16} /> },
         { id: 'activity', label: 'Activity', icon: <ActivityIcon size={16} /> },
         { id: 'edit', label: 'Edit Page', icon: <Edit3 size={16} /> },
     ];
@@ -360,19 +359,10 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
             }}>
                 <header style={styles.header}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <button
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            style={{
-                                padding: '8px',
-                                backgroundColor: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                                borderRadius: '12px'
-                            }}
-                        >
-                            <Menu size={24} color="#475569" />
-                        </button>
+                        {/* Hamburger menu removed as per request */}
+                    </div>
 
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={styles.searchContainer}>
                             <Search size={18} style={styles.searchIcon} />
                             <input
@@ -381,9 +371,7 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
                                 style={styles.searchInput}
                             />
                         </div>
-                    </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <button style={{
                             padding: '10px',
                             color: '#475569',
@@ -425,11 +413,6 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
                         </button>
 
                         <div style={{ width: '1px', height: '24px', backgroundColor: '#e2e8f0', margin: '0 8px' }} />
-
-                        <button style={styles.btnPrimary}>
-                            <Download size={18} />
-                            Export Data
-                        </button>
                     </div>
                 </header>
 
