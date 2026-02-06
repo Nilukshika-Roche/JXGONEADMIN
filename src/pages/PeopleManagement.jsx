@@ -324,7 +324,7 @@ const PeopleManagement = () => {
                     <div className="toolbar-info">
                         <div className="directory-badge">
                             <Users size={14} />
-                            <span className="directory-title">User Directory</span>
+                            <span className="directory-title">Employee Directory</span>
                             <span className="member-count">{filteredUsers.length} Members</span>
                         </div>
                     </div>
@@ -342,15 +342,7 @@ const PeopleManagement = () => {
                         </div>
 
                         <div className="control-buttons">
-                            <button className="control-btn" title="Filter">
-                                <Filter size={12} />
-                                <span>Filter</span>
-                            </button>
 
-                            <button className="control-btn" title="Export">
-                                <Download size={12} />
-                                <span>Export</span>
-                            </button>
 
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
@@ -367,18 +359,7 @@ const PeopleManagement = () => {
 
                 {/* User Table Card */}
                 <div className="user-table-card">
-                    <div className="table-header">
-                        <div className="table-header-left">
-                            <h3 className="table-title">Team Members</h3>
-                            <p className="table-subtitle">Manage organizational access permissions</p>
-                        </div>
-                        <div className="table-header-right">
-                            <div className="date-display">
-                                <Clock size={14} />
-                                <span>Updated just now</span>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div className="table-container">
                         <table className="user-table">

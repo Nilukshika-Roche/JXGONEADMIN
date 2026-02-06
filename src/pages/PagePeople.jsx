@@ -149,7 +149,7 @@ const PagePeople = () => {
                     <div className="toolbar-info">
                         <div className="directory-badge">
                             <Users size={14} />
-                            <span className="directory-title">User Directory</span>
+                            <span className="directory-title">Team Members</span>
                             <span className="member-count">{filteredUsers.length} Members</span>
                         </div>
                     </div>
@@ -166,17 +166,7 @@ const PagePeople = () => {
                             />
                         </div>
 
-                        <div className="control-buttons">
-                            <button className="control-btn" title="Filter">
-                                <Filter size={12} />
-                                <span>Filter</span>
-                            </button>
 
-                            <button className="control-btn" title="Export">
-                                <Download size={12} />
-                                <span>Export</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -184,18 +174,7 @@ const PagePeople = () => {
 
 
                 <div className="user-table-card">
-                    <div className="table-header">
-                        <div className="table-header-left">
-                            <h3 className="table-title">Team Members</h3>
-                            <p className="table-subtitle">Manage organizational access permissions</p>
-                        </div>
-                        <div className="table-header-right">
-                            <div className="date-display">
-                                <Clock size={14} />
-                                <span>Updated just now</span>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div className="table-container">
                         <table className="user-table">
@@ -474,7 +453,7 @@ const PagePeople = () => {
                     background: #f8fafc;
                     border: 1px solid #e2e8f0;
                     border-radius: 8px;
-                    padding: 8px 12px;
+                    padding: 6px 12px;
                     flex: 1;
                     min-width: 200px;
                     transition: all 0.2s;
