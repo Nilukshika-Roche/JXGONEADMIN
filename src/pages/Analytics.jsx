@@ -70,20 +70,20 @@ const Analytics = () => {
     ];
 
     const contentHighlights = [
-        { label: 'Impressions', value: '125,480', trend: '+12.5%', icon: <Eye size={18} /> },
-        { label: 'Reactions', value: '45,210', trend: '+8.2%', icon: <Heart size={18} /> },
-        { label: 'Comments', value: '12,845', trend: '+15.4%', icon: <MessageSquare size={18} /> },
-        { label: 'Posts', value: '840', trend: '+2.1%', icon: <BarChart3 size={18} /> },
+        { label: 'Impressions', value: '125,480', trend: '+12.5%', icon: <Eye size={18} />, color: 'orange' },
+        { label: 'Reactions', value: '45,210', trend: '+8.2%', icon: <Heart size={18} />, color: 'rose' },
+        { label: 'Comments', value: '12,845', trend: '+15.4%', icon: <MessageSquare size={18} />, color: 'amber' },
+        { label: 'Posts', value: '840', trend: '+2.1%', icon: <BarChart3 size={18} />, color: 'emerald' },
     ];
 
     const followerHighlights = [
-        { label: 'Total Followers', value: '12,840', trend: '+5.2%', icon: <Users size={18} /> },
-        { label: 'New Followers', value: '1,245', trend: '+12.8%', icon: <TrendingUp size={18} /> },
+        { label: 'Total Followers', value: '12,840', trend: '+5.2%', icon: <Users size={18} />, color: 'orange' },
+        { label: 'New Followers', value: '1,245', trend: '+12.8%', icon: <TrendingUp size={18} />, color: 'emerald' },
     ];
 
     const visitorHighlights = [
-        { label: 'Page Views', value: '15,240', trend: '+18.2%', icon: <Eye size={18} /> },
-        { label: 'Unique Visitors', value: '4,850', trend: '+12.4%', icon: <Users size={18} /> },
+        { label: 'Page Views', value: '15,240', trend: '+18.2%', icon: <Eye size={18} />, color: 'orange' },
+        { label: 'Unique Visitors', value: '4,850', trend: '+12.4%', icon: <Users size={18} />, color: 'amber' },
     ];
 
     return (
@@ -147,7 +147,7 @@ const Analytics = () => {
                                         <motion.div
                                             key={i}
                                             whileHover={{ y: -4 }}
-                                            className="metric"
+                                            className={`metric ${metric.color}`}
                                         >
                                             <div className="metric-bg"></div>
                                             <div className="metric-content">
@@ -283,7 +283,7 @@ const Analytics = () => {
                                         <motion.div
                                             key={i}
                                             whileHover={{ y: -4 }}
-                                            className="metric"
+                                            className={`metric ${metric.color}`}
                                         >
                                             <div className="metric-bg"></div>
                                             <div className="metric-content">
@@ -432,7 +432,7 @@ const Analytics = () => {
                                         <motion.div
                                             key={i}
                                             whileHover={{ y: -4 }}
-                                            className="metric"
+                                            className={`metric ${metric.color}`}
                                         >
                                             <div className="metric-bg"></div>
                                             <div className="metric-content">
@@ -729,29 +729,42 @@ const Analytics = () => {
                     grid-template-columns: repeat(2, 1fr);
                 }
                 .metric {
-                    background: #fffafa;
-                    border: 1px solid #fee2e2;
-                    border-radius: 10px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
                     padding: 0.75rem;
                     position: relative;
                     overflow: hidden;
                     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
                     transition: all 0.3s ease;
+                    cursor: pointer;
                 }
                 .metric:hover {
-                    border-color: #fed7aa;
                     transform: translateY(-4px);
-                    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.1);
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
                 }
+
+                /* Color Variants */
+                .metric.emerald { background: #f0fdf4; border-color: #bbf7d0; }
+                .metric.amber { background: #fffbeb; border-color: #fde68a; }
+                .metric.orange { background: #fff7ed; border-color: #fed7aa; }
+                .metric.rose { background: #fff1f2; border-color: #fecdd3; }
+
+                .metric-bg {
                     position: absolute;
                     top: -20px;
                     right: -20px;
                     width: 60px;
                     height: 60px;
-                    background: rgba(249, 115, 22, 0.1);
                     border-radius: 50%;
                     filter: blur(10px);
+                    opacity: 0.5;
                 }
+                .metric.emerald .metric-bg { background: rgba(16, 185, 129, 0.2); }
+                .metric.amber .metric-bg { background: rgba(251, 191, 36, 0.2); }
+                .metric.orange .metric-bg { background: rgba(249, 115, 22, 0.2); }
+                .metric.rose .metric-bg { background: rgba(244, 63, 94, 0.2); }
+
                 .metric-content {
                     position: relative;
                     z-index: 1;
@@ -764,10 +777,16 @@ const Analytics = () => {
                 }
                 .metric-icon {
                     padding: 6px;
-                    background: #fff7ed;
                     border-radius: 6px;
-                    color: #f97316;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
+                .metric.emerald .metric-icon { background: #dcfce7; color: #10b981; }
+                .metric.amber .metric-icon { background: #fef3c7; color: #fbbf24; }
+                .metric.orange .metric-icon { background: #ffedd5; color: #f97316; }
+                .metric.rose .metric-icon { background: #ffe4e6; color: #f43f5e; }
+
                 .metric-icon svg {
                     width: 16px;
                     height: 16px;
@@ -776,12 +795,16 @@ const Analytics = () => {
                     display: flex;
                     align-items: center;
                     gap: 3px;
-                    background: #d1fae5;
                     padding: 2px 6px;
                     border-radius: 20px;
                     font-size: 10px;
-                    color: #065f46;
+                    font-weight: 700;
                 }
+                .metric.emerald .metric-trend { background: #d1fae5; color: #065f46; }
+                .metric.amber .metric-trend { background: #ffedd5; color: #92400e; }
+                .metric.orange .metric-trend { background: #ffedd5; color: #9a3412; }
+                .metric.rose .metric-trend { background: #ffe4e6; color: #9f1239; }
+
                 .metric-body {
                     display: flex;
                     flex-direction: column;
@@ -807,12 +830,16 @@ const Analytics = () => {
                     left: 0;
                     width: 100%;
                     height: 3px;
-                    background: #f1f5f9;
+                    background: rgba(0,0,0,0.05);
                 }
                 .metric-progress-fill {
                     height: 100%;
-                    background: linear-gradient(90deg, #f97316, #fbbf24);
+                    transition: width 1s ease-out; 
                 }
+                .metric.emerald .metric-progress-fill { background: #10b981; }
+                .metric.amber .metric-progress-fill { background: #fbbf24; }
+                .metric.orange .metric-progress-fill { background: #f97316; }
+                .metric.rose .metric-progress-fill { background: #f43f5e; }
 
                 /* Chart */
                 .chart {
@@ -1167,62 +1194,7 @@ const Analytics = () => {
                     cursor: pointer;
                 }
 
-                /* Dark Mode */
-                .dark .analytics-container {
-                    background: #0f172a;
-                }
-                .dark .header,
-                .dark .top-bar,
-                .dark .metric,
-                .dark .chart,
-                .dark .construction,
-                .dark .visitors-table-card,
-                .dark .followers-list-card,
-                .dark .highlights-section-card {
-                    background: #1e293b;
-                    color: white;
-                    border: 1px solid #334155;
-                }
-                .dark .metric:hover {
-                    border-color: #f97316;
-                    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-                }
-                .dark .top-bar { box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-                .dark .section-title,
-                .dark .metric-value,
-                .dark .chart-title,
-                .dark .stat-value,
-                .dark .table-title,
-                .dark .visitor-name {
-                    color: white;
-                }
-                .dark .tabs { background: #334155; }
-                .dark .tab.active { background: #475569; }
-                .dark .date-btn, .dark .date-display {
-                    background: #334155;
-                    border-color: #475569;
-                    color: #cbd5e1;
-                }
-                .dark .chart-stat span, .dark .chart-subtitle, .dark .metric-label, .dark .table-subtitle {
-                    color: #94a3b8;
-                }
-                .dark .chart-stats { background: #334155; }
-                .dark .chart-divider, .dark .visitor-table th, .dark .visitor-table td {
-                    background: transparent;
-                    border-color: #334155;
-                }
-                .dark .metric-icon { background: #334155; }
-                .dark .metric-progress { background: #334155; }
-                .dark .table-header { background: #1e293b; border-bottom-color: #334155; }
-                .dark .visitor-table th { background: #0f172a; color: #94a3b8; }
-                .dark .visitor-table td { color: #cbd5e1; }
-                .dark .role-badge { background: #334155; border-color: #475569; color: #fb923c; }
-                .dark .followers-list-card, .dark .visitors-list-card { background: #1e293b; }
-                .dark .follower-item { background: #334155; border-color: transparent; }
-                .dark .follower-item:hover { background: #475569; border-color: #f97316; }
-                .dark .follower-name-text { color: white; }
-                .dark .follower-date-badge { background: #1e293b; border-color: #475569; color: #94a3b8; }
-                .dark .follower-sub-text { color: #cbd5e1; }
+
             `}</style>
         </div>
     );

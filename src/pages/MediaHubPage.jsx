@@ -561,7 +561,7 @@ const MediaHubPage = () => {
                     border-color: #f97316;
                     color: #f97316;
                 }
-                .composer-submit {
+                .appmit {
                     display: flex;
                     align-items: center;
                     gap: 6px;
@@ -1023,69 +1023,7 @@ const MediaHubPage = () => {
 
 
 
-                .dark .analytics-container {
-                    background: #0f172a;
-                }
 
-                .dark .composer-card,
-                .dark .feed-header,
-                .dark .post-card,
-                .dark .composer-title,
-                .dark .feed-title,
-                .dark .post-author-name h4,
-                .dark .empty-state h3 {
-                    color: white;
-                }
-                .dark .composer-textarea {
-                    background: #334155;
-                    border-color: #475569;
-                    color: white;
-                }
-                .dark .media-button {
-                    background: #334155;
-                    border-color: #475569;
-                    color: #94a3b8;
-                }
-                .dark .feed-search-bar {
-                    background: #334155;
-                }
-                .dark .feed-search-input {
-                    color: white;
-                }
-                .dark .post-content p,
-                .dark .feed-subtitle,
-                .dark .post-followers,
-                .dark .post-date,
-                .dark .sidebar-subtitle,
-                .dark .empty-state p {
-                    color: #94a3b8;
-                }
-                .dark .post-tag.primary {
-                    background: #334155;
-                    color: #fb923c;
-                }
-                .dark .post-tag.secondary {
-                    background: #334155;
-                    color: #94a3b8;
-                }
-                .dark .post-media-container {
-                    background: #334155;
-                }
-                .dark .post-stats {
-                    border-color: #334155;
-                }
-                .dark .post-action-btn {
-                    background: #334155;
-                    color: #94a3b8;
-                }
-                .dark .post-action-btn:hover {
-                    background: #475569;
-                }
-                .dark .load-more-btn {
-                    background: #334155;
-                    border-color: #475569;
-                    color: #cbd5e1;
-                }
             `}</style>
         </div>
     );

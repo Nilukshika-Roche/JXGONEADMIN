@@ -779,77 +779,7 @@ const PagePeople = () => {
                     margin: 0;
                 }
 
-                /* Dark Mode Redesign (Ported from PeopleManagement) */
-                .dark .analytics-container {
-                    background: #0f172a;
-                }
-                .dark .compact-toolbar {
-                    background: #1e293b;
-                    border-color: #334155;
-                }
-                .dark .directory-badge {
-                    background: #451a03;
-                    border-color: #78350f;
-                }
-                .dark .directory-title {
-                    color: white;
-                }
-                .dark .search-compact {
-                    background: #0f172a;
-                    border-color: #334155;
-                }
-                .dark .search-input-compact {
-                    color: white;
-                }
-                .dark .control-btn {
-                    background: #1e293b;
-                    border-color: #334155;
-                    color: #94a3b8;
-                }
-                .dark .control-btn:hover {
-                    background: #334155;
-                    color: white;
-                }
-                .dark .user-table-card {
-                    background: #1e293b;
-                }
-                .dark .table-title {
-                    color: white;
-                }
-                .dark .member-count {
-                    background: #334155;
-                    color: #f97316;
-                }
-                .dark .table-subtitle {
-                    color: #94a3b8;
-                }
-                .dark .user-table th {
-                    background: #0f172a;
-                    color: #94a3b8;
-                    border-bottom-color: #334155;
-                }
-                .dark .user-table td {
-                    border-bottom-color: #334155;
-                    color: #cbd5e1;
-                }
-                .dark .user-row:hover {
-                    background: #334155;
-                }
-                .dark .user-name {
-                    color: white;
-                }
-                .dark .user-email {
-                    color: #94a3b8;
-                }
-                .dark .department {
-                    color: #cbd5e1;
-                }
-                .dark .role-badge {
-                    border-color: rgba(255, 255, 255, 0.1);
-                }
-                .dark .status-badge {
-                    background: rgba(255, 255, 255, 0.05);
-                }
+
             `}</style>
         </div >
     );
