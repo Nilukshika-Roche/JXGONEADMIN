@@ -298,7 +298,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
         // Mock data generation
         const mockDetails = {
             reportedBy: ['John Doe', 'Jane Smith', 'Admin User', 'Anonymous'][Math.floor(Math.random() * 4)],
-            date: new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            reportedDate: new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             reason: ['Inappropriate content', 'Spam / Misleading', 'Policy violation', 'Budget concerns'][Math.floor(Math.random() * 4)],
             description: 'User reported this project due to concerns about resources and compliance.'
         };
@@ -1033,75 +1033,52 @@ const CSR = ({ setActiveTab: onNavigate }) => {
             <AnimatePresence>
                 {reportedModalData.isOpen && reportedModalData.details && (
                     <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-                            onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                        >
-                            <div
-                                className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden"
+                        <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="modal-container max-w-sm"
                                 onClick={e => e.stopPropagation()}
                             >
-                                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-red-50">
-                                    <h3 className="font-bold text-red-800 flex items-center gap-2">
-                                        <AlertCircle size={18} />
-                                        Report Details
-                                    </h3>
-                                    <button
-                                        onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                                        className="text-red-400 hover:text-red-700 transition-colors"
-                                    >
+                                <div className="modal-header bg-red-50">
+                                    <div className="modal-header-left">
+                                        <div className="report-icon text-red-600">
+                                            <AlertCircle size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="report-title text-red-800">Report Reasons</h3>
+                                            <p className="modal-subtitle">Security flagging information</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="report-close-btn text-red-400">
                                         <X size={20} />
                                     </button>
                                 </div>
-                                <div className="p-5 space-y-4">
-                                    <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Reported By</p>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
-                                                {reportedModalData.details.reportedBy.charAt(0)}
-                                            </div>
-                                            <p className="text-sm font-medium text-slate-800">{reportedModalData.details.reportedBy}</p>
+                                <div className="modal-body">
+                                    <div className="flex gap-40">
+                                        <div>
+                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
+                                            <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
+                                            <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
                                         </div>
                                     </div>
-
                                     <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Date Reported</p>
-                                        <p className="text-sm font-medium text-slate-800">{reportedModalData.details.date}</p>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
+                                        <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
                                     </div>
-
-                                    <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Reason</p>
-                                        <span className="inline-block px-2 py-1 round-md bg-red-100 text-red-700 text-xs font-bold rounded">
-                                            {reportedModalData.details.reason}
-                                        </span>
+                                    <div className="bg-slate-50 p-3 rounded-lg border">
+                                        <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
                                     </div>
-
-                                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-                                        <p className="text-xs text-slate-500 mb-1">Description</p>
-                                        <p className="text-sm text-slate-700 italic">"{reportedModalData.details.description}"</p>
-                                    </div>
-
-                                    <div className="pt-2">
-                                        <button
-                                            onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                                            className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition-colors"
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
+                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
+                                        Close
+                                    </button>
                                 </div>
-                            </div>
-                        </motion.div>
+                            </motion.div>
+                        </div>
                     </>
                 )}
             </AnimatePresence>
@@ -1529,6 +1506,93 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 .show-more-btn:hover svg {
                     transform: translateY(-2px);
                 }    
+
+                /* Modal Styles */
+                .modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(4px);
+                    z-index: 9998;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+                }
+                .modal-container {
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                    overflow: hidden;
+                    max-width: 500px;
+                    width: 100%;
+                }
+                .modal-header {
+                    padding: 1.25rem 1.5rem;
+                    border-bottom: 1px solid #e2e8f0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background: white;
+                    z-index: 10;
+                }
+                .modal-header-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
+                .modal-body {
+                    padding: 1.5rem 1.75rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
+                    background: white;
+                }
+                .modal-subtitle {
+                    font-size: 13px;
+                    color: #64748b;
+                    font-weight: 500;
+                }
+                .modal-icon {
+                    width: 44px;
+                    height: 44px;
+                    background: #f8fafc;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #475569;
+                    border: 1px solid #f1f5f9;
+                }
+
+                .report-icon {
+                    width: 44px;
+                    height: 44px;
+                    background: #fef2f2;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ef4444;
+                    border: 1px solid #fee2e2;
+                }
+                .report-title {
+                    font-size: 20px;
+                    font-weight: 800;
+                    color: #ef4444;
+                }
+                .report-close-btn {
+                    padding: 8px;
+                    color: #d55a5aff;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                    background: none;
+                    border: none;
+                }
+                .report-close-btn:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                }
 
             `}</style>
         </div >

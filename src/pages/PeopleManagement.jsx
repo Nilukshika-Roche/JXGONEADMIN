@@ -92,7 +92,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
             permissions: 7,
             lastActive: '5 mins ago',
             joinDate: '2023-11-30',
-            reasons: 'Suspicious login activity reported'
+            reasons: 'Suspicious login activity reported',
+            reportedDate: '2026-02-10'
         },
         {
             id: 5,
@@ -312,7 +313,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
         const mockDetails = {
             reportedBy: ['Sarah Wilson', 'System Monitor', 'Admin User', 'Anonymous'][Math.floor(Math.random() * 4)],
-            date: new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            reportedDate: new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             reason: ['Unauthorized Access Attempt', 'Suspicious Activity', 'Policy Violation', 'Multiple Failed Logins'][Math.floor(Math.random() * 4)],
             description: 'This user account has been flagged for multiple suspicious activities and needs administrative review.'
         };
@@ -363,7 +364,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 permissions: Math.floor(Math.random() * 8) + 1,
                 lastActive: 'Just now',
                 joinDate: new Date().toISOString().split('T')[0],
-                reasons: status === 'Reported' ? 'Suspicious activity detected' : ''
+                reasons: status === 'Reported' ? 'Suspicious activity detected' : '',
+                reportedDate: status === 'Reported' ? new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined
             });
         }
         setUsers([...users, ...newPeople]);
@@ -1025,22 +1027,28 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                             >
                                 <div className="modal-header bg-red-50">
                                     <div className="modal-header-left">
-                                        <div className="modal-icon text-red-600">
+                                        <div className="report-icon text-red-600">
                                             <AlertCircle size={20} />
                                         </div>
                                         <div>
-                                            <h3 className="modal-title text-red-800">Report Details</h3>
+                                            <h3 className="report-title text-red-800">Report Reasons</h3>
                                             <p className="modal-subtitle">Security flagging information</p>
                                         </div>
                                     </div>
-                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="modal-close-btn text-red-400">
+                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="report-close-btn text-red-400">
                                         <X size={20} />
                                     </button>
                                 </div>
-                                <div className="p-5 space-y-4">
-                                    <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
-                                        <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
+                                <div className="modal-body">
+                                    <div className="flex gap-40">
+                                        <div>
+                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
+                                            <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
+                                            <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
+                                        </div>
                                     </div>
                                     <div>
                                         <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
@@ -1271,7 +1279,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 .kebab-menu-container { position: relative; }
                 .kebab-menu-popup {
                     position: absolute;
-                    top: 100%; right: 0;
+                    top: 100%;
                     margin-top: 4px;
                     background: white;
                     border: 1px solid #e2e8f0;
@@ -1338,6 +1346,19 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     z-index: 10;
                 }
+                .modal-header-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
+                .modal-body {
+                    
+                    padding: 1.5rem 1.75rem;
+                    gap: .5rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
                 .modal-icon {
                     width: 44px;
                     height: 44px;
@@ -1349,6 +1370,31 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     color: #475569;
                     border: 1px solid #f1f5f9;
                 }
+
+                .report-icon {
+                    width: 44px;
+                    height: 44px;
+                    background: #fef2f2;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ef4444;
+                    border: 1px solid #fee2e2;
+                }
+                .report-title {
+                    font-size: 20px;
+                    font-weight: 800;
+                    color: #ef4444;
+                }
+                .report-close-btn {
+                    padding: 8px;
+                    color: #d55a5aff;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                }
+
                 .modal-icon.delete { background: #fef2f2; color: #ef4444; border-color: #fee2e2; }
                 .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; }
                 .modal-subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
