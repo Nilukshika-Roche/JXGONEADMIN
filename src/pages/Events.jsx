@@ -2,10 +2,10 @@ import React from 'react';
 
 const Events = () => {
     return (
-        <div className="flex items-center justify-center min-h-[400px]">
-            <h1 className="text-2xl font-black text-slate-800 uppercase italic">
-                this is <span className="text-orange-600">events page</span>
-            </h1>
+        <div style={{ padding: '2rem', color: '#64748b' }}>
+            {/* Events page is currently empty */}
+            <h1>Events</h1>
+            <p>No events available.</p>
         </div>
     );
 };

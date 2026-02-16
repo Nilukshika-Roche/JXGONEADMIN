@@ -29,7 +29,8 @@ import {
     ChevronDown,
     Activity as ActivityIcon,
     Layout,
-    BarChart
+    BarChart,
+    Building2
 } from 'lucide-react';
 
 const styles = {
