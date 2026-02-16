@@ -29,7 +29,8 @@ import {
     ChevronDown,
     Activity as ActivityIcon,
     Layout,
-    BarChart
+    BarChart,
+    ShoppingBag
 } from 'lucide-react';
 
 const styles = {
@@ -230,6 +231,7 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
         { id: 'content', icon: <Edit3 size={20} />, label: 'Content Management' },
         { id: 'events', icon: <Calendar size={20} />, label: 'Events' },
         { id: 'csr', icon: <Heart size={20} />, label: 'CSR' },
+        { id: 'marketplace', icon: <ShoppingBag size={20} />, label: 'Marketplace' },
         { id: 'games', icon: <Gamepad2 size={20} />, label: 'Games' },
     ];
 

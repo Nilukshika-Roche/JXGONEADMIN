@@ -575,20 +575,7 @@ const ActivityDashboard = () => {
                     background: #94a3b8;
                 }
 
-                /* Dark Mode */
-                .dark .analytics-container { background: #0f172a; }
-                .dark .tabs-row, .dark .feed-header { background: #1e293b; border-color: #334155; }
-                .dark .tabs { background: #0f172a; }
-                .dark .tab.active { background: #1e293b; color: #fb923c; }
-                .dark .activity-feed { background: #1e293b; border-color: #334155; }
-                .dark .activity-card { border-bottom-color: #334155; }
-                .dark .activity-card:hover { background: #1e293b; border-left-color: #f97316; }
-                .dark .feed-title, .dark .activity-title { color: #f1f5f9; }
-                .dark .activity-description { color: #cbd5e1; }
-                .dark .date-btn { background: #1e293b; border-color: #334155; color: #cbd5e1; }
-                .dark .date-btn:hover { border-color: #fb923c; color: #fb923c; }
-                .dark .meta-item { color: #94a3b8; }
-                .dark .activity-time { background: #334155; color: #cbd5e1; }
+
             `}</style>
         </div>
     );

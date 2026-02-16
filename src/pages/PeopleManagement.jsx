@@ -30,10 +30,12 @@ import {
     EyeOff,
     Link,
     Building2,
-    Lock
+    Lock,
+    ChevronRight,
+    UserSearch
 } from 'lucide-react';
 
-const PeopleManagement = () => {
+const PeopleManagement = ({ setActiveTab: onNavigate }) => {
     // --- Mock Data ---
     const [users, setUsers] = useState([
         {
@@ -47,7 +49,8 @@ const PeopleManagement = () => {
             company: 'Janashakthi Group',
             permissions: 8,
             lastActive: '2 mins ago',
-            joinDate: '2023-05-15'
+            joinDate: '2023-05-15',
+            reasons: 'Superuser access'
         },
         {
             id: 2,
@@ -60,7 +63,8 @@ const PeopleManagement = () => {
             company: 'Janashakthi Group',
             permissions: 6,
             lastActive: '1 hour ago',
-            joinDate: '2023-08-22'
+            joinDate: '2023-08-22',
+            reasons: ''
         },
         {
             id: 3,
@@ -73,20 +77,23 @@ const PeopleManagement = () => {
             company: 'Janashakthi Group',
             permissions: 4,
             lastActive: '2 days ago',
-            joinDate: '2024-01-10'
+            joinDate: '2024-01-10',
+            reasons: 'Account inactive for 30 days'
         },
         {
             id: 4,
             name: 'Emma Davis',
             email: 'e.davis@jxg.com',
             role: 'Admin',
-            status: 'Active',
+            status: 'Reported',
             avatar: 'ED',
             department: 'Operations',
             company: 'Janashakthi Group',
             permissions: 7,
             lastActive: '5 mins ago',
-            joinDate: '2023-11-30'
+            joinDate: '2023-11-30',
+            reasons: 'Suspicious login activity reported',
+            reportedDate: '2026-02-10'
         },
         {
             id: 5,
@@ -99,7 +106,8 @@ const PeopleManagement = () => {
             company: 'Janashakthi Group',
             permissions: 3,
             lastActive: '1 week ago',
-            joinDate: '2024-02-14'
+            joinDate: '2024-02-14',
+            reasons: ''
         },
     ]);
 
@@ -128,16 +136,52 @@ const PeopleManagement = () => {
         status: 'Active',
         department: '',
         company: 'Janashakthi Group',
-        permissions: 3
+        permissions: 3,
+        reasons: ''
     });
+
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [selectedUserIds, setSelectedUserIds] = useState(new Set());
+
+    const [reportedModalData, setReportedModalData] = useState({ isOpen: false, item: null, details: null });
+
+    const [reasonModalData, setReasonModalData] = useState({ isOpen: false, userId: null, reason: '' });
+    const [openFilter, setOpenFilter] = useState(null);
+    const [tableFilters, setTableFilters] = useState({
+        department: 'All',
+        role: 'All',
+        status: 'All',
+        reasons: 'All'
+    });
+
+    const toggleFilter = (filterName) => {
+        setOpenFilter(openFilter === filterName ? null : filterName);
+    };
+
+    const handleFilterSelect = (type, value) => {
+        setTableFilters(prev => ({ ...prev, [type]: value }));
+        setOpenFilter(null);
+    };
+
+    const uniqueDepartments = ['All', ...new Set(users.map(u => u.department))];
+    const uniqueRoles = ['All', ...new Set(users.map(u => u.role))];
+    const uniqueStatuses = ['All', ...new Set(users.map(u => u.status))];
+    const uniqueReasons = ['All', ...new Set(users.map(u => u.reasons || 'None'))];
 
     // --- Derived State ---
     const filteredUsers = useMemo(() => {
-        let filtered = users.filter(user =>
-            user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.department.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        let filtered = users.filter(user => {
+            const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (user.department && user.department.toLowerCase().includes(searchQuery.toLowerCase()));
+
+            const matchesDepartment = tableFilters.department === 'All' || user.department === tableFilters.department;
+            const matchesRole = tableFilters.role === 'All' || user.role === tableFilters.role;
+            const matchesStatus = tableFilters.status === 'All' || user.status === tableFilters.status;
+            const matchesReasons = tableFilters.reasons === 'All' || (user.reasons || 'None') === tableFilters.reasons;
+
+            return matchesSearch && matchesDepartment && matchesRole && matchesStatus && matchesReasons;
+        });
 
         if (activeTab === 'active') {
             filtered = filtered.filter(user => user.status === 'Active');
@@ -159,18 +203,13 @@ const PeopleManagement = () => {
         }
 
         return filtered;
-    }, [users, searchQuery, activeTab, roleFilter, departmentFilter, statusFilter]);
+    }, [users, searchQuery, activeTab, roleFilter, departmentFilter, statusFilter, tableFilters]);
 
-    // Get unique values for filters
-    const uniqueRoles = useMemo(() => ['all', ...new Set(users.map(u => u.role))], [users]);
-    const uniqueDepartments = useMemo(() => ['all', ...new Set(users.map(u => u.department))], [users]);
-    const uniqueStatuses = useMemo(() => ['all', 'Active', 'Inactive'], []);
+
 
     const toggleMenu = (userId) => {
         setActiveMenuId(activeMenuId === userId ? null : userId);
     };
-
-
 
     // --- CRUD Handlers ---
     const handleAddUser = (e) => {
@@ -269,6 +308,97 @@ const PeopleManagement = () => {
         setIsStatusModalOpen(true);
     };
 
+    const handleReportedClick = (user) => {
+        if (user.status !== 'Reported') return;
+
+        const mockDetails = {
+            reportedBy: ['Sarah Wilson', 'System Monitor', 'Admin User', 'Anonymous'][Math.floor(Math.random() * 4)],
+            reportedDate: new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            reason: ['Unauthorized Access Attempt', 'Suspicious Activity', 'Policy Violation', 'Multiple Failed Logins'][Math.floor(Math.random() * 4)],
+            description: 'This user account has been flagged for multiple suspicious activities and needs administrative review.'
+        };
+
+        setReportedModalData({
+            isOpen: true,
+            item: user,
+            details: mockDetails
+        });
+    };
+
+    const handleReasonClick = (user) => {
+        setReasonModalData({ isOpen: true, userId: user.id, reason: user.reasons || '' });
+    };
+
+    const handleSaveReason = () => {
+        setUsers(prev => prev.map(user =>
+            user.id === reasonModalData.userId ? { ...user, reasons: reasonModalData.reason } : user
+        ));
+        setReasonModalData({ isOpen: false, userId: null, reason: '' });
+    };
+
+    const generateMorePeople = () => {
+        const roles = ['User', 'Editor', 'Content Manager', 'Admin', 'Global Admin'];
+        const statuses = ['Active', 'Inactive', 'Reported'];
+        const departments = ['IT Security', 'Marketing', 'Content', 'Operations', 'Sales', 'HR', 'Finance'];
+        const companies = ['Janashakthi Group', 'First Capital', 'Janashakthi Life', 'Janashakthi Insurance'];
+        const names = [
+            'John Smith', 'Emily Johnson', 'Michael Brown', 'Sarah Davis', 'David Wilson',
+            'Lisa Anderson', 'James Taylor', 'Maria Garcia', 'William Lee', 'Linda Rodriguez'
+        ];
+
+        const newPeople = [];
+        const currentMaxId = Math.max(...users.map(u => u.id));
+
+        for (let i = 1; i <= 5; i++) {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            newPeople.push({
+                id: currentMaxId + i,
+                name: `${name} ${currentMaxId + i}`,
+                email: `${name.toLowerCase().replace(' ', '.')}@jxg.com`,
+                role: roles[Math.floor(Math.random() * roles.length)],
+                status: status,
+                avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
+                department: departments[Math.floor(Math.random() * departments.length)],
+                company: companies[Math.floor(Math.random() * companies.length)],
+                permissions: Math.floor(Math.random() * 8) + 1,
+                lastActive: 'Just now',
+                joinDate: new Date().toISOString().split('T')[0],
+                reasons: status === 'Reported' ? 'Suspicious activity detected' : '',
+                reportedDate: status === 'Reported' ? new Date(Date.now() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined
+            });
+        }
+        setUsers([...users, ...newPeople]);
+    };
+
+    const toggleUserSelection = (userId) => {
+        setSelectedUserIds(prev => {
+            const next = new Set(prev);
+            if (next.has(userId)) {
+                next.delete(userId);
+            } else {
+                next.add(userId);
+            }
+            return next;
+        });
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedUserIds.size === filteredUsers.length) {
+            setSelectedUserIds(new Set());
+        } else {
+            setSelectedUserIds(new Set(filteredUsers.map(u => u.id)));
+        }
+    };
+
+    const handleExportDetails = () => {
+        const selectedUsers = users.filter(u => selectedUserIds.has(u.id));
+        console.log('Exporting details for:', selectedUsers);
+        alert(`Exporting details for ${selectedUsers.length} users. Check console for details.`);
+        setIsExportModalOpen(false);
+        setSelectedUserIds(new Set());
+    };
+
     const MemberInfoSummary = ({ user }) => {
         if (!user) return null;
         return (
@@ -298,7 +428,8 @@ const PeopleManagement = () => {
     };
 
     const getStatusColor = (status) => {
-        return status === 'Active' ? '#10b981' : '#f43f5e';
+        if (status === 'Reported') return '#f43f5e';
+        return status === 'Active' ? '#10b981' : '#64748b';
     };
 
     const getRoleColor = (role) => {
@@ -312,239 +443,221 @@ const PeopleManagement = () => {
     };
 
     return (
-        <div className="analytics-container">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="analytics-content"
-            >
-
-                {/* Compact Toolbar */}
-                <div className="compact-toolbar">
-                    <div className="toolbar-info">
-                        <div className="directory-badge">
-                            <Users size={14} />
-                            <span className="directory-title">Employee Directory</span>
-                            <span className="member-count">{filteredUsers.length} Members</span>
-                        </div>
+        <div className="p-6 max-w-[1400px] mx-auto font-sans text-slate-800">
+            {/* Header Section */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+                {/* Left: Breadcrumbs & Title */}
+                <div>
+                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                        <span
+                            className="hover:text-orange-500 cursor-pointer transition-colors"
+                            onClick={() => onNavigate?.('dashboard')}
+                        >
+                            Admin
+                        </span> &gt; User Management
                     </div>
-
-                    <div className="toolbar-controls">
-                        <div className="search-compact">
-                            <Search size={12} />
-                            <input
-                                type="text"
-                                placeholder="Search members..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="search-input-compact"
-                            />
-                        </div>
-
-                        <div className="control-buttons">
-
-
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setIsAddModalOpen(true)}
-                                className="add-btn-compact"
-                            >
-                                <UserPlus size={12} />
-                                <span>Add User</span>
-                            </motion.button>
-                        </div>
-                    </div>
+                    <h1 className="text-3xl font-handwriting font-bold text-slate-800">
+                        User Directory
+                    </h1>
                 </div>
 
-                {/* User Table Card */}
-                <div className="user-table-card">
+                {/* Export & add user Actions */}
+                <div className="page-actions">
+                    <button
+                        className="page-action-btn primary"
+                        onClick={() => setIsExportModalOpen(true)}
+                    >
+                        <Download size={16} />
+                        <span>Export</span>
+                    </button>
+                    <button
+                        className="page-action-btn secondary"
+                        onClick={() => setIsAddModalOpen(true)}
+                    >
+                        <UserPlus size={16} />
+                        <span>Add User</span>
+                    </button>
+                </div>
+                {/*How the export and add user buttons were before
+                <div className="flex gap-3 ml-auto">
+                    <button className="flex items-center gap-2 px-4 py-[10px] bg-[#f1f5f9] text-[#475569] rounded-lg font-semibold text-[13px] hover:bg-[#e2e8f0] transition-all border-none">
+                        <Download size={16} />
+                        <span>Export</span>
+                    </button>
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-[10px] bg-gradient-to-br from-orange-500 to-amber-400 text-white rounded-lg font-semibold text-[13px] hover:opacity-90 transition-all border-none shadow-sm"
+                    >
+                        <UserPlus size={16} />
+                        <span>Add User</span>
+                    </button>
+                </div>*/}
+            </div>
 
+            {/* Table Section */}
+            <div className="user-table-card">
 
-                    <div className="table-container">
-                        <table className="user-table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            Role
-                                            <select
-                                                value={roleFilter}
-                                                onChange={(e) => setRoleFilter(e.target.value)}
-                                                onClick={(e) => e.stopPropagation()}
-                                                style={{ fontSize: '11px', padding: '2px 6px', border: '1px solid #e2e8f0', borderRadius: '4px', background: 'white', cursor: 'pointer' }}
-                                            >
-                                                {uniqueRoles.map(role => (
-                                                    <option key={role} value={role}>{role === 'all' ? 'All' : role}</option>
-                                                ))}
-                                            </select>
+                <div className="table-container">
+                    <table className="user-table">
+                        <thead>
+                            <tr>
+                                <th style={{ width: '40%' }}>
+                                    <div className="table-filter-header" style={{ cursor: 'default' }}>
+                                        User
+                                        <div className="table-search-container">
+                                            <Search size={16} className="table-search-icon" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search users..."
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                className="table-search-input"
+                                            />
                                         </div>
-                                    </th>
-                                    <th>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            Department
-                                            <select
-                                                value={departmentFilter}
-                                                onChange={(e) => setDepartmentFilter(e.target.value)}
-                                                onClick={(e) => e.stopPropagation()}
-                                                style={{ fontSize: '11px', padding: '2px 6px', border: '1px solid #e2e8f0', borderRadius: '4px', background: 'white', cursor: 'pointer' }}
-                                            >
-                                                {uniqueDepartments.map(dept => (
-                                                    <option key={dept} value={dept}>{dept === 'all' ? 'All' : dept}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            Status
-                                            <select
-                                                value={statusFilter}
-                                                onChange={(e) => setStatusFilter(e.target.value)}
-                                                onClick={(e) => e.stopPropagation()}
-                                                style={{ fontSize: '11px', padding: '2px 6px', border: '1px solid #e2e8f0', borderRadius: '4px', background: 'white', cursor: 'pointer' }}
-                                            >
-                                                {uniqueStatuses.map(status => (
-                                                    <option key={status} value={status}>{status === 'all' ? 'All' : status}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredUsers.map((user, idx) => (
-                                    <motion.tr
-                                        key={user.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        className={`user-row ${selectedUser === user.id ? 'selected' : ''}`}
-                                        onClick={() => setSelectedUser(user.id)}
-                                    >
-                                        <td className="user-info">
-                                            <div className="action-menu-container left-align">
+                                    </div>
+                                </th>
+                                <th>
+                                    <div className="table-filter-header" onClick={() => toggleFilter('department')}>
+                                        <span>Department</span>
+                                        <ChevronDown size={14} className={openFilter === 'department' ? 'rotate' : ''} />
+                                    </div>
+                                </th>
+                                <th>
+                                    <div className="table-filter-header" onClick={() => toggleFilter('role')}>
+                                        <span>Role</span>
+                                        <ChevronDown size={14} className={openFilter === 'role' ? 'rotate' : ''} />
+                                    </div>
+                                </th>
+                                <th>
+                                    <div className="table-filter-header" onClick={() => toggleFilter('status')}>
+                                        <span>Status</span>
+                                        <ChevronDown size={14} className={openFilter === 'status' ? 'rotate' : ''} />
+                                    </div>
+                                </th>
+                                <th onClick={() => toggleFilter('reasons')}>
+                                    <div className="table-filter-header">
+                                        <span>Reasons</span>
+                                        <ChevronDown size={14} className={openFilter === 'reasons' ? 'rotate' : ''} />
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredUsers.map((user) => (
+                                <tr key={user.id} className="user-row hover:bg-slate-50">
+                                    <td>
+                                        <div className="flex items-center gap-4">
+                                            <div className="kebab-menu-container relative">
                                                 <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleMenu(user.id);
-                                                    }}
-                                                    className="action-icon-btn"
+                                                    className="p-1 text-slate-400 hover:text-slate-800 transition-colors"
+                                                    onClick={(e) => { e.stopPropagation(); toggleMenu(user.id); }}
                                                 >
-                                                    <MoreVertical size={16} />
+                                                    <MoreVertical size={20} />
                                                 </button>
+
                                                 {activeMenuId === user.id && (
-                                                    <div className="action-dropdown-menu left-align">
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); openEditModal(user); setActiveMenuId(null); }}
-                                                            className="menu-item"
-                                                        >
-                                                            <Edit2 size={14} /> Edit Details
+                                                    <div className="kebab-menu-popup">
+                                                        <button className="kebab-menu-item" onClick={(e) => { e.stopPropagation(); openEditModal(user); setActiveMenuId(null); }}>
+                                                            <Edit2 size={16} /> <span>Edit Details</span>
                                                         </button>
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); openStatusModal(user); setActiveMenuId(null); }}
-                                                            className="menu-item"
-                                                        >
-                                                            {user.status === 'Active' ? <UserX size={14} /> : <UserCheck size={14} />}
-                                                            {user.status === 'Active' ? 'Suspend Account' : 'Activate Account'}
+                                                        <button className="kebab-menu-item" onClick={(e) => { e.stopPropagation(); openStatusModal(user); setActiveMenuId(null); }}>
+                                                            {user.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
+                                                            <span>{user.status === 'Active' ? 'Suspend Account' : 'Activate Account'}</span>
                                                         </button>
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); openResetPasswordModal(user); setActiveMenuId(null); }}
-                                                            className="menu-item"
-                                                        >
-                                                            <Key size={14} /> Reset Password
+                                                        <button className="kebab-menu-item" onClick={(e) => { e.stopPropagation(); openResetPasswordModal(user); setActiveMenuId(null); }}>
+                                                            <Key size={16} /> <span>Reset Password</span>
                                                         </button>
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); openDeleteModal(user); setActiveMenuId(null); }}
-                                                            className="menu-item delete"
-                                                        >
-                                                            <Trash2 size={14} /> Delete User
+                                                        <div className="kebab-menu-divider"></div>
+                                                        <button className="kebab-menu-item text-red-600 hover:bg-red-50" onClick={(e) => { e.stopPropagation(); openDeleteModal(user); setActiveMenuId(null); }}>
+                                                            <Trash2 size={16} /> <span>Delete User</span>
                                                         </button>
                                                     </div>
                                                 )}
-                                                {activeMenuId === user.id && (
-                                                    <div className="menu-backdrop" onClick={(e) => { e.stopPropagation(); setActiveMenuId(null); }} />
-                                                )}
                                             </div>
-                                            <div className="user-avatar">
-                                                <div
-                                                    className="avatar-initial"
-                                                    style={{ background: getRoleColor(user.role) }}
-                                                >
-                                                    {user.avatar}
-                                                </div>
-                                                <div
-                                                    className="status-indicator"
-                                                    style={{ backgroundColor: getStatusColor(user.status) }}
-                                                />
-                                            </div>
-                                            <div className="user-details">
-                                                <div className="user-name">{user.name}</div>
-                                                <div className="user-email">
-                                                    <Mail size={12} />
-                                                    {user.email}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
                                             <div
-                                                className="role-badge"
-                                                style={{
-                                                    background: `${getRoleColor(user.role)}15`,
-                                                    color: getRoleColor(user.role),
-                                                    borderColor: `${getRoleColor(user.role)}30`
-                                                }}
+                                                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
+                                                style={{ background: getRoleColor(user.role) }}
                                             >
-                                                <Shield size={14} />
-                                                {user.role}
+                                                {user.avatar}
                                             </div>
-                                        </td>
-                                        <td>
-                                            <span className="department">{user.department}</span>
-                                        </td>
-                                        <td>
-                                            <div
-                                                className="status-badge"
-                                                style={{
-                                                    background: `${getStatusColor(user.status)}15`,
-                                                    color: getStatusColor(user.status)
-                                                }}
-                                            >
-                                                <div
-                                                    className="status-dot"
-                                                    style={{ backgroundColor: getStatusColor(user.status) }}
-                                                />
-                                                {user.status}
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-slate-800 text-sm">{user.name}</span>
+                                                <span className="text-xs text-slate-500">{user.email}</span>
                                             </div>
-                                        </td>
-                                    </motion.tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </td>
+                                    <td><div className="text-sm font-medium text-slate-600">{user.department}</div></td>
+                                    <td>
+                                        <span className="px-2 py-1 rounded-lg text-xs font-bold" style={{ backgroundColor: `${getRoleColor(user.role)}15`, color: getRoleColor(user.role) }}>
+                                            {user.role}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div
+                                            onClick={(e) => {
+                                                if (user.status === 'Reported') {
+                                                    e.stopPropagation();
+                                                    handleReportedClick(user);
+                                                }
+                                            }}
+                                            className={`flex items-center gap-1.5 ${user.status === 'Reported' ? 'cursor-pointer hover:bg-red-50 px-2 py-1 rounded-full w-fit' : ''}`}
+                                        >
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(user.status) }} />
+                                            <span className="text-sm font-bold" style={{ color: getStatusColor(user.status) }}>{user.status}</span>
+                                            {user.status === 'Reported' && <ChevronRight size={14} className="text-red-500" />}
+                                        </div>
+                                    </td>
+                                    <td onClick={(e) => { e.stopPropagation(); handleReasonClick(user); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
+                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={user.reasons}>
+                                            {user.reasons || <span className="text-slate-300 italic">No reasons...</span>}
+                                            <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {filteredUsers.length === 0 && (
+                    <div className="empty-state">
+                        <div className="empty-icon">
+                            <UserSearch size={32} />
+                        </div>
+                        <h3>No users found</h3>
+                        <p>Try adjusting your search terms</p>
+                    </div>
+                )}
+
+                <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
+                    <div>
+                        Showing {filteredUsers.length > 0 ? 1 : 0} to {filteredUsers.length} of {users.length} results
                     </div>
 
-                    {filteredUsers.length === 0 && (
-                        <div className="empty-state">
-                            <div className="empty-icon">
-                                <Users size={32} />
-                            </div>
-                            <h3>No members found</h3>
-                            <p>Try adjusting your search terms</p>
-                        </div>
-                    )}
+                    {/* Show More Button */}
+                    <button
+
+                        onClick={generateMorePeople}
+                        className="show-more-btn"
+                    >
+                        <ChevronDown size={16} />
+                        <span>Show More</span>
+                    </button>
                 </div>
-            </motion.div>
+            </div>
+
 
             {/* Modals */}
             <AnimatePresence>
                 {(isAddModalOpen || isEditModalOpen) && (
-                    <div className="modal-overlay">
+                    <div className="modal-overlay" onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="modal-container"
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div className="modal-header">
                                 <div className="modal-header-left">
@@ -641,7 +754,7 @@ const PeopleManagement = () => {
                                             className="form-input"
                                         />
                                     </div>
-                                    <div className="form-group">
+                                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
                                         <label className="form-label">Permissions Level</label>
                                         <div className="permissions-slider">
                                             <input
@@ -678,12 +791,13 @@ const PeopleManagement = () => {
                 )}
 
                 {isStatusModalOpen && (
-                    <div className="modal-overlay">
+                    <div className="modal-overlay" onClick={() => setIsStatusModalOpen(false)}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="modal-container"
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div className="modal-header">
                                 <div className="modal-header-left">
@@ -736,12 +850,13 @@ const PeopleManagement = () => {
                 )}
 
                 {isDeleteModalOpen && (
-                    <div className="modal-overlay">
+                    <div className="modal-overlay" onClick={() => setIsDeleteModalOpen(false)}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="modal-container"
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div className="modal-header">
                                 <div className="modal-header-left">
@@ -790,12 +905,13 @@ const PeopleManagement = () => {
                 )}
 
                 {isResetPasswordModalOpen && (
-                    <div className="modal-overlay">
+                    <div className="modal-overlay" onClick={() => setIsResetPasswordModalOpen(false)}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="modal-container"
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div className="modal-header">
                                 <div className="modal-header-left">
@@ -818,26 +934,28 @@ const PeopleManagement = () => {
                                 <MemberInfoSummary user={currentUser} />
 
                                 <div className="reset-methods">
-                                    <label className="reset-method">
+                                    <label className={`reset-method ${resetMethod === 'email' ? 'active' : ''}`}>
                                         <input
                                             type="radio"
                                             name="resetMethod"
                                             value="email"
                                             checked={resetMethod === 'email'}
                                             onChange={() => setResetMethod('email')}
+                                            style={{ display: 'none' }}
                                         />
                                         <div className="method-content">
                                             <Mail size={16} />
                                             <span>Send password reset link via email</span>
                                         </div>
                                     </label>
-                                    <label className="reset-method">
+                                    <label className={`reset-method ${resetMethod === 'temp' ? 'active' : ''}`}>
                                         <input
                                             type="radio"
                                             name="resetMethod"
                                             value="temp"
                                             checked={resetMethod === 'temp'}
                                             onChange={() => setResetMethod('temp')}
+                                            style={{ display: 'none' }}
                                         />
                                         <div className="method-content">
                                             <Lock size={16} />
@@ -856,45 +974,27 @@ const PeopleManagement = () => {
                                         <div className="form-group">
                                             <div className="password-input-wrapper">
                                                 <input
-                                                    type={showTempPassword ? 'text' : 'password'}
+                                                    type={showTempPassword ? "text" : "password"}
                                                     value={generatedPassword}
                                                     readOnly
-                                                    className="form-input password-input"
-                                                    placeholder="Click generate to create password"
+                                                    className="form-input"
                                                 />
-                                                <div className="password-actions">
-                                                    <button
-                                                        onClick={() => setShowTempPassword(!showTempPassword)}
-                                                        className="password-btn"
-                                                        title={showTempPassword ? 'Hide' : 'Show'}
-                                                    >
-                                                        {showTempPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText(generatedPassword);
-                                                            alert('Password copied to clipboard');
-                                                        }}
-                                                        className="password-btn"
-                                                        title="Copy"
-                                                        disabled={!generatedPassword}
-                                                    >
-                                                        <Copy size={16} />
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => setShowTempPassword(!showTempPassword)}
+                                                    className="password-toggle"
+                                                >
+                                                    {showTempPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
                                             </div>
-                                            <button
-                                                onClick={generatePass}
-                                                className="generate-btn"
-                                            >
-                                                <Zap size={14} />
-                                                Generate Password
+                                            <button onClick={generatePass} className="generate-btn">
+                                                <Zap size={16} />
+                                                <span>Generate Secure Password</span>
                                             </button>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="modal-actions" style={{ marginTop: '1.5rem' }}>
+                                <div className="modal-actions">
                                     <button
                                         onClick={() => setIsResetPasswordModalOpen(false)}
                                         className="cancel-btn"
@@ -906,386 +1006,256 @@ const PeopleManagement = () => {
                                         className="submit-btn"
                                         disabled={resetMethod === 'temp' && !generatedPassword}
                                     >
-                                        Reset Password
+                                        {resetMethod === 'email' ? 'Send Reset Link' : 'Set New Password'}
                                     </button>
                                 </div>
                             </div>
                         </motion.div>
                     </div>
                 )}
+
+                {/* Reported Details Modal */}
+                <AnimatePresence>
+                    {reportedModalData.isOpen && reportedModalData.details && (
+                        <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="modal-container max-w-sm"
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <div className="modal-header bg-red-50">
+                                    <div className="modal-header-left">
+                                        <div className="report-icon text-red-600">
+                                            <AlertCircle size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="report-title text-red-800">Report Reasons</h3>
+                                            <p className="modal-subtitle">Security flagging information</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="report-close-btn text-red-400">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="flex gap-40">
+                                        <div>
+                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
+                                            <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
+                                            <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
+                                        <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                    </div>
+                                    <div className="bg-slate-50 p-3 rounded-lg border">
+                                        <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
+                                    </div>
+                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
+                                        Close
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
+                {/* Filter Dropdowns */}
+                <AnimatePresence>
+                    {openFilter && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="filter-dropdown-overlay"
+                            onClick={() => setOpenFilter(null)}
+                        >
+                            <div className="filter-dropdown-card" onClick={e => e.stopPropagation()}>
+                                <div className="filter-dropdown-header">
+                                    <h4>Filter by {openFilter.charAt(0).toUpperCase() + openFilter.slice(1)}</h4>
+                                </div>
+                                <div className="filter-options">
+                                    {(openFilter === 'department' ? uniqueDepartments :
+                                        openFilter === 'role' ? uniqueRoles :
+                                            openFilter === 'status' ? uniqueStatuses :
+                                                uniqueReasons).map((val) => (
+                                                    <button
+                                                        key={val}
+                                                        className={`filter-option ${tableFilters[openFilter] === val ? 'active' : ''}`}
+                                                        onClick={() => handleFilterSelect(openFilter, val)}
+                                                    >
+                                                        {val}
+                                                    </button>
+                                                ))}
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Reason Edit Modal */}
+                <AnimatePresence>
+                    {reasonModalData.isOpen && (
+                        <div className="modal-overlay" onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                className="modal-container max-w-md"
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <div className="modal-header bg-slate-50/50">
+                                    <div className="modal-header-left">
+                                        <div className="modal-icon">
+                                            <Edit2 size={18} />
+                                        </div>
+                                        <h3 className="modal-title">Edit Reasons / Notes</h3>
+                                    </div>
+                                    <button onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })} className="modal-close-btn">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <div className="p-6">
+                                    <textarea
+                                        value={reasonModalData.reason}
+                                        onChange={(e) => setReasonModalData(prev => ({ ...prev, reason: e.target.value }))}
+                                        rows={4}
+                                        className="form-input h-32 w-full resize-none"
+                                        placeholder="Add reason for being reported or user notes..."
+                                        autoFocus
+                                    />
+                                    <div className="flex justify-end gap-3 mt-6">
+                                        <button onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })} className="cancel-btn">
+                                            Cancel
+                                        </button>
+                                        <button onClick={handleSaveReason} className="submit-btn px-8">
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
             </AnimatePresence>
 
-            <style jsx>{`
-                /* Container */
-                .analytics-container {
-                    min-height: 100vh;
-                    background: #f8fafc;
-                }
-                .analytics-content {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    padding: 0.5rem 1rem;
-                }
+            {/* Export Modal */}
+            <AnimatePresence>
+                {isExportModalOpen && (
+                    <div className="modal-backdrop" onClick={() => setIsExportModalOpen(false)}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="linkedin-editor modal-content export-modal-wide"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Header */}
+                            <header className="editor-header">
+                                <div className="header-top">
+                                    <div className="edit-label">Export User Data</div>
+                                    <div className="header-right">
+                                        <div className="header-info">{selectedUserIds.size} users selected</div>
+                                        <div className="header-buttons">
+                                            <button
+                                                className="btn-secondary"
+                                                onClick={toggleSelectAll}
+                                            >
+                                                {selectedUserIds.size === filteredUsers.length ? 'Deselect All' : 'Select All'}
+                                            </button>
+                                            <button className="btn-secondary" onClick={() => setIsExportModalOpen(false)}>Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
 
-                /* Header */
-                .header {
-                    background: white;
-                    border-radius: 20px;
-                    padding: 1.5rem;
-                    margin-bottom: 1.5rem;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                }
-                @media (min-width: 768px) {
-                    .header {
-                        flex-direction: row;
-                        justify-content: space-between;
-                        align-items: flex-start;
-                    }
-                }
-                .header-left {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-                .badge {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-                .badge-line {
-                    width: 20px;
-                    height: 3px;
-                    background: linear-gradient(90deg, #f97316, #fbbf24);
-                    border-radius: 2px;
-                }
-                .badge-text {
-                    color: #f97316;
-                    font-size: 11px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                }
-                .title {
-                    font-size: 28px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .gradient {
-                    background: linear-gradient(90deg, #f97316, #fbbf24);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    color: transparent;
-                }
-                .header-subtitle {
-                    font-size: 14px;
-                    color: #64748b;
-                    margin: 0;
-                }
+                            <div className="editor-main">
+                                <div className="editor-content no-padding">
+                                    <div className="export-table-container">
+                                        <table className="export-data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ width: '40px' }}></th>
+                                                    <th>User</th>
+                                                    <th>Department</th>
+                                                    <th>Role</th>
+                                                    <th>Status</th>
+                                                    <th>Reasons</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredUsers.map(user => (
+                                                    <tr
+                                                        key={user.id}
+                                                        className={selectedUserIds.has(user.id) ? 'selected' : ''}
+                                                        onClick={() => toggleUserSelection(user.id)}
+                                                    >
+                                                        <td>
+                                                            <div className={`custom-checkbox ${selectedUserIds.has(user.id) ? 'checked' : ''}`}>
+                                                                {selectedUserIds.has(user.id) && <CheckCircle2 size={14} />}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div className="export-user-cell">
+                                                                <span className="user-name">{user.name}</span>
+                                                                <span className="user-email">{user.email}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>{user.department}</td>
+                                                        <td>{user.role}</td>
+                                                        <td>{user.status}</td>
+                                                        <td className="truncate-cell">{user.reasons || '-'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
-                /* Compact Toolbar */
-                .compact-toolbar {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    background: white;
-                    padding: 16px;
-                    border-radius: 12px;
-                    border: 1px solid #e2e8f0;
-                    margin-bottom: 16px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                }
-                
-                @media (min-width: 768px) {
-                    .compact-toolbar {
-                        flex-direction: row;
-                        justify-content: space-between;
-                        align-items: center;
-                        padding: 12px 20px;
-                    }
-                }
-                
-                .toolbar-info {
-                    display: flex;
-                    align-items: center;
-                }
-                
-                .directory-badge {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 6px 12px;
-                    background: #fff7ed;
-                    border-radius: 8px;
-                    border: 1px solid #fed7aa;
-                }
-                
-                .directory-badge svg {
-                    color: #f97316;
-                }
-                
-                .directory-title {
-                    font-size: 14px;
-                    font-weight: 700;
-                    color: #0f172a;
-                }
-                
-                .member-count {
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: #f97316;
-                    background: white;
-                    padding: 2px 6px;
-                    border-radius: 4px;
-                    margin-left: 4px;
-                }
-                
-                .toolbar-controls {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    width: 100%;
-                }
-                
-                @media (min-width: 768px) {
-                    .toolbar-controls {
-                        flex-direction: row;
-                        align-items: center;
-                        justify-content: flex-end;
-                        width: auto;
-                        gap: 8px;
-                    }
-                }
-                
-                .search-compact {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    background: #f8fafc;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
-                    padding: 8px 12px;
-                    flex: 1;
-                    min-width: 200px;
-                    transition: all 0.2s;
-                }
-                
-                @media (min-width: 768px) {
-                    .search-compact {
-                        flex: 0 1 200px;
-                    }
-                }
-                
-                .search-compact:focus-within {
-                    background: white;
-                    border-color: #f97316;
-                    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
-                }
-                
-                .search-compact svg {
-                    color: #94a3b8;
-                    flex-shrink: 0;
-                }
-                
-                .search-input-compact {
-                    border: none;
-                    background: transparent;
-                    outline: none;
-                    font-size: 13px;
-                    color: #0f172a;
-                    width: 100%;
-                }
-                
-                .control-buttons {
-                    display: flex;
-                    gap: 8px;
-                }
-                
-                .control-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                    padding: 8px 12px;
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    color: #475569;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                
-                .control-btn:hover {
-                    background: #f8fafc;
-                    border-color: #cbd5e1;
-                    color: #0f172a;
-                }
-                
-                .add-btn-compact {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 8px 14px;
-                    background: linear-gradient(135deg, #f97316, #fbbf24);
-                    border: none;
-                    border-radius: 8px;
-                    color: white;
-                    font-size: 12px;
-                    font-weight: 700;
-                    cursor: pointer;
-                    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
-                    transition: all 0.2s;
-                }
-                
-                .add-btn-compact:hover {
-                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
-                    transform: translateY(-1px);
-                }
+                            {/* Modal Footer */}
+                            <div className="modal-footer">
+                                <button
+                                    className="btn-primary large"
+                                    onClick={handleExportDetails}
+                                    disabled={selectedUserIds.size === 0}
+                                >
+                                    <Download size={18} />
+                                    <span>Export Details</span>
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
-                /* Metrics */
-                .metrics {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                    gap: 1rem;
-                    margin-bottom: 1.5rem;
-                }
-                .metric {
-                    background: white;
-                    border-radius: 12px;
-                    padding: 1.25rem;
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-                }
-                .metric-bg {
-                    position: absolute;
-                    top: -20px;
-                    right: -20px;
-                    width: 60px;
-                    height: 60px;
-                    background: rgba(249, 115, 22, 0.1);
-                    border-radius: 50%;
-                    filter: blur(10px);
-                }
-                .metric-content {
-                    position: relative;
-                    z-index: 1;
-                }
-                .metric-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 1rem;
-                }
-                .metric-icon {
-                    padding: 8px;
-                    background: #fff7ed;
-                    border-radius: 8px;
-                    color: #f97316;
-                }
-                .metric-trend {
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                    padding: 4px 8px;
-                    border-radius: 20px;
-                    font-size: 11px;
-                    font-weight: 600;
-                }
-                .metric-trend.positive {
-                    background: #d1fae5;
-                    color: #065f46;
-                }
-                .metric-trend.negative {
-                    background: #fee2e2;
-                    color: #dc2626;
-                }
-                .metric-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 4px;
-                }
-                .metric-label {
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin: 0;
-                }
-                .metric-value {
-                    font-size: 24px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .metric-progress {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 3px;
-                    background: #f1f5f9;
-                }
-                .metric-progress-fill {
-                    height: 100%;
-                    background: linear-gradient(90deg, #f97316, #fbbf24);
-                }
-
-                /* User Table Card */
+            <style>{`
                 .user-table-card {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden;
+                    overflow: visible;
+                    margin-top: 1.5rem;
+                    border: 1px solid #e2e8f0;
                 }
                 .table-header {
                     padding: 1.5rem;
+                    border-radius: 12px 12px 0 0;
                     border-bottom: 1px solid #e2e8f0;
+                    background: #fffaf5;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    background: #fffaf5;
                 }
-                .table-title {
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .table-subtitle {
-                    font-size: 12px;
-                    color: #64748b;
-                    margin: 0;
-                }
-                .table-header-right {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                }
-                .date-display {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    background: white;
-                    border: 1px solid #fed7aa;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    color: #f97316;
-                }
-                .table-container {
-                    overflow-x: auto;
-                }
-                .user-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
+                .table-header-left { display: flex; gap: 1rem; align-items: center; }
+                .user-table { width: 100%; border-collapse: collapse; }
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
@@ -1293,298 +1263,302 @@ const PeopleManagement = () => {
                     font-size: 11px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    border-bottom: 1px solid #e2e8f0;
                     text-align: left;
+                    border-bottom: 1px solid #e2e8f0;
                 }
                 .user-table td {
                     padding: 1rem 1.5rem;
                     border-bottom: 1px solid #f1f5f9;
                     font-size: 13px;
                     color: #334155;
+                    vertical-align: middle;
                 }
-                .user-row {
-                    transition: background-color 0.2s;
-                }
-                .user-row:hover {
-                    background: #fffaf5;
-                }
-                .user-row.selected {
-                    background: #fff7ed;
-                }
+                .user-row { transition: all 0.2s; }
+                .user-row:hover { background: #fffaf5; }
 
-                .user-info {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                }
-                .user-avatar {
-                    position: relative;
-                }
-                .avatar-initial {
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 10px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-weight: 700;
-                    font-size: 14px;
-                }
-                .status-indicator {
+                .kebab-menu-container { position: relative; }
+                .kebab-menu-popup {
                     position: absolute;
-                    bottom: -2px;
-                    right: -2px;
-                    width: 12px;
-                    height: 12px;
-                    border-radius: 50%;
-                    border: 2px solid white;
+                    top: 100%;
+                    margin-top: 4px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                    z-index: 1000;
+                    min-width: 200px;
+                    overflow: hidden;
+                    animation: menuSlideIn 0.2s ease-out;
+                    padding: 4px;
                 }
-                .user-details {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
+                @keyframes menuSlideIn {
+                    from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
                 }
-                .user-name {
-                    font-weight: 600;
-                    color: #0f172a;
-                }
-                .user-email {
+                .kebab-menu-item {
+                    width: 100%;
                     display: flex;
                     align-items: center;
-                    gap: 4px;
-                    font-size: 11px;
-                    color: #64748b;
-                }
-
-                .role-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    border: 1px solid;
-                }
-
-                .department {
+                    gap: 10px;
+                    padding: 10px 12px;
+                    background: white;
+                    border: none;
+                    text-align: left;
+                    font-size: 13px;
                     font-weight: 600;
                     color: #475569;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    border-radius: 8px;
                 }
-
-                .status-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 11px;
-                    font-weight: 600;
-                }
-                .status-dot {
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
-                }
-
-                .permissions-info {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                }
-                .permissions-count {
-                    font-size: 16px;
-                    font-weight: 700;
-                    color: #0f172a;
-                }
-                .permissions-label {
-                    font-size: 10px;
-                    color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-
-                .last-active {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 12px;
-                    color: #64748b;
-                }
-
-                .action-buttons {
-                    display: flex;
-                    gap: 4px;
-                }
-                .action-btn {
-                    width: 32px;
-                    height: 32px;
+                .kebab-menu-item:hover { background: #f8fafc; color: #0f172a; }
+                .kebab-menu-divider { height: 1px; background: #f1f5f9; margin: 4px; }
+                
+                /* Modal Styles */
+                .modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(15, 23, 42, 0.4);
+                    backdrop-filter: blur(8px);
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background: #f1f5f9;
-                    border: none;
-                    border-radius: 6px;
-                    color: #64748b;
-                    cursor: pointer;
+                    z-index: 9999;
+                    padding: 1.5rem;
                 }
-                .action-btn.status:hover {
-                    background: #e2e8f0;
+                .modal-container {
+                    background: white;
+                    border-radius: 20px;
+                    width: 100%;
+                    max-width: 520px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
                 }
-                .action-btn.active {
-                    color: #10b981;
+                .modal-header {
+                    padding: 1.5rem 1.75rem;
+                    border-bottom: 1px solid #f1f5f9;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    position: sticky;
+                    top: 0;
+                    background: white;
+                    z-index: 10;
                 }
-                .action-btn.inactive {
-                    color: #f43f5e;
+                .modal-header-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
                 }
-                .action-btn.edit:hover {
-                    background: #fef3c7;
-                    color: #f97316;
+                .modal-body {
+                    
+                    padding: 1.5rem 1.75rem;
+                    gap: .5rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
                 }
-                .action-btn.delete:hover {
-                    background: #fee2e2;
-                    color: #dc2626;
-                }
-
-                /* Member Summary */
-                .member-summary {
+                .modal-icon {
+                    width: 44px;
+                    height: 44px;
                     background: #f8fafc;
                     border-radius: 12px;
-                    padding: 1.25rem;
-                    margin-bottom: 1.5rem;
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 1.25rem;
-                    border: 1px solid #e2e8f0;
-                }
-                .summary-item {
                     display: flex;
-                    flex-direction: column;
-                    gap: 4px;
-                }
-                .summary-label {
-                    font-size: 10px;
-                    color: #94a3b8;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    font-weight: 700;
-                }
-                .summary-value {
-                    font-size: 14px;
-                    color: #1e293b;
-                    font-weight: 700;
+                    align-items: center;
+                    justify-content: center;
+                    color: #475569;
+                    border: 1px solid #f1f5f9;
                 }
 
-                /* Reset Password Flow */
-                .reset-methods {
+                .report-icon {
+                    width: 44px;
+                    height: 44px;
+                    background: #fef2f2;
+                    border-radius: 12px;
                     display: flex;
-                    flex-direction: column;
-                    gap: 0.75rem;
-                    margin-bottom: 1.5rem;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ef4444;
+                    border: 1px solid #fee2e2;
                 }
+                .report-title {
+                    font-size: 20px;
+                    font-weight: 800;
+                    color: #ef4444;
+                }
+                .report-close-btn {
+                    padding: 8px;
+                    color: #d55a5aff;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                }
+
+                .modal-icon.delete { background: #fef2f2; color: #ef4444; border-color: #fee2e2; }
+                .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; }
+                .modal-subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
+                
+                .modal-close-btn {
+                    padding: 8px;
+                    color: #94a3b8;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                }
+                .modal-close-btn:hover { background: #f1f5f9; color: #475569; }
+
+                .modal-form { padding: 1.75rem; }
+                .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+                .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+                .form-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+                .form-input, .form-select {
+                    padding: 12px 16px;
+                    border: 2px solid #f1f5f9;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    color: #0f172a;
+                    background: #f8fafc;
+                    transition: all 0.2s;
+                    font-weight: 500;
+                }
+                .form-input:focus, .form-select:focus {
+                    outline: none;
+                    border-color: #f97316;
+                    background: white;
+                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                }
+
+                .permissions-slider {
+                    display: flex;
+                    align-items: center;
+                    gap: 1.25rem;
+                    background: #f8fafc;
+                    padding: 14px 16px;
+                    border-radius: 12px;
+                    border: 2px solid #f1f5f9;
+                }
+                .range-input { flex: 1; accent-color: #f97316; }
+                .permissions-value { font-size: 14px; font-weight: 800; color: #f97316; min-width: 60px; }
+
+                .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+                .cancel-btn {
+                    flex: 1;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: #475569;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
+                
+                .submit-btn {
+                    flex: 1.2;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: white;
+                    background: #1e293b;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2);
+                }
+                .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
+                .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+                .delete-btn {
+                    flex: 1.2;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: white;
+                    background: #ef4444;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .delete-btn:hover { background: #dc2626; transform: translateY(-1px); }
+                .delete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+                .member-summary {
+                    background: #f8fafc;
+                    border-radius: 16px;
+                    padding: 1.25rem;
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                    border: 2px solid #f1f5f9;
+                }
+                .summary-item { display: flex; flex-direction: column; gap: 4px; }
+                .summary-label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+                .summary-value { font-size: 14px; font-weight: 700; color: #1e293b; }
+
+                .reset-methods { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
                 .reset-method {
                     display: flex;
                     align-items: center;
                     gap: 1rem;
-                    padding: 1.25rem;
-                    border: 2px solid #f1f5f9;
+                    padding: 1rem;
                     border-radius: 12px;
+                    border: 2px solid #f1f5f9;
                     cursor: pointer;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: all 0.2s;
+                    background: #f8fafc;
                 }
-                .reset-method:hover {
-                    background: #fff7ed;
-                    border-color: #fbbf24;
-                }
-                .reset-method input[type="radio"] {
-                    width: 20px;
-                    height: 20px;
-                    accent-color: #f97316;
-                }
-                .method-content {
+                .reset-method:hover { border-color: #e2e8f0; }
+                .reset-method.active { border-color: #f97316; background: #fff7ed; }
+                .method-content { display: flex; align-items: center; gap: 0.75rem; font-size: 14px; font-weight: 600; color: #475569; }
+                .reset-method.active .method-content { color: #f97316; }
+
+                .reset-explanation {
+                    padding: 1rem;
+                    background: #f0f9ff;
+                    border-radius: 12px;
+                    color: #0369a1;
+                    font-size: 13px;
+                    font-weight: 500;
                     display: flex;
                     align-items: center;
                     gap: 0.75rem;
-                    font-size: 14px;
-                    font-weight: 700;
-                    color: #334155;
-                }
-
-                .reset-explanation, .temp-password-section {
-                    background: #fff7ed;
-                    border: 1px dashed #fbbf24;
-                    border-radius: 12px;
-                    padding: 1.25rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
                     margin-bottom: 1.5rem;
                 }
-                .reset-explanation {
-                    flex-direction: row;
-                    align-items: center;
-                }
-                .reset-explanation span {
-                    font-size: 13px;
-                    color: #9a3412;
-                    line-height: 1.5;
-                    font-weight: 600;
-                }
-                .reset-explanation svg {
-                    color: #f97316;
-                    flex-shrink: 0;
-                }
 
-                .password-input-wrapper {
-                    position: relative;
-                    width: 100%;
+                .temp-password-section {
+                    background: #f8fafc;
+                    padding: 1.25rem;
+                    border-radius: 16px;
+                    border: 2px solid #f1f5f9;
                 }
-                .password-input {
-                    padding-right: 100px !important;
-                    font-family: 'JetBrains Mono', monospace;
-                    letter-spacing: 1.5px;
-                    font-weight: 700;
-                    background: white !important;
-                    height: 50px;
-                    font-size: 16px !important;
-                }
-                .password-actions {
-                    position: absolute;
-                    right: 10px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    display: flex;
-                    gap: 6px;
-                }
+                .password-input-wrapper { display: flex; gap: 0.5rem; margin-bottom: 1rem; position: relative; }
+                .password-input { flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 700; }
+                .password-actions { display: flex; gap: 0.5rem; }
                 .password-btn {
-                    width: 36px;
-                    height: 36px;
+                    width: 40px;
+                    height: 40px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background: #f8fafc;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
+                    background: white;
+                    border: 2px solid #f1f5f9;
+                    border-radius: 10px;
                     color: #64748b;
                     cursor: pointer;
                     transition: all 0.2s;
                 }
-                .password-btn:hover {
-                    background: #f1f5f9;
-                    color: #f97316;
-                    border-color: #fbbf24;
-                }
-                .password-btn:disabled {
-                    opacity: 0.4;
-                    cursor: not-allowed;
-                }
+                .password-btn:hover { background: #f1f5f9; color: #1e293b; }
+                
                 .generate-btn {
+                    width: 100%;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    padding: 10px 18px;
+                    justify-content: center;
+                    gap: 0.5rem;
+                    padding: 10px;
                     background: white;
                     border: 2px solid #fed7aa;
                     border-radius: 10px;
@@ -1592,17 +1566,9 @@ const PeopleManagement = () => {
                     font-size: 13px;
                     font-weight: 800;
                     cursor: pointer;
-                    width: fit-content;
                     transition: all 0.2s;
-                    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
                 }
-                .generate-btn:hover {
-                    background: #f97316;
-                    color: white;
-                    border-color: #f97316;
-                    transform: translateY(-1px);
-                    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.2);
-                }
+                .generate-btn:hover { background: #f97316; color: white; border-color: #f97316; }
 
                 /* Empty State */
                 .empty-state {
@@ -1633,320 +1599,395 @@ const PeopleManagement = () => {
                     margin: 0;
                 }
 
-                /* Modal Styles */
-                .modal-overlay {
+                /* Table Filter Header */
+                .table-filter-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: all 0.2s;
+                }
+                .table-filter-header:hover {
+                    color: #f97316;
+                }
+                .table-filter-header .rotate {
+                    transform: rotate(180deg);
+                }
+                .table-filter-header svg {
+                    transition: transform 0.2s;
+                }
+
+                /* Table Search Bar */
+                .table-search-container {
+                    position: relative;
+                    margin-left: 1rem;
+                    flex: 1;
+                    max-width: 320px;
+                }
+                .table-search-input {
+                    width: 100%;
+                    padding: 8px 12px 8px 36px;
+                    background-color: #f1f5f9;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #1e293b;
+                    outline: none;
+                    transition: all 0.2s;
+                    font-family: inherit;
+                }
+                .table-search-input:focus {
+                    background-color: #fff;
+                    border-color: #cbd5e1;
+                    box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.5);
+                }
+                .table-search-icon {
+                    position: absolute;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #94a3b8;
+                    pointer-events: none;
+                }
+                
+                /* Filter Dropdown Overlay */
+                .filter-dropdown-overlay {
                     position: fixed;
-                    inset: 0;
-                    z-index: 50;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 10000;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding-top: 15vh;
+                    background: rgba(0, 0, 0, 0.4);
+                    backdrop-filter: blur(2px);
+                }
+                .filter-dropdown-card {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                    min-width: 220px;
+                    max-width: 320px;
+                }
+                .filter-dropdown-header {
+                    margin-bottom: 1rem;
+                    border-bottom: 1px solid #f1f5f9;
+                    padding-bottom: 0.75rem;
+                }
+                .filter-dropdown-header h4 {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: #1e293b;
+                    margin: 0;
+                }
+                .filter-options {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    padding-right: 4px;
+                }
+                .filter-options::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .filter-options::-webkit-scrollbar-thumb {
+                    background: #cbd5e1;
+                    border-radius: 4px;
+                }
+                .filter-option {
+                    padding: 10px 12px;
+                    background: none;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    color: #475569;
+                    text-align: left;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .filter-option:hover {
+                    background: #f1f5f9;
+                    color: #1e293b;
+                }
+                .filter-option.active {
+                    background: #fff7ed;
+                    color: #f97316;
+                    font-weight: 700;
+                }
+
+                /* Table Filter Header */
+                .table-filter-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: all 0.2s;
+                }
+                .table-filter-header:hover {
+                    color: #f97316;
+                }
+                .table-filter-header .rotate {
+                    transform: rotate(180deg);
+                }
+                .table-filter-header svg {
+                    transition: transform 0.2s;
+                }
+                
+                
+                .page-actions {
+                    display: flex;
+                    gap: 0.75rem;
+                }
+                .page-action-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;
+                }
+                .page-action-btn.primary {
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    color: white;
+                }
+                .page-action-btn.secondary {
+                    background: #f1f5f9;
+                    color: #475569;
+                }
+
+                .show-more-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;
+                }
+                .show-more-btn:hover {
+                    background: #f1f5f9;
+                }
+                .show-more-btn svg {
+                    transition: transform 0.2s;
+                }
+                .show-more-btn:hover svg {
+                    transform: translateY(-2px);
+                }    
+
+                /* Export Modal Specifics */
+                .export-modal-wide {
+                    max-width: 1000px;
+                    width: 95%;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .no-padding { padding: 0 !important; }
+                .export-table-container {
+                    max-height: 50vh;
+                    overflow-y: auto;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    margin: 20px;
+                }
+                .export-data-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 13px;
+                }
+                .export-data-table th {
+                    position: sticky;
+                    top: 0;
+                    background: #f8fafc;
+                    padding: 12px 16px;
+                    text-align: left;
+                    font-weight: 700;
+                    color: #64748b;
+                    text-transform: uppercase;
+                    font-size: 11px;
+                    border-bottom: 1px solid #e2e8f0;
+                    z-index: 1;
+                }
+                .export-data-table td {
+                    padding: 12px 16px;
+                    border-bottom: 1px solid #f1f5f9;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                }
+                .export-data-table tr:hover td {
+                    background: #f8fafc;
+                }
+                .export-data-table tr.selected td {
+                    background: #fff7ed;
+                }
+                .export-user-cell {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .export-user-cell .user-name {
+                    font-weight: 700;
+                    color: #0f172a;
+                }
+                .export-user-cell .user-email {
+                    font-size: 11px;
+                    color: #64748b;
+                }
+                .truncate-cell {
+                    max-width: 200px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                /* Custom Checkbox */
+                .custom-checkbox {
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid #cbd5e1;
+                    border-radius: 6px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 1rem;
-                    background: rgba(15, 23, 42, 0.4);
+                    color: white;
+                    transition: all 0.2s;
+                    background: white;
+                }
+                .custom-checkbox.checked {
+                    background: #f97316;
+                    border-color: #f97316;
+                }
+
+                .modal-footer {
+                    padding: 16px 24px;
+                    border-top: 1px solid #e2e8f0;
+                    background: white;
+                    display: flex;
+                    justify-content: flex-end;
+                    border-radius: 0 0 12px 12px;
+                }
+                
+                .btn-primary.large {
+                    padding: 12px 24px;
+                    font-size: 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    border-radius: 8px;
+                }
+
+                /* Reuse/Adapt EditPage.jsx styles */
+                .modal-backdrop {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(15, 23, 42, 0.4);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
                     backdrop-filter: blur(8px);
                 }
-                .modal-container {
-                    background: white;
-                    border-radius: 24px;
-                    width: 100%;
-                    max-width: 520px;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                    border: 1px solid #f1f5f9;
+
+                .modal-content {
+                    background-color: #f8f9fa;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+                    overflow: hidden;
                 }
-                .modal-header {
-                    padding: 1.75rem;
-                    border-bottom: 1px solid #f1f5f9;
+
+                .editor-header {
+                    background-color: #fff;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+
+                .header-top {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    padding: 16px 24px;
                 }
-                .modal-header-left {
-                    display: flex;
-                    align-items: center;
-                    gap: 1.25rem;
-                }
-                .modal-icon {
-                    width: 48px;
-                    height: 48px;
-                    background: #fff7ed;
-                    border-radius: 14px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #f97316;
-                    box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.1);
-                }
-                .modal-icon.delete {
-                    background: #fee2e2;
-                    color: #ef4444;
-                    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1);
-                }
-                .modal-title {
+
+                .edit-label {
                     font-size: 20px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                    letter-spacing: -0.5px;
+                    font-weight: 600;
+                    color: #000;
                 }
-                .modal-subtitle {
-                    font-size: 13px;
-                    color: #64748b;
-                    margin: 4px 0 0;
-                    font-weight: 500;
-                }
-                .modal-close-btn {
-                    width: 32px;
-                    height: 32px;
+
+                .header-right {
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    background: #f8fafc;
-                    border: 1px solid #f1f5f9;
-                    border-radius: 10px;
-                    color: #94a3b8;
-                    cursor: pointer;
-                    transition: all 0.2s;
+                    gap: 24px;
                 }
-                .modal-close-btn:hover {
-                    background: #fee2e2;
-                    color: #ef4444;
-                    border-color: #fecaca;
-                }
-                .modal-form {
-                    padding: 1.75rem;
-                }
-                .form-grid {
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    gap: 1.5rem;
-                }
-                @media (min-width: 640px) {
-                    .form-grid {
-                        grid-template-columns: 1fr 1fr;
-                    }
-                    .form-grid .form-group:nth-child(5),
-                    .form-grid .form-group:nth-child(6) {
-                        grid-column: span 2;
-                    }
-                }
-                .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.75rem;
-                }
-                .form-label {
-                    font-size: 11px;
-                    font-weight: 800;
+
+                .header-info {
                     color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                }
-                .form-input, .form-select {
-                    padding: 14px 16px;
-                    background: #f8fafc;
-                    border: 2px solid #f1f5f9;
-                    border-radius: 12px;
-                    font-size: 15px;
-                    color: #0f172a;
-                    outline: none;
-                    transition: all 0.2s;
+                    font-size: 14px;
                     font-weight: 500;
                 }
-                .form-input:focus, .form-select:focus {
-                    border-color: #f97316;
-                    background: white;
-                    box-shadow: 0 0 0 5px rgba(249, 115, 22, 0.1);
-                }
-                .permissions-slider {
+
+                .header-buttons {
                     display: flex;
-                    align-items: center;
-                    gap: 1.25rem;
-                    background: #f8fafc;
-                    padding: 16px;
-                    border-radius: 14px;
-                    border: 2px solid #f1f5f9;
+                    gap: 8px;
                 }
-                .range-input {
-                    flex: 1;
-                    height: 8px;
+
+                .btn-primary {
+                    background-color: #0a66c2;
+                    color: white;
+                    padding: 8px 16px;
                     border-radius: 4px;
-                    background: #e2e8f0;
-                    outline: none;
-                    -webkit-appearance: none;
-                }
-                .range-input::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 50%;
-                    background: #f97316;
+                    font-size: 14px;
+                    font-weight: 600;
+                    border: none;
                     cursor: pointer;
-                    box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.3);
-                    border: 2px solid white;
+                    transition: background 0.2s;
                 }
-                .permissions-value {
-                    font-size: 15px;
-                    font-weight: 800;
-                    color: #f97316;
-                    min-width: 60px;
+
+                .btn-primary:hover {
+                    background-color: #004182;
                 }
-                .modal-actions {
-                    display: flex;
-                    gap: 1rem;
-                    padding-top: 2rem;
-                    border-top: 1px solid #f1f5f9;
-                }
-                .cancel-btn {
-                    flex: 1;
-                    padding: 14px 20px;
-                    background: #f8fafc;
-                    border: 2px solid #f8fafc;
-                    border-radius: 14px;
-                    font-size: 15px;
-                    font-weight: 700;
+
+                .btn-secondary {
+                    background-color: transparent;
                     color: #64748b;
+                    border: 1px solid #cbd5e1;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    font-weight: 600;
                     cursor: pointer;
                     transition: all 0.2s;
                 }
-                .cancel-btn:hover {
-                    background: #f1f5f9;
-                    color: #0f172a;
-                    border-color: #e2e8f0;
-                }
-                .submit-btn {
-                    flex: 1.2;
-                    padding: 14px 20px;
-                    background: linear-gradient(135deg, #f97316, #fbbf24);
-                    border: none;
-                    border-radius: 14px;
-                    font-size: 15px;
-                    font-weight: 700;
-                    color: white;
-                    cursor: pointer;
-                    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.25);
-                    transition: all 0.2s;
-                }
-                .submit-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.3);
-                }
-                .delete-btn {
-                    flex: 1.2;
-                    padding: 14px 20px;
-                    background: #ef4444;
-                    border: none;
-                    border-radius: 14px;
-                    font-size: 15px;
-                    font-weight: 700;
-                    color: white;
-                    cursor: pointer;
-                    box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.25);
-                    transition: all 0.2s;
-                }
-                .delete-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 20px 25px -5px rgba(239, 68, 68, 0.3);
-                }
-                .delete-btn:disabled {
-                    opacity: 0.5;
-                    cursor: not-allowed;
-                    transform: none;
-                    box-shadow: none;
+
+                .btn-secondary:hover {
+                    background-color: #f1f5f9;
+                    border-color: #94a3b8;
                 }
 
-                /* Action Menu */
-                .action-menu-container { position: relative; margin-right: 12px; }
-                .action-icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; border-radius: 8px; color: #64748b; cursor: pointer; transition: all 0.2s; }
-                .action-icon-btn:hover { background: #f1f5f9; color: #0f172a; }
-                .action-dropdown-menu { position: absolute; top: 100%; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 0.5rem; z-index: 50; min-width: 180px; display: flex; flex-direction: column; gap: 2px; border: 1px solid #e2e8f0; }
-                .action-dropdown-menu.left-align { left: 0; right: auto; margin-top: 4px; transform-origin: top left; }
-                .menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; width: 100%; border: none; background: none; font-size: 13px; font-weight: 500; color: #475569; border-radius: 6px; cursor: pointer; text-align: left; transition: all 0.2s; }
-                .menu-item:hover { background: #f8fafc; color: #0f172a; }
-                .menu-item.delete { color: #ef4444; }
-                .menu-item.delete:hover { background: #fef2f2; }
-                .menu-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 40; }
+                .editor-main {
+                    padding: 0;
+                }
 
-                /* Dark Mode */
-                .dark .action-icon-btn:hover { background: #334155; color: white; }
-                .dark .action-dropdown-menu { background: #1e293b; border-color: #334155; }
-                .dark .menu-item { color: #cbd5e1; }
-                .dark .menu-item:hover { background: #334155; color: white; }
+                .editor-content {
+                    background-color: #fff;
+                    margin: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                }
 
-                /* Dark Mode */
-                .dark .header,
-                .dark .metric,
-                .dark .user-table-card,
-                .dark .modal-container { background: #1e293b; }
-                .dark .modal-container { border-color: #334155; }
-                .dark .title, .dark .control-title, .dark .metric-value, .dark .table-title, .dark .user-name, .dark .modal-title { color: white; }
-                .dark .tabs { background: #334155; }
-                .dark .tab.active { background: #475569; color: white; }
-                .dark .modal-header, .dark .modal-actions, .dark .permissions-slider, .dark .modal-close-btn { border-color: #334155; color: #cbd5e1; }
-                .dark .form-input, .dark .form-select { color: white; background: #0f172a; border-color: #334155; }
-                .dark .metric-label, .dark .table-subtitle, .dark .header-subtitle, .dark .modal-subtitle, .dark .form-label { color: #94a3b8; }
-                .dark .user-table th { background: #0f172a; color: #94a3b8; border-bottom-color: #334155; }
-                .dark .user-table td { border-bottom-color: #334155; color: #cbd5e1; }
-                .dark .user-row:hover { background: #1e293b; }
-                .dark .user-row.selected { background: #334155; }
-                .dark .user-email, .dark .last-active { color: #94a3b8; }
-                .dark .permissions-count { color: white; }
-                .dark .action-btn { background: #334155; color: #94a3b8; }
-                .dark .empty-icon { background: #334155; }
-                .dark .empty-state h3 { color: white; }
-                .dark .modal-overlay { background: rgba(0, 0, 0, 0.7); }
-                .dark .modal-close-btn { background: #334155; }
-                .dark .range-input { background: #334155; }
-                .dark .cancel-btn { background: #334155; border-color: #475569; color: #cbd5e1; }
-                .dark .member-summary { background: #0f172a; border-color: #334155; }
-                .dark .summary-label { color: #64748b; }
-                .dark .summary-value { color: #f1f5f9; }
-                .dark .reset-method { border-color: #334155; }
-                .dark .reset-method:hover { background: #0f172a; border-color: #f97316; }
-                .dark .method-content { color: #cbd5e1; }
-                .dark .reset-explanation, .dark .temp-password-section { background: #1c1917; border-color: #44403c; }
-                .dark .reset-explanation span { color: #fdba74; }
-                .dark .password-input { background: #0f172a !important; border-color: #334155; }
-                .dark .password-btn { background: #334155; border-color: #475569; color: #94a3b8; }
-                .dark .generate-btn { background: #451a03; border-color: #78350f; color: #fbbf24; }
-                .dark .modal-icon { background: #451a03; color: #fbbf24; }
-                .dark .modal-icon.delete { background: #450a0a; color: #f87171; }
-                
-                /* Dark Mode for Compact Toolbar */
-                .dark .compact-toolbar {
-                    background: #1e293b;
-                    border-color: #334155;
-                }
-                
-                .dark .directory-badge {
-                    background: #451a03;
-                    border-color: #78350f;
-                }
-                
-                .dark .directory-title {
-                    color: white;
-                }
-                
-                .dark .search-compact {
-                    background: #0f172a;
-                    border-color: #334155;
-                }
-                
-                .dark .search-input-compact {
-                    color: white;
-                }
-                
-                .dark .control-btn {
-                    background: #1e293b;
-                    border-color: #334155;
-                    color: #94a3b8;
-                }
-                
-                .dark .control-btn:hover {
-                    background: #334155;
-                    color: white;
-                }
             `}</style>
         </div>
     );

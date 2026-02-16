@@ -21,6 +21,7 @@ import PageEvents from './pages/PageEvents';
 import PagePeople from './pages/PagePeople';
 import PageCSR from './pages/PageCSR';
 import MediaHubPage from './pages/MediaHubPage.jsx';
+import Marketplace from './pages/Marketplace';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -67,17 +68,18 @@ function AppContent() {
       case 'dashboard': return <Dashboard setActiveTab={handleTabChange} />;
       case 'page-view': return <PageView setActiveTab={handleTabChange} companyData={companyData} />;
       case 'analytics': return <Analytics />;
-      case 'content': return <ContentManagement />;
-      case 'people': return <PeopleManagement />;
-      case 'csr': return <CSR />;
+      case 'content': return <ContentManagement setActiveTab={handleTabChange} />;
+      case 'people': return <PeopleManagement setActiveTab={handleTabChange} />;
+      case 'csr': return <CSR setActiveTab={handleTabChange} />;
       case 'feed': return <Feed />;
       case 'activity': return <Activity />;
       case 'app-settings': return <AppSettings />;
-      case 'events': return <Events />;
+      case 'events': return <Events setActiveTab={handleTabChange} />;
       case 'games': return <Games />;
       case 'page-events': return <PageEvents />;
       case 'page-people': return <PagePeople />;
       case 'page-csr': return <PageCSR />;
+      case 'marketplace': return <Marketplace setActiveTab={handleTabChange} />;
       case 'page-content': return <MediaHubPage />;
       default: return <Dashboard />;
     }

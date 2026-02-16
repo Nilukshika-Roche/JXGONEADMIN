@@ -350,9 +350,139 @@ const MediaHubPage = () => {
                     margin: 0 auto;
                 }
 
-
-
-
+                .composer-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+                .composer-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                .composer-badge-line {
+                    width: 16px;
+                    height: 2px;
+                    background: linear-gradient(90deg, #f97316, #fbbf24);
+                    border-radius: 2px;
+                }
+                .composer-badge-text {
+                    color: #f97316;
+                    font-size: 10px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                .composer-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: #0f172a;
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+                .composer-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                }
+                .composer-input-section {
+                    display: flex;
+                    gap: 1rem;
+                }
+                .composer-avatar {
+                    flex-shrink: 0;
+                }
+                .avatar-initial {
+                    width: 48px;
+                    height: 48px;
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 18px;
+                }
+                .composer-input-wrapper {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                .composer-textarea {
+                    width: 100%;
+                    min-height: 100px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 16px;
+                    font-size: 16px;
+                    color: #0f172a;
+                    resize: vertical;
+                    outline: none;
+                }
+                .composer-textarea:focus {
+                    border-color: #f97316;
+                }
+                .composer-input-actions {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .composer-visibility {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    background: #f1f5f9;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    color: #64748b;
+                }
+                .composer-char-count {
+                    font-size: 12px;
+                    color: #94a3b8;
+                }
+                .composer-actions {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .composer-media-buttons {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+                .media-button {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 8px 12px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    color: #64748b;
+                    cursor: pointer;
+                }
+                .media-button:hover {
+                    border-color: #f97316;
+                    color: #f97316;
+                }
+                .appmit {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 24px;
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    border: none;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
 
                 /* Feed Header */
                 .feed-header {
@@ -789,69 +919,7 @@ const MediaHubPage = () => {
 
 
 
-                .dark .analytics-container {
-                    background: #0f172a;
-                }
 
-                .dark .composer-card,
-                .dark .feed-header,
-                .dark .post-card,
-                .dark .composer-title,
-                .dark .feed-title,
-                .dark .post-author-name h4,
-                .dark .empty-state h3 {
-                    color: white;
-                }
-                .dark .composer-textarea {
-                    background: #334155;
-                    border-color: #475569;
-                    color: white;
-                }
-                .dark .media-button {
-                    background: #334155;
-                    border-color: #475569;
-                    color: #94a3b8;
-                }
-                .dark .feed-search-bar {
-                    background: #334155;
-                }
-                .dark .feed-search-input {
-                    color: white;
-                }
-                .dark .post-content p,
-                .dark .feed-subtitle,
-                .dark .post-followers,
-                .dark .post-date,
-                .dark .sidebar-subtitle,
-                .dark .empty-state p {
-                    color: #94a3b8;
-                }
-                .dark .post-tag.primary {
-                    background: #334155;
-                    color: #fb923c;
-                }
-                .dark .post-tag.secondary {
-                    background: #334155;
-                    color: #94a3b8;
-                }
-                .dark .post-media-container {
-                    background: #334155;
-                }
-                .dark .post-stats {
-                    border-color: #334155;
-                }
-                .dark .post-action-btn {
-                    background: #334155;
-                    color: #94a3b8;
-                }
-                .dark .post-action-btn:hover {
-                    background: #475569;
-                }
-                .dark .load-more-btn {
-                    background: #334155;
-                    border-color: #475569;
-                    color: #cbd5e1;
-                }
             `}</style>
         </div>
     );
