@@ -1,0 +1,217 @@
+/* Admin Management Page - Premium Orange Aesthetic */
+.am-wrapper {
+    padding: 1.5rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background-color: #fcfaf9;
+    min-height: 100vh;
+}
+
+.am-content-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* Common Table Styles (Synced with CompanyManagement) */
+.am-table-container {
+    overflow-x: auto;
+}
+
+.am-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.am-table th {
+    padding: 1rem 1.5rem;
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: #f8fafc;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.am-table td {
+    padding: 1rem 1.5rem;
+    font-size: 13.5px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.am-table tr:hover td {
+    background: #fffaf7;
+}
+
+/* Admin Profile Cell */
+.admin-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar-placeholder {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #f97316 0%, #fbbf24 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.2);
+}
+
+.admin-name-text {
+    font-weight: 600;
+    color: #0f172a;
+    display: block;
+}
+
+.admin-email-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+/* Badges */
+.role-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.role-badge.super-admin {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+}
+
+.role-badge.group-admin {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #e0f2fe;
+}
+
+.role-badge.support-admin {
+    background: #f5f3ff;
+    color: #5b21b6;
+    border: 1px solid #ede9fe;
+}
+
+/* Status Pills */
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+}
+
+.status-pill.active {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-pill.inactive {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.status-pill.pending {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.status-dot-active {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.status-dot-suspended {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+}
+
+/* Reusing shared styles from CompanyManagement.css for consistency */
+/* (In a real app, these would be in a common CSS file) */
+.date-text {
+    font-weight: 600;
+    color: #64748b;
+}
+
+.bu-cell {
+    font-weight: 700;
+    color: #475569;
+}
+
+/* Pagination - Premium Layout */
+.am-pagination {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2rem;
+    background: #fcfcfc;
+}
+
+.page-summary {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.page-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #f1f5f9;
+    background: white;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-btn.active {
+    background: #f97316;
+    color: white;
+    border-color: #f97316;
+    box-shadow: 0 4px 10px rgba(249, 115, 22, 0.2);
+}
+
+.page-btn:hover:not(.active) {
+    background: #fff7ed;
+    color: #f97316;
+    border-color: #fbd38d;
+}
