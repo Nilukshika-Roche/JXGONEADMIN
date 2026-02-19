@@ -22,11 +22,16 @@ import PagePeople from './pages/PagePeople';
 import PageCSR from './pages/PageCSR';
 import MediaHubPage from './pages/MediaHubPage.jsx';
 import Marketplace from './pages/Marketplace';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import CompanyManagement from './pages/CompanyManagement.jsx';
+import AdminManagement from './pages/AdminManagement';
+import SuperAdminPortal from './pages/SuperAdminPortal';
 import AdminProfile from './pages/AdminProfile';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [prevTab, setPrevTab] = useState('dashboard');
+  const [isSuperAdminView, setIsSuperAdminView] = useState(true); // Default to Super Admin for now
 
   const [companyData, setCompanyData] = useState({
     name: 'Janashakthi Group',
@@ -83,23 +88,47 @@ function AppContent() {
       case 'marketplace': return <Marketplace setActiveTab={handleTabChange} />;
       case 'profile': return <AdminProfile setActiveTab={handleTabChange} />;
       case 'page-content': return <MediaHubPage />;
+      case 'superadmin': return <AdminManagement />;
+      case 'company-management': return <CompanyManagement />;
       default: return <Dashboard />;
     }
   };
 
+  if (isSuperAdminView) {
+    return (
+      <>
+        <SuperAdminPortal onLogout={() => setIsSuperAdminView(false)} />
+        <button
+          onClick={() => setIsSuperAdminView(false)}
+          style={{ position: 'fixed', bottom: '20px', right: '20px', padding: '10px 20px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '30px', fontWeight: 700, cursor: 'pointer', zIndex: 1000, boxShadow: '0 10px 15px rgba(0,0,0,0.1)' }}
+        >
+          Switch to Company Admin
+        </button>
+      </>
+    );
+  }
+
   return (
-    <Shell activeTab={activeTab === 'edit' ? prevTab : activeTab} setActiveTab={handleTabChange}>
-      <div className="pb-10">
-        {renderContent(activeTab === 'edit' ? prevTab : activeTab)}
-      </div>
-      {activeTab === 'edit' && (
-        <EditPage
-          companyData={companyData}
-          setCompanyData={setCompanyData}
-          onClose={() => setActiveTab(prevTab)}
-        />
-      )}
-    </Shell>
+    <div className="relative">
+      <Shell activeTab={activeTab === 'edit' ? prevTab : activeTab} setActiveTab={handleTabChange}>
+        <div className="pb-10">
+          {renderContent(activeTab === 'edit' ? prevTab : activeTab)}
+        </div>
+        {activeTab === 'edit' && (
+          <EditPage
+            companyData={companyData}
+            setCompanyData={setCompanyData}
+            onClose={() => setActiveTab(prevTab)}
+          />
+        )}
+      </Shell>
+      <button
+        onClick={() => setIsSuperAdminView(true)}
+        style={{ position: 'fixed', bottom: '20px', right: '20px', padding: '10px 20px', background: '#f97316', color: 'white', border: 'none', borderRadius: '30px', fontWeight: 700, cursor: 'pointer', zIndex: 1000, boxShadow: '0 10px 15px rgba(249,115,22,0.2)' }}
+      >
+        Switch to Super Admin
+      </button>
+    </div>
   );
 }
 

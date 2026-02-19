@@ -32,79 +32,7 @@ import {
     Hash
 } from 'lucide-react';
 
-// --- Post Composer Component ---
-const PostComposer = () => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="composer-card"
-        >
-            <div className="composer-content">
-                <div className="composer-header">
-                    <div className="composer-badge">
-                        <div className="composer-badge-line"></div>
-                        <span className="composer-badge-text">Create Post</span>
-                    </div>
-                    <div className="composer-title">
-                        <Zap size={20} />
-                        <h3>Share your update</h3>
-                    </div>
-                </div>
 
-                <div className="composer-body">
-                    <div className="composer-input-section">
-                        <div className="composer-avatar">
-                            <div className="avatar-initial">JS</div>
-                        </div>
-                        <div className="composer-input-wrapper">
-                            <textarea
-                                placeholder="What's on your mind, Janashakthi?"
-                                className="composer-textarea"
-                                rows={3}
-                            />
-                            <div className="composer-input-actions">
-                                <div className="composer-visibility">
-                                    <Globe size={14} />
-                                    <span>Everyone</span>
-                                    <ChevronDown size={12} />
-                                </div>
-                                <div className="composer-char-count">
-                                    <span>0/280</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="composer-actions">
-                        <div className="composer-media-buttons">
-                            <button className="media-button">
-                                <ImageIcon size={18} />
-                                <span>Image</span>
-                            </button>
-                            <button className="media-button">
-                                <Video size={18} />
-                                <span>Video</span>
-                            </button>
-                            <button className="media-button">
-                                <Paperclip size={18} />
-                                <span>Attachment</span>
-                            </button>
-                            <button className="media-button">
-                                <Tag size={18} />
-                                <span>Tag</span>
-                            </button>
-                        </div>
-                        <button className="composer-submit">
-                            <Send size={16} />
-                            <span>Publish</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </motion.div>
-    );
-};
 
 // --- Post Card Component ---
 const PostCard = ({ post, index }) => {
@@ -336,19 +264,12 @@ const MediaHubPage = () => {
 
 
 
-                        {/* Post Composer */}
-                        <PostComposer />
+
 
                         {/* Feed Header */}
                         <div className="feed-header">
                             <div className="feed-header-left">
-                                <div className="feed-icon">
-                                    <Target size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="feed-title">Latest Feed</h3>
-                                    <p className="feed-subtitle">Recent posts from your network</p>
-                                </div>
+                                {/* Left side intentionally left empty or for future use */}
                             </div>
                             <div className="feed-header-right">
                                 <div className="feed-search-bar">
@@ -366,9 +287,9 @@ const MediaHubPage = () => {
                                     <span>Dec 01 - 24, 2024</span>
                                     <ChevronDown size={12} />
                                 </button>
-                                <button className="filter-btn">
-                                    <Filter size={16} />
-                                    <span>Filters</span>
+                                <button className="create-post-btn">
+                                    <Zap size={16} />
+                                    <span>Create Post</span>
                                 </button>
                             </div>
                         </div>
@@ -428,18 +349,6 @@ const MediaHubPage = () => {
                     max-width: 1200px;
                     margin: 0 auto;
                 }
-
-
-
-                /* Composer Card */
-                .composer-card {
-                    background: white;
-                    border-radius: 16px;
-                    padding: 2rem;
-                    margin-bottom: 2rem;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                }
-
 
                 .composer-header {
                     display: flex;
@@ -579,8 +488,8 @@ const MediaHubPage = () => {
                 .feed-header {
                     background: white;
                     border-radius: 12px;
-                    padding: 2rem;
-                    margin-bottom: 1.5rem;
+                    padding: 1rem;
+                    margin-bottom: 1rem;
                     display: flex;
                     flex-direction: column;
                     gap: 1rem;
@@ -597,27 +506,7 @@ const MediaHubPage = () => {
                     align-items: center;
                     gap: 0.75rem;
                 }
-                .feed-icon {
-                    width: 36px;
-                    height: 36px;
-                    background: #fff7ed;
-                    border-radius: 8px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #f97316;
-                }
-                .feed-title {
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .feed-subtitle {
-                    font-size: 12px;
-                    color: #64748b;
-                    margin: 0;
-                }
+
                  .feed-header-right {
                     display: flex;
                     align-items: center;
@@ -661,17 +550,24 @@ const MediaHubPage = () => {
                     color: #475569;
                     cursor: pointer;
                 }
-                .filter-btn {
+                .create-post-btn {
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 8px 12px;
-                    background: #f1f5f9;
+                    padding: 8px 16px;
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
                     border: none;
                     border-radius: 8px;
                     font-size: 12px;
-                    color: #475569;
+                    font-weight: 600;
+                    color: white;
                     cursor: pointer;
+                    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+                    transition: all 0.2s;
+                }
+                .create-post-btn:hover {
+                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+                    transform: translateY(-1px);
                 }
 
                 /* Post Card */
