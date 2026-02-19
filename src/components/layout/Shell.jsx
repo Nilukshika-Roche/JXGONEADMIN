@@ -326,7 +326,17 @@ const Shell = ({ children, activeTab, setActiveTab }) => {
                 </nav>
 
                 <div style={styles.profile}>
-                    <div style={styles.profileCard}>
+                    <div
+                        style={{
+                            ...styles.profileCard,
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s ease',
+                            backgroundColor: activeTab === 'profile' ? '#f8fafc' : 'transparent'
+                        }}
+                        onClick={() => setActiveTab('profile')}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = activeTab === 'profile' ? '#f8fafc' : 'transparent'}
+                    >
                         <img
                             src="https://i.pravatar.cc/150?u=john"
                             alt="Profile"

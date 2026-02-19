@@ -444,8 +444,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
     return (
         <div className="p-6 max-w-[1400px] mx-auto font-sans text-slate-800">
-            {/* Header Section */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+            {/* Header Section, nmatched content mgmt header padding */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-8 gap-6">
                 {/* Left: Breadcrumbs & Title */}
                 <div>
                     <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
@@ -630,7 +630,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     </div>
                 )}
 
-                <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
+                <div className="showing">
                     <div>
                         Showing {filteredUsers.length > 0 ? 1 : 0} to {filteredUsers.length} of {users.length} results
                     </div>
@@ -1031,7 +1031,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                             <AlertCircle size={20} />
                                         </div>
                                         <div>
-                                            <h3 className="report-title text-red-800">Report Reasons</h3>
+                                            <h3 className="report-title text-red-800">Report Details</h3>
                                             <p className="modal-subtitle">Security flagging information</p>
                                         </div>
                                     </div>
@@ -1051,12 +1051,12 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                        <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
-                                    </div>
-                                    <div className="bg-slate-50 p-3 rounded-lg border">
-                                        <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
-                                    </div>
+                                    <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
+                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                </div>
+                                <div>
+                                    <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
+                                </div>
                                     <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
                                         Close
                                     </button>
@@ -1241,7 +1241,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: visible;
+                    overflow: hidden;
                     margin-top: 1.5rem;
                     border: 1px solid #e2e8f0;
                 }
@@ -1786,6 +1786,18 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 .show-more-btn:hover svg {
                     transform: translateY(-2px);
                 }    
+
+                .showing{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;   
+                }
 
                 /* Export Modal Specifics */
                 .export-modal-wide {

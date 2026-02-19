@@ -22,6 +22,7 @@ import PagePeople from './pages/PagePeople';
 import PageCSR from './pages/PageCSR';
 import MediaHubPage from './pages/MediaHubPage.jsx';
 import Marketplace from './pages/Marketplace';
+import AdminProfile from './pages/AdminProfile';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -80,6 +81,7 @@ function AppContent() {
       case 'page-people': return <PagePeople />;
       case 'page-csr': return <PageCSR />;
       case 'marketplace': return <Marketplace setActiveTab={handleTabChange} />;
+      case 'profile': return <AdminProfile setActiveTab={handleTabChange} />;
       case 'page-content': return <MediaHubPage />;
       default: return <Dashboard />;
     }

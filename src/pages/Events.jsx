@@ -680,7 +680,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 )}
 
                 {/* Footer */}
-                <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
+                <div className="showing">
                     <div>
                         Showing {filteredEvents.length > 0 ? 1 : 0} to {filteredEvents.length} of {events.length} results
                     </div>
@@ -748,183 +748,206 @@ const Events = ({ setActiveTab: onNavigate }) => {
 
 
 
-            {/* Event Preview Modal */}
+            {/* Event Preview/Edit Modal */}
             <AnimatePresence>
                 {previewItem && (
-                    <>
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setPreviewItem(null)}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
-                        />
-
-                        {/* Modal */}
+                    <div className="modal-overlay" onClick={() => setPreviewItem(null)}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             transition={{ type: "spring", duration: 0.3 }}
-                            className="fixed inset-0 z-[9999] flex items-center justify-center p-6"
-                            onClick={() => setPreviewItem(null)}
+                            className="modal-container"
+                            style={{ maxWidth: '600px' }}
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <div
-                                className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                {/* Modal Header */}
-                                <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex justify-between items-start z-10">
-                                    <div>
-                                        <h2 className="text-2xl font-bold text-slate-800 mb-1">
-                                            {previewItem.title}
-                                        </h2>
-                                        <p className="text-sm text-slate-500">Event Preview</p>
+                            {/* Modal Header */}
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon">
+                                        <Calendar size={20} />
                                     </div>
-                                    <button
-                                        onClick={() => setPreviewItem(null)}
-                                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                                    >
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                        </svg>
-                                    </button>
+                                    <div>
+                                        <h3 className="modal-title">
+                                            {isEditMode ? 'Edit Event Details' : previewItem.title}
+                                        </h3>
+                                        <p className="modal-subtitle">
+                                            {isEditMode ? 'Update event information and settings' : 'Event Information Preview'}
+                                        </p>
+                                    </div>
                                 </div>
+                                <button
+                                    onClick={() => { setPreviewItem(null); setIsEditMode(false); }}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
 
-                                {/* Modal Content */}
-                                <div className="p-6 space-y-6">
-                                    {/* Title - Editable in edit mode */}
-                                    {isEditMode && (
-                                        <div>
-                                            <label className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-2 block">
-                                                Event Title
-                                            </label>
+                            {/* Modal Content */}
+                            {isEditMode ? (
+                                <div className="modal-form">
+                                    <div className="form-grid">
+                                        <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                            <label className="form-label">Event Title</label>
                                             <input
+                                                required
                                                 type="text"
                                                 value={editFormData?.title || ''}
                                                 onChange={(e) => handleFormChange('title', e.target.value)}
-                                                className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-lg focus:border-slate-800 focus:outline-none text-lg font-bold"
+                                                className="form-input"
                                             />
                                         </div>
-                                    )}
+                                        <div className="form-group">
+                                            <label className="form-label">Department</label>
+                                            <input
+                                                type="text"
+                                                value={editFormData?.department || ''}
+                                                onChange={(e) => handleFormChange('department', e.target.value)}
+                                                className="form-input"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Requirement</label>
+                                            <input
+                                                type="text"
+                                                value={editFormData?.requirement || ''}
+                                                onChange={(e) => handleFormChange('requirement', e.target.value)}
+                                                className="form-input"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Status</label>
+                                            <select
+                                                value={editFormData?.status || ''}
+                                                onChange={(e) => handleFormChange('status', e.target.value)}
+                                                className="form-select"
+                                            >
+                                                <option value="Published">Published</option>
+                                                <option value="ongoing">Ongoing</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="Reported">Reported</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Date</label>
+                                            <input
+                                                type="text"
+                                                value={editFormData?.date || ''}
+                                                onChange={(e) => handleFormChange('date', e.target.value)}
+                                                className="form-input"
+                                                placeholder="e.g. 15 Oct, 2024"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Attendees</label>
+                                            <input
+                                                type="number"
+                                                value={editFormData?.attendees || ''}
+                                                onChange={(e) => handleFormChange('attendees', e.target.value)}
+                                                className="form-input"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Capacity</label>
+                                            <input
+                                                type="number"
+                                                value={editFormData?.capacity || ''}
+                                                onChange={(e) => handleFormChange('capacity', e.target.value)}
+                                                className="form-input"
+                                            />
+                                        </div>
+                                        <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                                            <label className="form-label">Notes</label>
+                                            <textarea
+                                                rows={3}
+                                                value={editFormData?.notes || ''}
+                                                onChange={(e) => handleFormChange('notes', e.target.value)}
+                                                className="form-textarea"
+                                                placeholder="Add notes about this event..."
+                                            />
+                                        </div>
+                                    </div>
 
+                                    <div className="modal-actions">
+                                        <button
+                                            type="button"
+                                            onClick={handleCancelEdit}
+                                            className="cancel-btn"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleSaveEdit}
+                                            className="submit-btn"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="modal-body">
                                     {/* Event Icon Preview */}
-                                    <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl border border-blue-300 flex items-center justify-center">
+                                    <div className="w-full h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl border border-blue-300 flex items-center justify-center mb-2">
                                         <div className="text-center">
-                                            <Calendar size={64} className="mx-auto mb-2 text-blue-600" />
+                                            <Calendar size={48} className="mx-auto mb-2 text-blue-600" />
                                             <p className="text-sm text-blue-700 font-semibold">{previewItem.status} Event</p>
                                         </div>
                                     </div>
 
-                                    {/* Event Details Grid */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Department</p>
+                                            <p className="form-label mb-1">Department</p>
                                             <p className="text-sm font-bold text-slate-800">{previewItem.department}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Requirement</p>
+                                            <p className="form-label mb-1">Requirement</p>
                                             <p className="text-sm font-bold text-slate-800">{previewItem.requirement}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Status</p>
-                                            {isEditMode ? (
-                                                <select
-                                                    value={editFormData?.status || ''}
-                                                    onChange={(e) => handleFormChange('status', e.target.value)}
-                                                    className="w-full px-3 py-1.5 border-2 border-slate-200 rounded-lg focus:border-slate-800 focus:outline-none text-xs font-bold"
-                                                >
-                                                    <option value="Published">Published</option>
-                                                    <option value="ongoing">Ongoing</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="Reported">Reported</option>
-                                                </select>
-                                            ) : (
-                                                <span className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full ${previewItem.status === 'Reported' ? 'text-red-600 bg-red-100' :
-                                                    previewItem.status === 'Published' ? 'text-emerald-600 bg-emerald-100' :
-                                                        previewItem.status === 'ongoing' ? 'text-blue-600 bg-blue-100' :
-                                                            previewItem.status === 'pending' ? 'text-amber-600 bg-amber-100' :
-                                                                'text-slate-600 bg-slate-200'
-                                                    }`}>
-                                                    {previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)}
-                                                </span>
-                                            )}
+                                            <p className="form-label mb-1">Status</p>
+                                            <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
+                                                {previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)}
+                                            </span>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Date </p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.date}</p>
-                                            <p className="text-xs text-slate-500">{previewItem.time}</p>
+                                            <p className="form-label mb-1">Date & Time</p>
+                                            <p className="text-sm font-bold text-slate-800">{previewItem.date} at {previewItem.time}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Attendees</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.attendees} / {previewItem.capacity}</p>
-                                        </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">Capacity</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.capacity} people</p>
+                                            <p className="form-label mb-1">Capacity</p>
+                                            <p className="text-sm font-bold text-slate-800">{previewItem.attendees} / {previewItem.capacity} People</p>
                                         </div>
                                     </div>
 
-                                    {/* Notes Section - Editable in edit mode */}
-                                    <div className={`border p-4 rounded-lg ${isEditMode ? 'bg-white border-slate-200' : 'bg-amber-50 border-amber-200'}`}>
-                                        <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${isEditMode ? 'text-slate-500' : 'text-amber-800'}`}>
-                                            Notes
-                                        </p>
-                                        {isEditMode ? (
-                                            <textarea
-                                                value={editFormData?.notes || ''}
-                                                onChange={(e) => handleFormChange('notes', e.target.value)}
-                                                rows={3}
-                                                className="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-slate-800 focus:outline-none text-sm resize-none"
-                                                placeholder="Add notes about this event..."
-                                            />
-                                        ) : (
-                                            <p className="text-sm text-amber-900">{previewItem.notes}</p>
-                                        )}
+                                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                                        <p className="form-label mb-1 text-amber-800">Notes</p>
+                                        <p className="text-sm text-amber-900 leading-relaxed">{previewItem.notes}</p>
                                     </div>
 
-                                    {/* Action Buttons */}
-                                    <div className="flex gap-3 pt-4">
-                                        {isEditMode ? (
-                                            <>
-                                                <button
-                                                    onClick={handleSaveEdit}
-                                                    className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
-                                                >
-                                                    <CheckCircle2 size={16} />
-                                                    Save Changes
-                                                </button>
-                                                <button
-                                                    onClick={handleCancelEdit}
-                                                    className="px-4 py-2.5 border-2 border-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors"
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    onClick={handleStartEdit}
-                                                    className="flex-1 px-4 py-2.5 bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
-                                                >
-                                                    <Edit2 size={16} />
-                                                    Edit Event
-                                                </button>
-                                                <button
-                                                    onClick={() => handleConfirmEvent(previewItem)}
-                                                    className="px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
-                                                >
-                                                    <Check size={16} />
-                                                    Confirm
-                                                </button>
-                                            </>
-                                        )}
+                                    <div className="modal-actions">
+                                        <button
+                                            onClick={handleStartEdit}
+                                            className="cancel-btn flex items-center justify-center gap-2"
+                                            style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
+                                        >
+                                            <Edit2 size={16} />
+                                            Edit Event
+                                        </button>
+                                        <button
+                                            onClick={() => handleConfirmEvent(previewItem)}
+                                            className="submit-btn flex items-center justify-center gap-2"
+                                            style={{ background: '#059669' }}
+                                        >
+                                            <CheckCircle2 size={16} />
+                                            Approve
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </motion.div>
-                    </>
+                    </div>
                 )}
             </AnimatePresence>
 
@@ -990,56 +1013,63 @@ const Events = ({ setActiveTab: onNavigate }) => {
             </AnimatePresence>
 
 
+            {/* Reported Content Modal */}
             <AnimatePresence>
                 {reportedModalData.isOpen && reportedModalData.details && (
-                    <>
-                        <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="modal-container max-w-sm"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className="modal-header bg-red-50">
-                                    <div className="modal-header-left">
-                                        <div className="report-icon text-red-600">
-                                            <AlertCircle size={20} />
-                                        </div>
-                                        <div>
-                                            <h3 className="report-title text-red-800">Report Reasons</h3>
-                                            <p className="modal-subtitle">Security flagging information</p>
-                                        </div>
-                                    </div>
-                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="report-close-btn text-red-400">
-                                        <X size={20} />
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="flex gap-40">
-                                        <div>
-                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
-                                            <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
-                                            <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
-                                        </div>
+                    <div className="reported-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="reported-container max-w-sm"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="report-icon text-red-600">
+                                        <AlertCircle size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                        <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                        <h3 className="report-title text-red-800">Report Details</h3>
+                                        <p className="modal-subtitle">Security flagging information</p>
                                     </div>
-                                    <div className="bg-slate-50 p-3 rounded-lg border">
-                                        <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
-                                    </div>
-                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
-                                        Close
-                                    </button>
                                 </div>
-                            </motion.div>
-                        </div>
-                    </>
+                                <button
+                                    onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
+                                    className="report-close-btn text-red-400"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="flex gap-40">
+                                    <div>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
+                                        <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
+                                        <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
+                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                </div>
+                                <div>
+                                    <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
+                                </div>
+
+                                <button
+                                    onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
+                                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
 
@@ -1049,7 +1079,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: visible;
+                    overflow: hidden;
                     margin-top: 1.5rem;
                 }
                 .table-header {
@@ -1223,8 +1253,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     color: #94a3b8;
                     pointer-events: none;
                 }
-            `}</style>
-            <style>{`
+
                 .metrics {
                     display: grid;
                     grid-template-columns: repeat(4, minmax(140px, 1fr));
@@ -1361,100 +1390,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 .metric.red .metric-progress-fill {background: #ef4444; }
                 .metric.blue .metric-progress-fill {background: #3b82f6; }
 
-                /* User Table Card Styles */
-                .user-table-card {
-                    background: white;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden;
-                    margin-top: 1.5rem;
-                }
-                .table-container {
-                    overflow-x: auto;
-                }
-                .user-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                .user-table th {
-                    padding: 1rem 1.5rem;
-                    background: #f8fafc;
-                    color: #64748b;
-                    font-size: 11px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                }
-                .user-table td {
-                    padding: 1rem 1.5rem;
-                    border-bottom: 1px solid #f1f5f9;
-                    font-size: 13px;
-                    color: #334155;
-                    vertical-align: middle;
-                }
-                .user-row {
-                    transition: background-color 0.2s;
-                }
-                .user-row:hover {
-                    background: #fffaf5;
-                }
-
-                /* Kebab Menu Popup Styles */
-                .kebab-menu-container {
-                    position: relative;
-                }
-                .kebab-menu-popup {
-                    position: absolute;
-                    top: 100%;
-                    left: 0;
-                    margin-top: 4px;
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
-                    z-index: 1000;
-                    min-width: 180px;
-                    overflow: hidden;
-                    animation: menuSlideIn 0.15s ease-out;
-                }
-                @keyframes menuSlideIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-8px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                .kebab-menu-item {
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 10px 14px;
-                    background: white;
-                    border: none;
-                    text-align: left;
-                    font-size: 13px;
-                    font-weight: 500;
-                    color: #334155;
-                    cursor: pointer;
-                    transition: all 0.15s ease;
-                }
-                .kebab-menu-item:hover {
-                    background: #f8fafc;
-                }
-                .kebab-menu-item svg {
-                    flex-shrink: 0;
-                }
-                .kebab-menu-divider {
-                    height: 1px;
-                    background: #e2e8f0;
-                    margin: 4px 0;
-                }
                 /* Empty State */
                 .empty-state {
                     text-align: center;
@@ -1554,52 +1489,51 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     font-weight: 700;
                 }
 
-                /* Table Filter Header */
-                .table-filter-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    user-select: none;
-                    transition: all 0.2s;
-                }
-                .table-filter-header:hover {
-                .table-filter-header .rotate {
-                    transform: rotate(180deg);
-                }
-                .table-filter-header svg {
-                    transition: transform 0.2s;
-                }
                 .show-more-btn:hover svg {
                     transform: translateY(-2px);
                 }
 
-                /* Modal Styles */
-                .modal-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0, 0, 0, 0.5);
-                    backdrop-filter: blur(4px);
-                    z-index: 9998;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 1rem;
-                }
-                .modal-container {
-                    background: white;
-                    border-radius: 12px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-                    overflow: hidden;
-                    max-width: 500px;
-                    width: 100%;
-                }
-                .modal-header {
-                    padding: 1.25rem 1.5rem;
-                    border-bottom: 1px solid #e2e8f0;
+                .showing{
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;   
+                }
+
+                /* Modal Styles - Unified with PeopleManagement */
+                .modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(15, 23, 42, 0.4);
+                    backdrop-filter: blur(8px);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1.5rem;
+                }
+                .modal-container {
+                    background: white;
+                    border-radius: 20px;
+                    width: 100%;
+                    max-width: 520px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                }
+                .modal-header {
+                    padding: 1.5rem 1.75rem;
+                    border-bottom: 1px solid #f1f5f9;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    position: sticky;
+                    top: 0;
                     background: white;
                     z-index: 10;
                 }
@@ -1608,18 +1542,20 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     align-items: center;
                     gap: 1rem;
                 }
-                .modal-body {
-                    padding: 1.5rem 1.75rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                    background: white;
+                .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; }
+                .modal-subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
+                
+                .modal-close-btn {
+                    padding: 8px;
+                    color: #94a3b8;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                    background: none;
+                    border: none;
                 }
-                .modal-subtitle {
-                    font-size: 13px;
-                    color: #64748b;
-                    font-weight: 500;
-                }
+                .modal-close-btn:hover { background: #f1f5f9; color: #475569; }
+
                 .modal-icon {
                     width: 44px;
                     height: 44px;
@@ -1632,6 +1568,26 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     border: 1px solid #f1f5f9;
                 }
 
+                /* Preserving Reported Modal (LEGACY) */
+                .reported-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(4px);
+                    z-index: 9998;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+                }
+                .reported-container {
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                    overflow: hidden;
+                    max-width: 500px;
+                    width: 100%;
+                }
                 .report-icon {
                     width: 44px;
                     height: 44px;
@@ -1657,10 +1613,79 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     background: none;
                     border: none;
                 }
-                .report-close-btn:hover {
-                    background: rgba(239, 68, 68, 0.1);
+                .report-close-btn:hover { background: rgba(239, 68, 68, 0.1); }
+
+                .modal-body {
+                    padding: 1.5rem 1.75rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
                 }
 
+                /* Form Styles for Edit Mode */
+                .modal-form { padding: 1.75rem; }
+                .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+                .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+                .form-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+                .form-input, .form-select, .form-textarea {
+                    padding: 12px 16px;
+                    border: 2px solid #f1f5f9;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    color: #0f172a;
+                    background: #f8fafc;
+                    transition: all 0.2s;
+                    font-weight: 500;
+                }
+                .form-input:focus, .form-select:focus, .form-textarea:focus {
+                    outline: none;
+                    border-color: #f97316;
+                    background: white;
+                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                }
+                .form-textarea { resize: none; min-height: 100px; }
+
+                .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+                .cancel-btn {
+                    flex: 1;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: #475569;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
+                
+                .submit-btn {
+                    flex: 1.2;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: white;
+                    background: #1e293b;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2);
+                }
+                .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 12px;
+                    border-radius: 9999px;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+                .status-badge.published { color: #059669; background: #ecfdf5; }
+                .status-badge.ongoing { color: #2563eb; background: #eff6ff; }
+                .status-badge.pending { color: #d97706; background: #fffbeb; }
+                .status-badge.reported { color: #dc2626; background: #fef2f2; }
             `}</style>
         </div>
     );

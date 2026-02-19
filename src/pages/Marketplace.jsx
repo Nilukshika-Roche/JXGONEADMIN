@@ -625,7 +625,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     </div>
                 )}
 
-                <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
+                <div className="showing">
                     <div>Showing {filteredItems.length} results</div>
                     <button
                         onClick={generateMoreItems}
@@ -724,174 +724,224 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
             </AnimatePresence>
 
             {/* Mock Item Preview Modal */}
+            {/* Preview Modal */}
             <AnimatePresence>
                 {previewItem && (
-                    <>
+                    <div className="modal-overlay" onClick={() => setPreviewItem(null)}>
                         <motion.div
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            onClick={() => setPreviewItem(null)}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed inset-0 z-[9999] flex items-center justify-center p-6"
-                            onClick={() => setPreviewItem(null)}
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="modal-container max-w-2xl"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                                <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex justify-between items-start z-10">
-                                    <div>
-                                        <h2 className="text-2xl font-bold text-slate-800 mb-1">{previewItem.title}</h2>
-                                        <p className="text-sm text-slate-500">Listing Preview</p>
+                            {/* Modal Header */}
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon">
+                                        <ShoppingBag size={20} className="text-orange-600" />
                                     </div>
-                                    <button onClick={() => setPreviewItem(null)} className="p-2 hover:bg-slate-100 rounded-lg">
-                                        <X size={20} />
-                                    </button>
+                                    <div>
+                                        <h3 className="modal-title">{previewItem.title}</h3>
+                                        <p className="modal-subtitle">Listing Details</p>
+                                    </div>
                                 </div>
-                                <div className="p-6 space-y-6">
-                                    {/* Editable Title */}
-                                    {isEditMode && (
-                                        <div>
-                                            <label className="text-xs text-slate-500 font-semibold mb-2 block">Listing Title</label>
+                                <button
+                                    onClick={() => setPreviewItem(null)}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Modal Body */}
+                            <div className="modal-form">
+                                {isEditMode ? (
+                                    <div className="space-y-6">
+                                        <div className="form-group">
+                                            <label className="form-label">Item Title</label>
                                             <input
                                                 type="text"
                                                 value={editFormData?.title || ''}
                                                 onChange={(e) => handleFormChange('title', e.target.value)}
-                                                className="w-full px-4 py-2 border rounded-lg font-bold"
+                                                className="form-input text-lg font-bold"
                                             />
                                         </div>
-                                    )}
 
-                                    {/* Image Placeholder */}
-                                    <div className="w-full h-64 bg-slate-100 rounded-xl flex items-center justify-center">
-                                        <ShoppingBag size={48} className="text-slate-300" />
-                                    </div>
-
-                                    {/* Details Grid */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold">Seller</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.seller}</p>
-                                        </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold">Price</p>
-                                            {isEditMode ? (
+                                        <div className="form-grid">
+                                            <div className="form-group">
+                                                <label className="form-label">Price</label>
                                                 <input
                                                     type="text"
                                                     value={editFormData?.price || ''}
                                                     onChange={(e) => handleFormChange('price', e.target.value)}
-                                                    className="w-full px-2 py-1 border rounded"
+                                                    className="form-input font-bold text-orange-600"
                                                 />
-                                            ) : (
-                                                <p className="text-sm font-bold text-emerald-600">{previewItem.price}</p>
-                                            )}
-                                        </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold">Status</p>
-                                            {isEditMode ? (
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="form-label">Status</label>
                                                 <select
                                                     value={editFormData?.status || ''}
                                                     onChange={(e) => handleFormChange('status', e.target.value)}
-                                                    className="w-full px-2 py-1 border rounded"
+                                                    className="form-select"
                                                 >
                                                     <option value="Active">Active</option>
                                                     <option value="Pending">Pending</option>
                                                     <option value="Reported">Reported</option>
                                                     <option value="Draft">Draft</option>
                                                 </select>
-                                            ) : (
-                                                <span className="text-sm font-bold">{previewItem.status}</span>
-                                            )}
+                                            </div>
                                         </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="text-xs text-slate-500 font-semibold">Category</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.category}</p>
-                                        </div>
-                                    </div>
 
-                                    {/* Notes */}
-                                    <div className="border p-4 rounded-lg">
-                                        <p className="text-xs font-semibold mb-2">Notes</p>
-                                        {isEditMode ? (
+                                        <div className="form-group">
+                                            <label className="form-label">Description / Notes</label>
                                             <textarea
                                                 value={editFormData?.notes || ''}
                                                 onChange={(e) => handleFormChange('notes', e.target.value)}
-                                                className="w-full p-2 border rounded resize-none"
+                                                className="form-textarea"
+                                                placeholder="Add details about this listing..."
                                             />
-                                        ) : (
-                                            <p className="text-sm">{previewItem.notes}</p>
-                                        )}
-                                    </div>
+                                        </div>
 
-                                    {/* Buttons */}
-                                    <div className="flex gap-3 pt-4">
-                                        {isEditMode ? (
-                                            <>
-                                                <button onClick={handleSaveEdit} className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold">
-                                                    Save Changes
-                                                </button>
-                                                <button onClick={handleCancelEdit} className="px-4 py-2 border rounded-lg font-semibold">
-                                                    Cancel
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button onClick={handleStartEdit} className="flex-1 px-4 py-2 bg-slate-800 text-white rounded-lg font-semibold">
-                                                    Edit
-                                                </button>
-                                                <button onClick={() => handleApprove(previewItem)} className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold">
-                                                    Approve
-                                                </button>
-                                            </>
-                                        )}
+                                        <div className="modal-actions">
+                                            <button onClick={handleCancelEdit} className="cancel-btn">Cancel</button>
+                                            <button onClick={handleSaveEdit} className="submit-btn flex items-center justify-center gap-2">
+                                                <Check size={18} />
+                                                Save Changes
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        {/* Image Preview */}
+                                        <div className="w-full h-48 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border border-orange-200 flex items-center justify-center overflow-hidden">
+                                            <div className="text-center">
+                                                <ShoppingBag size={64} className="mx-auto mb-2 text-orange-600" />
+                                                <p className="text-sm text-orange-700 font-semibold">{previewItem.category} Category</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="form-grid">
+                                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                <p className="form-label mb-1">Seller</p>
+                                                <p className="text-sm font-bold text-slate-800">{previewItem.seller}</p>
+                                            </div>
+                                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                <p className="form-label mb-1">Price</p>
+                                                <p className="text-sm font-bold text-orange-600">{previewItem.price}</p>
+                                            </div>
+                                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                <p className="form-label mb-1">Status</p>
+                                                <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
+                                                    {previewItem.status}
+                                                </span>
+                                            </div>
+                                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                <p className="form-label mb-1">Posted Date</p>
+                                                <p className="text-sm font-bold text-slate-800">{previewItem.date}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                                            <p className="text-xs font-bold text-orange-800 uppercase tracking-wide mb-2">Listing Notes</p>
+                                            <p className="text-sm text-orange-900 leading-relaxed">{previewItem.notes}</p>
+                                        </div>
+
+                                        <div className="modal-actions">
+                                            <button
+                                                onClick={handleStartEdit}
+                                                className="submit-btn flex items-center justify-center gap-2"
+                                            >
+                                                <Edit2 size={16} />
+                                                Edit Listing
+                                            </button>
+                                            <button
+                                                onClick={() => handleApprove(previewItem)}
+                                                className="cancel-btn text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center gap-2"
+                                            >
+                                                <CheckCircle2 size={16} />
+                                                Approve
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
-                    </>
+                    </div>
                 )}
             </AnimatePresence>
 
             {/* Note Edit Modal */}
             <AnimatePresence>
                 {noteModalData.isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                    >
-                        <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
-                            <div className="p-4 border-b flex justify-between items-center bg-slate-50">
-                                <h3 className="font-bold">Edit Note</h3>
-                                <button onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}>
+                    <div className="modal-overlay" onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="modal-container max-w-md"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon">
+                                        <FileText size={20} className="text-blue-500" />
+                                    </div>
+                                    <div>
+                                        <h3 className="modal-title">Edit Note</h3>
+                                        <p className="modal-subtitle">Update item notes</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="modal-close-btn"
+                                >
                                     <X size={20} />
                                 </button>
                             </div>
-                            <div className="p-4">
-                                <textarea
-                                    value={noteModalData.note}
-                                    onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
-                                    className="w-full h-32 p-3 border rounded-lg resize-none"
-                                    autoFocus
-                                />
-                                <div className="flex justify-end gap-2 mt-4">
-                                    <button onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })} className="px-4 py-2 border rounded-lg">Cancel</button>
-                                    <button onClick={handleSaveNote} className="px-4 py-2 bg-slate-800 text-white rounded-lg">Save</button>
+
+                            <div className="modal-form">
+                                <div className="form-group">
+                                    <label className="form-label">Note Content</label>
+                                    <textarea
+                                        value={noteModalData.note}
+                                        onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
+                                        className="form-textarea h-32"
+                                        placeholder="Enter note here..."
+                                        autoFocus
+                                    />
+                                </div>
+
+                                <div className="modal-actions">
+                                    <button
+                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                        className="cancel-btn"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleSaveNote}
+                                        className="submit-btn flex items-center justify-center gap-2"
+                                    >
+                                        <Check size={16} />
+                                        Save Note
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
 
             {/* Reported Modal */}
             <AnimatePresence>
                 {reportedModalData.isOpen && reportedModalData.details && (
-                    <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
+                    <div className="reported-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-container max-w-sm"
+                            className="reported-container max-w-sm"
                             onClick={e => e.stopPropagation()}
                         >
                             <div className="modal-header bg-red-50">
@@ -900,7 +950,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                         <AlertCircle size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="report-title text-red-800">Report Reasons</h3>
+                                        <h3 className="report-title text-red-800">Report Details</h3>
                                         <p className="modal-subtitle">Security flagging information</p>
                                     </div>
                                 </div>
@@ -923,7 +973,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                     <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
                                     <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
                                 </div>
-                                <div className="bg-slate-50 p-3 rounded-lg border">
+                                <div>
                                     <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
                                 </div>
                                 <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
@@ -1070,11 +1120,11 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: visible; /* Ensure menus aren't clipped */
+                    overflow: hidden; /* Ensure menus aren't clipped */
                     margin-top: 1.5rem;
                 }
                 .table-header {
-                    padding: 1.5rem;
+                    padding: .5rem;
                     border-radius: 12px 12px 0 0;
                     border-bottom: 1px solid #e2e8f0;
                     background: #fffaf5;
@@ -1098,6 +1148,13 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     color: #334155;
                     vertical-align: middle;
                 }
+                .user-row {
+                    transition: background-color 0.2s;
+                }
+                .user-row:hover {
+                    background: #fffaf5;
+                }
+                
                 .kebab-menu-container { position: relative; }
                 .kebab-menu-popup {
                     position: absolute;
@@ -1352,32 +1409,47 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     transform: translateY(-2px);
                 }    
 
-                /* Modal Styles */
-                .modal-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0, 0, 0, 0.5);
-                    backdrop-filter: blur(4px);
-                    z-index: 9998;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 1rem;
-                }
-                .modal-container {
-                    background: white;
-                    border-radius: 12px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-                    overflow: hidden;
-                    max-width: 500px;
-                    width: 100%;
-                }
-                .modal-header {
-                    padding: 1.25rem 1.5rem;
-                    border-bottom: 1px solid #e2e8f0;
+                .showing{
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;   
+                }
+
+                /* Standardized Modal Styles */
+                .modal-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(15, 23, 42, 0.4);
+                    backdrop-filter: blur(8px);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1.5rem;
+                }
+                .modal-container {
+                    background: white;
+                    border-radius: 20px;
+                    width: 100%;
+                    max-width: 520px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                }
+                .modal-header {
+                    padding: 1.5rem 1.75rem;
+                    border-bottom: 1px solid #f1f5f9;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    position: sticky;
+                    top: 0;
                     background: white;
                     z-index: 10;
                 }
@@ -1386,18 +1458,20 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     align-items: center;
                     gap: 1rem;
                 }
-                .modal-body {
-                    padding: 1.5rem 1.75rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                    background: white;
+                .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; }
+                .modal-subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
+                
+                .modal-close-btn {
+                    padding: 8px;
+                    color: #94a3b8;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                    background: none;
+                    border: none;
                 }
-                .modal-subtitle {
-                    font-size: 13px;
-                    color: #64748b;
-                    font-weight: 500;
-                }
+                .modal-close-btn:hover { background: #f1f5f9; color: #475569; }
+
                 .modal-icon {
                     width: 44px;
                     height: 44px;
@@ -1410,6 +1484,99 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     border: 1px solid #f1f5f9;
                 }
 
+                .modal-body {
+                    padding: 1.5rem 1.75rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
+                }
+
+                /* Form Styles for Edit Mode */
+                .modal-form { padding: 1.75rem; }
+                .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+                .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+                .form-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+                .form-input, .form-select, .form-textarea {
+                    padding: 12px 16px;
+                    border: 2px solid #f1f5f9;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    color: #0f172a;
+                    background: #f8fafc;
+                    transition: all 0.2s;
+                    font-weight: 500;
+                }
+                .form-input:focus, .form-select:focus, .form-textarea:focus {
+                    outline: none;
+                    border-color: #f97316;
+                    background: white;
+                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                }
+                .form-textarea { resize: none; min-height: 100px; }
+
+                .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+                .cancel-btn {
+                    flex: 1;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: #475569;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
+                
+                .submit-btn {
+                    flex: 1.2;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: white;
+                    background: #1e293b;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2);
+                }
+                .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 12px;
+                    border-radius: 9999px;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+                .status-badge.active { color: #059669; background: #ecfdf5; }
+                .status-badge.sold { color: #64748b; background: #f1f5f9; }
+                .status-badge.reported { color: #dc2626; background: #fef2f2; }
+                .status-badge.pending { color: #d97706; background: #fffbeb; }
+                .status-badge.draft { color: #475569; background: #f8fafc; }
+
+                /* Preserving Reported Modal (LEGACY) */
+                .reported-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(4px);
+                    z-index: 9998;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+                }
+                .reported-container {
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                    overflow: hidden;
+                    max-width: 500px;
+                    width: 100%;
+                }
                 .report-icon {
                     width: 44px;
                     height: 44px;
@@ -1435,9 +1602,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background: none;
                     border: none;
                 }
-                .report-close-btn:hover {
-                    background: rgba(239, 68, 68, 0.1);
-                }
+                .report-close-btn:hover { background: rgba(239, 68, 68, 0.1); }
 
             `}</style>
         </div >
