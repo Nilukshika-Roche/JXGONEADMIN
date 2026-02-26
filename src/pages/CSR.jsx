@@ -627,10 +627,10 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                                     handleReportedClick(item);
                                                 }
                                             }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 bg-red-50 cursor-pointer hover:bg-red-100' :
-                                                item.status === 'Ongoing' ? 'text-blue-600 bg-blue-50' :
-                                                    item.status === 'Upcoming' ? 'text-amber-600 bg-amber-50' :
-                                                        'text-slate-600 bg-slate-100'
+                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
+                                                item.status === 'Ongoing' ? 'text-blue-600' :
+                                                    item.status === 'Upcoming' ? 'text-amber-600' :
+                                                        'text-slate-600'
                                                 }`}>
                                             {item.status}
                                             {item.status === 'Reported' && <ChevronRight size={14} />}
@@ -948,37 +948,37 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                 ) : (
                                     <div className="space-y-6">
                                         {/* Icon Preview */}
-                                        <div className="w-full h-48 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl border border-emerald-300 flex items-center justify-center">
+                                        <div className="csr-preview">
                                             <div className="text-center">
                                                 <Leaf size={64} className="mx-auto mb-2 text-emerald-600" />
                                                 <p className="text-sm text-emerald-700 font-semibold">{previewItem.openTo} Initiative</p>
                                             </div>
                                         </div>
 
-                                        <div className="form-grid">
+                                        <div className="form-grid ">
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Department</p>
-                                                <p className="text-sm font-bold text-slate-800">{previewItem.department}</p>
+                                                <p className="form-label mb-1 adequate-spacing">Department</p>
+                                                <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.department}</p>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Open To</p>
-                                                <p className="text-sm font-bold text-slate-800">{previewItem.openTo}</p>
+                                                <p className="form-label mb-1 adequate-spacing">Open To</p>
+                                                <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.openTo}</p>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Status</p>
+                                                <p className="form-label mb-1 adequate-spacing">Status</p>
                                                 <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
                                                     {previewItem.status}
                                                 </span>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Initiative Date</p>
-                                                <p className="text-sm font-bold text-slate-800">{previewItem.initiativeDate}</p>
+                                                <p className="form-label mb-1 adequate-spacing">Initiative Date</p>
+                                                <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.initiativeDate}</p>
                                             </div>
                                         </div>
 
                                         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                                            <p className="text-xs font-bold text-emerald-800 uppercase tracking-wide mb-2">Notes</p>
-                                            <p className="text-sm text-emerald-900 leading-relaxed">{previewItem.notes}</p>
+                                            <p className="text-xs font-bold text-emerald-800 uppercase tracking-wide mb-2 adequate-spacing">Notes</p>
+                                            <p className="text-sm text-emerald-900 leading-relaxed adequate-spacing">{previewItem.notes}</p>
                                         </div>
 
                                         <div className="modal-actions">
@@ -1016,7 +1016,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                             className="reported-container max-w-sm"
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className="modal-header bg-red-50"> 
+                            <div className="modal-header bg-red-50">
                                 <div className="modal-header-left">
                                     <div className="report-icon text-red-600">
                                         <AlertCircle size={20} />
@@ -1202,6 +1202,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
                     overflow: hidden; /* Ensure menus aren't clipped */
                     margin-top: 1.5rem;
+                    
                 }
                 .table-container {
                     overflow-x: auto;
@@ -1563,6 +1564,24 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     gap: 1.25rem;
                 }
 
+                .csr-preview{
+                    width: 100%;
+                    height: 300px;
+                    background: linear-gradient(to bottom right, #e6fffb, #b3e6ff);
+                    border-radius: 12px;
+                    border: 1px solid #e6fffb;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 10px;                  
+                }
+                .csr-preview p{
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #475569;
+                }
+                
+                .adequate-spacing { margin: 10px; }
                 /* Form Styles for Edit Mode */
                 .modal-form { padding: 1.75rem; }
                 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }

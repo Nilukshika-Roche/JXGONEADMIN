@@ -597,10 +597,10 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                                     handleReportedClick(item);
                                                 }
                                             }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 bg-red-50 cursor-pointer hover:bg-red-100' :
-                                                item.status === 'Pending' ? 'text-amber-600 bg-amber-50' :
-                                                    item.status === 'Published' ? 'text-emerald-600 bg-emerald-50' :
-                                                        'text-slate-600 bg-slate-100'
+                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-2 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
+                                                item.status === 'Pending' ? 'text-amber-600' :
+                                                    item.status === 'Published' ? 'text-emerald-600' :
+                                                        'text-slate-600'
                                                 }`}>
                                             {item.status}
                                             {item.status === 'Reported' && <ChevronRight size={14} />}
@@ -802,7 +802,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                             ) : (
                                 <div className="modal-body">
                                     {/* Thumbnail Preview */}
-                                    <div className="w-full h-40 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl border border-slate-300 flex items-center justify-center mb-2">
+                                    <div className="content-thumbnail">
                                         <div className="text-center">
                                             {previewItem.type === 'Reel' && <Video size={40} className="mx-auto mb-2 text-slate-400" />}
                                             {previewItem.type === 'Post' && <FileText size={40} className="mx-auto mb-2 text-slate-400" />}
@@ -814,36 +814,36 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Author</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.author}</p>
+                                            <p className="adequate-spacing form-label mb-1">Author</p>
+                                            <p className="adequate-spacing text-sm font-bold text-slate-800">{previewItem.author}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Type</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.type}</p>
+                                            <p className="adequate-spacing form-label mb-1">Type</p>
+                                            <p className="adequate-spacing text-sm font-bold text-slate-800">{previewItem.type}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Status</p>
+                                            <p className="adequate-spacing form-label mb-1">Status</p>
                                             <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
                                                 {previewItem.status}
                                             </span>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Date Published</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.date}</p>
+                                            <p className="adequate-spacing form-label mb-1">Date Published</p>
+                                            <p className="adequate-spacing text-sm font-bold text-slate-800">{previewItem.date}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Views</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.views}</p>
+                                            <p className="adequate-spacing form-label mb-1">Views</p>
+                                            <p className="adequate-spacing text-sm font-bold text-slate-800">{previewItem.views}</p>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Engagement</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.engagement}</p>
+                                            <p className="adequate-spacing form-label mb-1">Engagement</p>
+                                            <p className="adequate-spacing text-sm font-bold text-slate-800">{previewItem.engagement}</p>
                                         </div>
                                     </div>
 
                                     <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
-                                        <p className="form-label mb-1 text-amber-800">Internal Notes</p>
-                                        <p className="text-sm text-amber-900 leading-relaxed">{previewItem.notes}</p>
+                                        <p className="adequate-spacing form-label mb-1 text-amber-800">Internal Notes</p>
+                                        <p className="adequate-spacing text-sm text-amber-900 leading-relaxed">{previewItem.notes}</p>
                                     </div>
 
                                     <div className="modal-actions">
@@ -1128,6 +1128,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
                     overflow: hidden;
                     margin-top: 1.5rem;
+                    border: 1px solid #e2e8f0;
                 }
                 .table-header {
                     padding: 1.5rem;
@@ -1163,6 +1164,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                 .table-container {
                     overflow-x: auto;
                 }
+                    
                 .user-table {
                     width: 100%;
                     border-collapse: collapse;
@@ -1494,6 +1496,20 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     color: #475569;
                     border: 1px solid #f1f5f9;
                 }
+
+                .content-thumbnail {
+                    width: 100%;
+                    height: 300px;
+                    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+                    border-radius: 12px;
+                    border: 1px solid #e2e8f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 1rem;
+                }
+                    /*w-full h-40 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl border border-slate-300 flex items-center justify-center mb-2*/
+
                 /* Preserving Reported Modal (LEGACY) */
                 .reported-overlay {
                     position: fixed;
@@ -1547,6 +1563,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     gap: 1.25rem;
                 }
 
+                .adequate-spacing { margin: 12px; }
                 /* Form Styles for Edit Mode */
                 .modal-form { padding: 1.75rem; }
                 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }

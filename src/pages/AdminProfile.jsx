@@ -61,21 +61,7 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
                     </h1>
                 </div>
             </div>
-            {/* Navigation Header previously used
-            <div className="mb-8">
-                <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
-                    <span
-                        className="hover:text-orange-500 cursor-pointer transition-colors"
-                        onClick={() => onNavigate?.('dashboard')}
-                    >
-                        Admin
-                    </span> &gt; Profile
-                </div>
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-                    Admin Profile
-                </h1>
-            </div>*/}
-
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Profile Card & Quick Info */}
                 <div className="lg:col-span-1 space-y-8">

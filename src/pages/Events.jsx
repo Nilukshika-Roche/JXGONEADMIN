@@ -109,6 +109,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
     const [editFormData, setEditFormData] = useState(null);
     const [noteModalData, setNoteModalData] = useState({ isOpen: false, itemId: null, note: '' });
     const [reportedModalData, setReportedModalData] = useState({ isOpen: false, item: null, details: null });
+    const [analyticsModalData, setAnalyticsModalData] = useState({ isOpen: false, event: null });
     const [openFilter, setOpenFilter] = useState(null);
     const [tableFilters, setTableFilters] = useState({
         department: 'All',
@@ -276,8 +277,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
     };
 
     const handleAnalytics = (item) => {
-        console.log('View analytics for:', item);
-        alert(`Analytics view for "${item.title}" - This feature will show event statistics and metrics.`);
+        setAnalyticsModalData({ isOpen: true, event: item });
         setActiveMenuId(null);
     };
 
@@ -645,11 +645,11 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                                     handleReportedClick(item);
                                                 }
                                             }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 bg-red-50 cursor-pointer hover:bg-red-100' :
-                                                item.status === 'Published' ? 'text-emerald-600 bg-emerald-50' :
-                                                    item.status === 'ongoing' ? 'text-blue-600 bg-blue-50' :
-                                                        item.status === 'pending' ? 'text-amber-600 bg-amber-50' :
-                                                            'text-slate-600 bg-slate-100'
+                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
+                                                item.status === 'Published' ? 'text-emerald-600' :
+                                                    item.status === 'ongoing' ? 'text-blue-600' :
+                                                        item.status === 'pending' ? 'text-amber-600' :
+                                                            'text-slate-600'
                                                 }`}>
                                             {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                                             {item.status === 'Reported' && <ChevronRight size={14} />}
@@ -680,7 +680,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 )}
 
                 {/* Footer */}
-                <div className="showing">
+                <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
                     <div>
                         Showing {filteredEvents.length > 0 ? 1 : 0} to {filteredEvents.length} of {events.length} results
                     </div>
@@ -803,17 +803,8 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                             <input
                                                 type="text"
                                                 value={editFormData?.department || ''}
-                                                onChange={(e) => handleFormChange('department', e.target.value)}
-                                                className="form-input"
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">Requirement</label>
-                                            <input
-                                                type="text"
-                                                value={editFormData?.requirement || ''}
-                                                onChange={(e) => handleFormChange('requirement', e.target.value)}
-                                                className="form-input"
+                                                disabled
+                                                className="form-input opacity-70"
                                             />
                                         </div>
                                         <div className="form-group">
@@ -835,16 +826,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                                 type="text"
                                                 value={editFormData?.date || ''}
                                                 onChange={(e) => handleFormChange('date', e.target.value)}
-                                                className="form-input"
-                                                placeholder="e.g. 15 Oct, 2024"
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-label">Attendees</label>
-                                            <input
-                                                type="number"
-                                                value={editFormData?.attendees || ''}
-                                                onChange={(e) => handleFormChange('attendees', e.target.value)}
                                                 className="form-input"
                                             />
                                         </div>
@@ -888,42 +869,46 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                 </div>
                             ) : (
                                 <div className="modal-body">
-                                    {/* Event Icon Preview */}
-                                    <div className="w-full h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl border border-blue-300 flex items-center justify-center mb-2">
+                                    {/* Event Hero */}
+                                    <div className="event-preview-hero">
                                         <div className="text-center">
-                                            <Calendar size={48} className="mx-auto mb-2 text-blue-600" />
-                                            <p className="text-sm text-blue-700 font-semibold">{previewItem.status} Event</p>
+                                            <Calendar size={64} className="mx-auto mb-2 text-blue-600" />
+                                            <p className="text-sm text-blue-700 font-semibold">{previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)} Event</p>
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Department</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.department}</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Department</p>
+                                            <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.department}</p>
                                         </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Requirement</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.requirement}</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Requirement</p>
+                                            <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.requirement}</p>
                                         </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Status</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Status</p>
                                             <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
-                                                {previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)}
+                                                {previewItem.status}
                                             </span>
                                         </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Date & Time</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.date} at {previewItem.time}</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Event Date</p>
+                                            <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.date}</p>
                                         </div>
-                                        <div className="bg-slate-50 p-4 rounded-lg">
-                                            <p className="form-label mb-1">Capacity</p>
-                                            <p className="text-sm font-bold text-slate-800">{previewItem.attendees} / {previewItem.capacity} People</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Attendees</p>
+                                            <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.attendees} / {previewItem.capacity}</p>
+                                        </div>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Capacity</p>
+                                            <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.capacity} people</p>
                                         </div>
                                     </div>
 
-                                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
-                                        <p className="form-label mb-1 text-amber-800">Notes</p>
-                                        <p className="text-sm text-amber-900 leading-relaxed">{previewItem.notes}</p>
+                                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                                        <p className="form-label mb-1 adequate-spacing text-amber-800">Internal Notes</p>
+                                        <p className="text-sm text-amber-900 leading-relaxed adequate-spacing">{previewItem.notes}</p>
                                     </div>
 
                                     <div className="modal-actions">
@@ -941,7 +926,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                             style={{ background: '#059669' }}
                                         >
                                             <CheckCircle2 size={16} />
-                                            Approve
+                                            Confirm
                                         </button>
                                     </div>
                                 </div>
@@ -954,118 +939,196 @@ const Events = ({ setActiveTab: onNavigate }) => {
             {/* Note Edit Modal */}
             <AnimatePresence>
                 {noteModalData.isOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
-                        />
+                    <div className="modal-overlay" onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-                            onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                            className="modal-container"
+                            style={{ maxWidth: '450px' }}
+                            onClick={e => e.stopPropagation()}
                         >
-                            <div
-                                className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                                    <h3 className="text-lg font-bold text-slate-800">Edit Note</h3>
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon">
+                                        <FileText size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="modal-title">Edit Note</h3>
+                                        <p className="modal-subtitle">Update internal comments for this event</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <textarea
+                                    value={noteModalData.note}
+                                    onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
+                                    rows={4}
+                                    className="form-textarea w-full"
+                                    placeholder="Add a note..."
+                                    autoFocus
+                                />
+                                <div className="modal-actions">
                                     <button
                                         onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                        className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
-                                    >
-                                        <X size={20} />
-                                    </button>
-                                </div>
-                                <div className="p-6">
-                                    <textarea
-                                        value={noteModalData.note}
-                                        onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
-                                        rows={4}
-                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none resize-none text-slate-700 font-medium"
-                                        placeholder="Add a note..."
-                                        autoFocus
-                                    />
-                                </div>
-                                <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex gap-3">
-                                    <button
-                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                        className="flex-1 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-sm transition-colors"
+                                        className="cancel-btn"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleSaveNote}
-                                        className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition-colors shadow-lg shadow-blue-200"
+                                        className="submit-btn"
+                                        style={{ background: '#3b82f6' }}
                                     >
                                         Save Note
                                     </button>
                                 </div>
                             </div>
                         </motion.div>
-                    </>
+                    </div>
                 )}
             </AnimatePresence>
 
 
-            {/* Reported Content Modal */}
+            {/* Reported Modal */}
             <AnimatePresence>
                 {reportedModalData.isOpen && reportedModalData.details && (
-                    <div className="reported-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
+                    <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="reported-container max-w-sm"
+                            className="modal-container"
+                            style={{ maxWidth: '400px' }}
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className="modal-header">
+                            <div className="modal-header bg-red-50/50">
                                 <div className="modal-header-left">
-                                    <div className="report-icon text-red-600">
+                                    <div className="report-icon">
                                         <AlertCircle size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="report-title text-red-800">Report Details</h3>
+                                        <h3 className="report-title">Report Reasons</h3>
                                         <p className="modal-subtitle">Security flagging information</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                                    className="report-close-btn text-red-400"
+                                    className="modal-close-btn"
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
                             <div className="modal-body">
-                                <div className="flex gap-40">
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
-                                        <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
+                                        <p className="analytics-stat-label">Reported By</p>
+                                        <p className="text-sm font-bold text-slate-800">{reportedModalData.details.reportedBy}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
-                                        <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
+                                        <p className="analytics-stat-label">Reported Date</p>
+                                        <p className="text-sm font-bold text-slate-800">{reportedModalData.details.reportedDate}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="analytics-stat-label">Reason</p>
+                                    <span className="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-lg border border-red-200">
+                                        {reportedModalData.details.reason}
+                                    </span>
+                                </div>
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <p className="text-sm italic text-slate-600 leading-relaxed">
+                                        "{reportedModalData.details.description}"
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
+                                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition-all"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Analytics Modal */}
+            <AnimatePresence>
+                {analyticsModalData.isOpen && analyticsModalData.event && (
+                    <div className="modal-overlay" onClick={() => setAnalyticsModalData({ isOpen: false, event: null })}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="modal-container"
+                            style={{ maxWidth: '450px' }}
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon" style={{ background: '#eff6ff', color: '#3b82f6' }}>
+                                        <BarChart size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="modal-title">Event Analytics</h3>
+                                        <p className="modal-subtitle">Engagement metrics for {analyticsModalData.event.title}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setAnalyticsModalData({ isOpen: false, event: null })}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="analytics-card">
+                                    <div className="analytics-grid">
+                                        <div>
+                                            <p className="analytics-stat-label">Total Attendees</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="analytics-stat-value">{analyticsModalData.event.attendees}</p>
+                                                <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">+{Math.floor(Math.random() * 10)}%</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="analytics-stat-label">Capacity Util.</p>
+                                            <p className="analytics-stat-value">{Math.round((analyticsModalData.event.attendees / analyticsModalData.event.capacity) * 100)}%</p>
+                                        </div>
+                                        <div>
+                                            <p className="analytics-stat-label">Engagement Rate</p>
+                                            <p className="analytics-stat-value">{65 + Math.floor(Math.random() * 20)}%</p>
+                                        </div>
+                                        <div>
+                                            <p className="analytics-stat-label">Feedback Score</p>
+                                            <p className="analytics-stat-value">4.8/5.0</p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
-                                </div>
-                                <div>
-                                    <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
+                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                    <div className="flex items-center gap-2 mb-2 adequate-spacing">
+                                        <TrendingUp size={16} className="text-blue-600" />
+                                        <p className="text-xs font-bold text-blue-800 uppercase tracking-wid">Performance Insights</p>
+                                    </div>
+                                    <p className="text-sm text-blue-900 leading-relaxed adequate-spacing">
+                                        This event has seen a high interest from the <strong>{analyticsModalData.event.department}</strong>.
+                                        Consider increasing the capacity for similar future events.
+                                    </p>
                                 </div>
 
                                 <button
-                                    onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors"
+                                    onClick={() => setAnalyticsModalData({ isOpen: false, event: null })}
+                                    className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-slate-200"
                                 >
-                                    Close
+                                    Done
                                 </button>
                             </div>
                         </motion.div>
@@ -1215,8 +1278,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden;
+                    overflow: visible;
                     margin-top: 1.5rem;
+                    
                 }
                 .table-container {
                     overflow-x: auto;
@@ -1478,32 +1542,35 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     transform: translateY(-2px);
                 }
 
-                /* Modal Styles */
+                /* Standardized Modal Styles */
                 .modal-overlay {
                     position: fixed;
                     inset: 0;
-                    background: rgba(0, 0, 0, 0.5);
-                    backdrop-filter: blur(4px);
+                    background: rgba(15, 23, 42, 0.4);
+                    backdrop-filter: blur(8px);
                     z-index: 10001; /* High z-index to appear on top */
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 1rem;
+                    padding: 1.5rem;
                 }
                 .modal-container {
                     background: white;
-                    border-radius: 12px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-                    overflow: hidden;
-                    max-width: 500px;
+                    border-radius: 20px;
                     width: 100%;
+                    max-width: 520px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
                 }
                 .modal-header {
-                    padding: 1.25rem 1.5rem;
-                    border-bottom: 1px solid #e2e8f0;
+                    padding: 1.5rem 1.75rem;
+                    border-bottom: 1px solid #f1f5f9;
                     display: flex;
                     justify-content: space-between;
-                    align-items: center;
+                    align-items: flex-start;
+                    position: sticky;
+                    top: 0;
                     background: white;
                     z-index: 10;
                 }
@@ -1512,18 +1579,20 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     align-items: center;
                     gap: 1rem;
                 }
-                .modal-body {
-                    padding: 1.5rem 1.75rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                    background: white;
+                .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; }
+                .modal-subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
+                
+                .modal-close-btn {
+                    padding: 8px;
+                    color: #94a3b8;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                    background: none;
+                    border: none;
                 }
-                .modal-subtitle {
-                    font-size: 13px;
-                    color: #64748b;
-                    font-weight: 500;
-                }
+                .modal-close-btn:hover { background: #f1f5f9; color: #475569; }
+
                 .modal-icon {
                     width: 44px;
                     height: 44px;
@@ -1535,6 +1604,91 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     color: #475569;
                     border: 1px solid #f1f5f9;
                 }
+
+                .modal-body {
+                    padding: 1.5rem 1.75rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
+                }
+
+                .event-preview-hero {
+                    width: 100%;
+                    height: 240px;
+                    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+                    border-radius: 16px;
+                    border: 1px solid #bfdbfe;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 0.5rem;
+                }
+
+                .adequate-spacing { margin: 10px; }
+                /* Form Styles for Edit Mode */
+                .modal-form { padding: 1.75rem; }
+                .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+                .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+                .form-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+                .form-input, .form-select, .form-textarea {
+                    padding: 12px 16px;
+                    border: 2px solid #f1f5f9;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    color: #0f172a;
+                    background: #f8fafc;
+                    transition: all 0.2s;
+                    font-weight: 500;
+                }
+                .form-input:focus, .form-select:focus, .form-textarea:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    background: white;
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+                }
+                .form-textarea { resize: none; min-height: 100px; }
+
+                .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+                .cancel-btn {
+                    flex: 1;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: #475569;
+                    background: #f1f5f9;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
+                
+                .submit-btn {
+                    flex: 1.2;
+                    padding: 12px;
+                    font-size: 14px; font-weight: 700;
+                    color: white;
+                    background: #1e293b;
+                    border: none;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2);
+                }
+                .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 12px;
+                    border-radius: 9999px;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+                .status-badge.published { color: #059669; background: #ecfdf5; }
+                .status-badge.ongoing { color: #2563eb; background: #eff6ff; }
+                .status-badge.pending { color: #d97706; background: #fffbeb; }
+                .status-badge.reported { color: #dc2626; background: #fef2f2; }
 
                 .report-icon {
                     width: 44px;
@@ -1563,6 +1717,30 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 }
                 .report-close-btn:hover {
                     background: rgba(239, 68, 68, 0.1);
+                }
+
+                .analytics-card {
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 16px;
+                    padding: 1.25rem;
+                }
+                .analytics-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 1rem;
+                }
+                .analytics-stat-label {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: #64748b;
+                    text-transform: uppercase;
+                    margin-bottom: 4px;
+                }
+                .analytics-stat-value {
+                    font-size: 18px;
+                    font-weight: 800;
+                    color: #0f172a;
                 }
                 .report-table {
                     border-radius: 12px;
@@ -1741,441 +1919,8 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     color: #94a3b8;
                     pointer-events: none;
                 }
-
-                .metrics {
-                    display: grid;
-                    grid-template-columns: repeat(4, minmax(140px, 1fr));
-                    gap: 0.5rem;
-                    width: 100%;
-                    max-width: 720px;
-                }
-                .metric {
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 10px;
-                    padding: 0.75rem;
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 90px;
-                }
-                .metric:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-                }
-                .metric.active {
-                    border-width: 2px;
-                }
-
-                /* Color Variants */
-                .metric.emerald {background: #f0fdf4; border-color: #bbf7d0; }
-                .metric.emerald.active {border-color: #10b981; }
-                .metric.amber {background: #fffbeb; border-color: #fde68a; }
-                .metric.amber.active {border-color: #f59e0b; }
-                .metric.red {background: #fef2f2; border-color: #fecaca; }
-                .metric.red.active {border-color: #ef4444; }
-
-                /* Blue Variant for Events */
-                .metric.blue {background: #eff6ff; border-color: #bfdbfe; }
-                .metric.blue.active {border-color: #3b82f6; }
-
-                .metric-bg {
-                    position: absolute;
-                    top: -20px;
-                    right: -20px;
-                    width: 60px;
-                    height: 60px;
-                    border-radius: 50%;
-                    filter: blur(10px);
-                    opacity: 0.5;
-                }
-                .metric.emerald .metric-bg {background: rgba(16, 185, 129, 0.2); }
-                .metric.amber .metric-bg {background: rgba(245, 158, 11, 0.2); }
-                .metric.red .metric-bg {background: rgba(239, 68, 68, 0.2); }
-                .metric.blue .metric-bg {background: rgba(59, 130, 246, 0.2); }
-
-                .metric-content {
-                    position: relative;
-                    z-index: 1;
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                }
-                .metric-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 4px;
-                }
-                .metric-icon {
-                    padding: 6px;
-                    border-radius: 6px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .metric.emerald .metric-icon {background: #dcfce7; color: #059669; }
-                .metric.amber .metric-icon {background: #fef3c7; color: #d97706; }
-                .metric.red .metric-icon {background: #fee2e2; color: #dc2626; }
-                .metric.blue .metric-icon {background: #dbeafe; color: #2563eb; }
-
-                .metric-icon svg {
-                    width: 16px;
-                    height: 16px;
-                }
-                .metric-trend {
-                    display: flex;
-                    align-items: center;
-                    gap: 3px;
-                    padding: 2px 6px;
-                    border-radius: 20px;
-                    font-size: 10px;
-                    font-weight: 700;
-                }
-                .metric.emerald .metric-trend {background: #d1fae5; color: #065f46; }
-                .metric.amber .metric-trend {background: #ffedd5; color: #9a3412; }
-                .metric.red .metric-trend {background: #fee2e2; color: #991b1b; }
-                .metric.blue .metric-trend {background: #dbeafe; color: #1e40af; }
-
-                .metric-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0px;
-                }
-                .metric-label {
-                    font-size: 10px;
-                    font-weight: 600;
-                    color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin: 0;
-                }
-                .metric-value {
-                    font-size: 20px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .metric-progress {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 3px;
-                    background: rgba(0,0,0,0.05);
-                }
-                .metric-progress-fill {
-                    height: 100%;
-                    transition: width 1s ease-out;
-                }
-                .metric.emerald .metric-progress-fill {background: #10b981; }
-                .metric.amber .metric-progress-fill {background: #f59e0b; }
-                .metric.red .metric-progress-fill {background: #ef4444; }
-                .metric.blue .metric-progress-fill {background: #3b82f6; }
-
-                /* Empty State */
-                .empty-state {
-                    text-align: center;
-                    padding: 60px 20px;
-                    border-top: 1px solid #e2e8f0;
-                }
-                .empty-icon {
-                    width: 64px;
-                    height: 64px;
-                    background: #f1f5f9;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto 20px;
-                    color: #94a3b8;
-                }
-                .empty-state h3 {
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #0f172a;
-                    margin: 0 0 8px;
-                }
-                .empty-state p {
-                    font-size: 14px;
-                    color: #64748b;
-                    margin: 0;
-                }
-
-                /* Filter Dropdown Overlay */
-                .filter-dropdown-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    z-index: 10000;
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: center;
-                    padding-top: 15vh;
-                    background: rgba(0, 0, 0, 0.4);
-                    backdrop-filter: blur(2px);
-                }
-                .filter-dropdown-card {
-                    background: white;
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-                    min-width: 220px;
-                    max-width: 320px;
-                }
-                .filter-dropdown-header {
-                    margin-bottom: 1rem;
-                    border-bottom: 1px solid #f1f5f9;
-                    padding-bottom: 0.75rem;
-                }
-                .filter-dropdown-header h4 {
-                    font-size: 14px;
-                    font-weight: 700;
-                    color: #1e293b;
-                    margin: 0;
-                }
-                .filter-options {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.25rem;
-                    max-height: 300px;
-                    overflow-y: auto;
-                    padding-right: 4px;
-                }
-                .filter-options::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .filter-options::-webkit-scrollbar-thumb {
-                    background: #cbd5e1;
-                    border-radius: 4px;
-                }
-                .filter-option {
-                    padding: 10px 12px;
-                    background: none;
-                    border: none;
-                    border-radius: 8px;
-                    font-size: 13px;
-                    color: #475569;
-                    text-align: left;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .filter-option:hover {
-                    background: #f1f5f9;
-                    color: #1e293b;
-                }
-                .filter-option.active {
-                    background: #fff7ed;
-                    color: #f97316;
-                    font-weight: 700;
-                }
-
-                .show-more-btn:hover svg {
-                    transform: translateY(-2px);
-                }
-
-                .showing{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 10px 16px;
-                    border-radius: 8px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    border: none;   
-                }
-
-                /* Modal Styles - Unified with PeopleManagement */
-                .modal-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(15, 23, 42, 0.4);
-                    backdrop-filter: blur(8px);
-                    z-index: 9999;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 1.5rem;
-                }
-                .modal-container {
-                    background: white;
-                    border-radius: 20px;
-                    width: 100%;
-                    max-width: 520px;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                }
-                .modal-header {
-                    padding: 1.5rem 1.75rem;
-                    border-bottom: 1px solid #f1f5f9;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    position: sticky;
-                    top: 0;
-                    background: white;
-                    z-index: 10;
-                }
-                .modal-header-left {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                }
-                .modal-title { font-size: 20px; font-weight: 800; color: #0f172a; }
-                .modal-subtitle { font-size: 13px; color: #64748b; font-weight: 500; }
-                
-                .modal-close-btn {
-                    padding: 8px;
-                    color: #94a3b8;
-                    cursor: pointer;
-                    border-radius: 8px;
-                    transition: all 0.2s;
-                    background: none;
-                    border: none;
-                }
-                .modal-close-btn:hover { background: #f1f5f9; color: #475569; }
-
-                .modal-icon {
-                    width: 44px;
-                    height: 44px;
-                    background: #f8fafc;
-                    border-radius: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #475569;
-                    border: 1px solid #f1f5f9;
-                }
-
-                /* Preserving Reported Modal (LEGACY) */
-                .reported-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0, 0, 0, 0.5);
-                    backdrop-filter: blur(4px);
-                    z-index: 9998;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 1rem;
-                }
-                .reported-container {
-                    background: white;
-                    border-radius: 12px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-                    overflow: hidden;
-                    max-width: 500px;
-                    width: 100%;
-                }
-                .report-icon {
-                    width: 44px;
-                    height: 44px;
-                    background: #fef2f2;
-                    border-radius: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #ef4444;
-                    border: 1px solid #fee2e2;
-                }
-                .report-title {
-                    font-size: 20px;
-                    font-weight: 800;
-                    color: #ef4444;
-                }
-                .report-close-btn {
-                    padding: 8px;
-                    color: #d55a5aff;
-                    cursor: pointer;
-                    border-radius: 8px;
-                    transition: all 0.2s;
-                    background: none;
-                    border: none;
-                }
-                .report-close-btn:hover { background: rgba(239, 68, 68, 0.1); }
-
-                .modal-body {
-                    padding: 1.5rem 1.75rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                }
-
-                /* Form Styles for Edit Mode */
-                .modal-form { padding: 1.75rem; }
-                .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
-                .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-                .form-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
-                .form-input, .form-select, .form-textarea {
-                    padding: 12px 16px;
-                    border: 2px solid #f1f5f9;
-                    border-radius: 12px;
-                    font-size: 14px;
-                    color: #0f172a;
-                    background: #f8fafc;
-                    transition: all 0.2s;
-                    font-weight: 500;
-                }
-                .form-input:focus, .form-select:focus, .form-textarea:focus {
-                    outline: none;
-                    border-color: #f97316;
-                    background: white;
-                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
-                }
-                .form-textarea { resize: none; min-height: 100px; }
-
-                .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
-                .cancel-btn {
-                    flex: 1;
-                    padding: 12px;
-                    font-size: 14px; font-weight: 700;
-                    color: #475569;
-                    background: #f1f5f9;
-                    border: none;
-                    border-radius: 12px;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
-                
-                .submit-btn {
-                    flex: 1.2;
-                    padding: 12px;
-                    font-size: 14px; font-weight: 700;
-                    color: white;
-                    background: #1e293b;
-                    border: none;
-                    border-radius: 12px;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2);
-                }
-                .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
-
-                .status-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 4px 12px;
-                    border-radius: 9999px;
-                    font-size: 12px;
-                    font-weight: 700;
-                }
-                .status-badge.published { color: #059669; background: #ecfdf5; }
-                .status-badge.ongoing { color: #2563eb; background: #eff6ff; }
-                .status-badge.pending { color: #d97706; background: #fffbeb; }
-                .status-badge.reported { color: #dc2626; background: #fef2f2; }
             `}</style>
-        </div>
+        </div >
     );
 };
 

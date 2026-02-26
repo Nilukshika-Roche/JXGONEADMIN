@@ -594,10 +594,10 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                                 handleReportedClick(item);
                                             }
                                         }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 bg-red-50 cursor-pointer hover:bg-red-100' :
-                                                item.status === 'Pending' ? 'text-amber-600 bg-amber-50' :
-                                                    item.status === 'Active' ? 'text-emerald-600 bg-emerald-50' :
-                                                        'text-slate-600 bg-slate-100'
+                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
+                                                item.status === 'Pending' ? 'text-amber-600' :
+                                                    item.status === 'Active' ? 'text-emerald-600' :
+                                                        'text-slate-600'
                                                 }`}>
                                             {item.status}
                                             {item.status === 'Reported' && <ChevronRight size={14} />}
@@ -814,7 +814,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                 ) : (
                                     <div className="space-y-6">
                                         {/* Image Preview */}
-                                        <div className="w-full h-48 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border border-orange-200 flex items-center justify-center overflow-hidden">
+                                        <div className="market-preview">
                                             <div className="text-center">
                                                 <ShoppingBag size={64} className="mx-auto mb-2 text-orange-600" />
                                                 <p className="text-sm text-orange-700 font-semibold">{previewItem.category} Category</p>
@@ -823,28 +823,28 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
 
                                         <div className="form-grid">
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Seller</p>
-                                                <p className="text-sm font-bold text-slate-800">{previewItem.seller}</p>
+                                                <p className="form-label mb-1 adequate-spacing">Seller</p>
+                                                <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.seller}</p>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Price</p>
-                                                <p className="text-sm font-bold text-orange-600">{previewItem.price}</p>
+                                                <p className="form-label mb-1 adequate-spacing">Price</p>
+                                                <p className="text-sm font-bold text-orange-600 adequate-spacing">{previewItem.price}</p>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Status</p>
+                                                <p className="form-label mb-1 adequate-spacing">Status</p>
                                                 <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
                                                     {previewItem.status}
                                                 </span>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1">Posted Date</p>
-                                                <p className="text-sm font-bold text-slate-800">{previewItem.date}</p>
+                                                <p className="form-label mb-1 adequate-spacing">Posted Date</p>
+                                                <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.date}</p>
                                             </div>
                                         </div>
 
                                         <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
-                                            <p className="text-xs font-bold text-orange-800 uppercase tracking-wide mb-2">Listing Notes</p>
-                                            <p className="text-sm text-orange-900 leading-relaxed">{previewItem.notes}</p>
+                                            <p className="text-xs font-bold text-orange-800 uppercase tracking-wide mb-2 adequate-spacing">Listing Notes</p>
+                                            <p className="text-sm text-orange-900 leading-relaxed adequate-spacing">{previewItem.notes}</p>
                                         </div>
 
                                         <div className="modal-actions">
@@ -1122,6 +1122,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
                     overflow: hidden; /* Ensure menus aren't clipped */
                     margin-top: 1.5rem;
+                    
                 }
                 .table-header {
                     padding: .5rem;
@@ -1491,6 +1492,19 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     gap: 1.25rem;
                 }
 
+                .market-preview {
+                    width: 100%;
+                    height: 300px;
+                    background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+                    border-radius: 12px;
+                    border: 1px solid #fde68a;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                    margin-bottom: 1.5rem;
+                }
+                .adequate-spacing { margin: 10px; }
                 /* Form Styles for Edit Mode */
                 .modal-form { padding: 1.75rem; }
                 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }

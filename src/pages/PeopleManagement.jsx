@@ -588,7 +588,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                     </td>
                                     <td><div className="text-sm font-medium text-slate-600">{user.department}</div></td>
                                     <td>
-                                        <span className="px-2 py-1 rounded-lg text-xs font-bold" style={{ backgroundColor: `${getRoleColor(user.role)}15`, color: getRoleColor(user.role) }}>
+                                        <span className="px-4 py-4 rounded-lg text-xs font-bold" style={{ color: getRoleColor(user.role) }}>
                                             {user.role}
                                         </span>
                                     </td>
@@ -599,8 +599,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                                     e.stopPropagation();
                                                     handleReportedClick(user);
                                                 }
-                                            }}
-                                            className={`flex items-center gap-1.5 ${user.status === 'Reported' ? 'cursor-pointer hover:bg-red-50 px-2 py-1 rounded-full w-fit' : ''}`}
+                                            }} 
+                                            className={`flex items-center gap-1.5 ${user.status === 'Reported' ? 'cursor-pointer hover:bg-red-50 px-2 py-1 rounded-full ' : ''}`}
                                         >
                                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(user.status) }} />
                                             <span className="text-sm font-bold" style={{ color: getStatusColor(user.status) }}>{user.status}</span>
