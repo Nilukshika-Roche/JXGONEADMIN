@@ -874,61 +874,60 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
             {/* Note Edit Modal */}
             <AnimatePresence>
                 {noteModalData.isOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
-                        />
+                    <div className="modal-overlay" onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-                            onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                            className="modal-container max-w-md"
+                            onClick={e => e.stopPropagation()}
                         >
-                            <div
-                                className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                                    <h3 className="text-lg font-bold text-slate-800">Edit Note</h3>
-                                    <button
-                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                        className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
-                                    >
-                                        <X size={20} />
-                                    </button>
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon">
+                                        <FileText size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="modal-title">Edit Note</h3>
+                                        <p className="modal-subtitle">Update internal comments for this content</p>
+                                    </div>
                                 </div>
-                                <div className="p-6">
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="modal-form">
+                                <div className="form-group">
+                                    <label className="form-label">Note Content</label>
                                     <textarea
                                         value={noteModalData.note}
                                         onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
-                                        rows={4}
-                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none resize-none text-slate-700 font-medium"
-                                        placeholder="Add a note..."
+                                        className="form-textarea h-32"
+                                        placeholder="Enter note here..."
                                         autoFocus
                                     />
                                 </div>
-                                <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex gap-3">
-                                    <button
-                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                        className="flex-1 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-sm transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleSaveNote}
-                                        className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition-colors shadow-lg shadow-blue-200"
-                                    >
-                                        Save Note
-                                    </button>
-                                </div>
+                            </div>
+                            <div className="modal-actions">
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="cancel-btn"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSaveNote}
+                                    className="submit-btn flex items-center justify-center gap-2"
+                                >
+                                    <Check size={16} />
+                                    Save Note
+                                </button>
                             </div>
                         </motion.div>
-                    </>
+                    </div>
                 )}
             </AnimatePresence>
 

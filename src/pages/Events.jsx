@@ -944,8 +944,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="modal-container"
-                            style={{ maxWidth: '450px' }}
+                            className="modal-container max-w-md"
                             onClick={e => e.stopPropagation()}
                         >
                             <div className="modal-header">
@@ -965,31 +964,34 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                     <X size={20} />
                                 </button>
                             </div>
-                            <div className="modal-body">
-                                <textarea
-                                    value={noteModalData.note}
-                                    onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
-                                    rows={4}
-                                    className="form-textarea w-full"
-                                    placeholder="Add a note..."
-                                    autoFocus
-                                />
-                                <div className="modal-actions">
-                                    <button
-                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                        className="cancel-btn"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleSaveNote}
-                                        className="submit-btn"
-                                        style={{ background: '#3b82f6' }}
-                                    >
-                                        Save Note
-                                    </button>
+                            <div className="modal-form">
+                                <div className="form-group">
+                                    <label className="form-label">Note Content</label>
+                                    <textarea
+                                        value={noteModalData.note}
+                                        onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
+                                        className="form-textarea h-32"
+                                        placeholder="Enter note here..."
+                                        autoFocus
+                                    />
                                 </div>
+                            
+                            <div className="modal-actions">
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="cancel-btn"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSaveNote}
+                                    className="submit-btn flex items-center justify-center gap-2"
+                                >
+                                    <Check size={16} />
+                                    Save Note
+                                </button>
                             </div>
+                        </div>
                         </motion.div>
                     </div>
                 )}
@@ -1920,6 +1922,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     pointer-events: none;
                 }
             `}</style>
+
         </div >
     );
 };

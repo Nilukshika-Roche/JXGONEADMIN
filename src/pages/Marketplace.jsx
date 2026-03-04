@@ -885,7 +885,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             <div className="modal-header">
                                 <div className="modal-header-left">
                                     <div className="modal-icon">
-                                        <FileText size={20} className="text-blue-500" />
+                                        <FileText size={20}/>
                                     </div>
                                     <div>
                                         <h3 className="modal-title">Edit Note</h3>

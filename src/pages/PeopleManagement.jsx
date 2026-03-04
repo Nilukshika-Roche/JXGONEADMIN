@@ -444,7 +444,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
     return (
         <div className="p-6 max-w-[1400px] mx-auto font-sans text-slate-800">
-            {/* Header Section, nmatched content mgmt header padding */}
+            {/* Header Section, matched content mgmt header padding */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-8 gap-6">
                 {/* Left: Breadcrumbs & Title */}
                 <div>
@@ -1101,48 +1101,63 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
                 {/* Reason Edit Modal */}
                 <AnimatePresence>
-                    {reasonModalData.isOpen && (
-                        <div className="modal-overlay" onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })}>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 20 }}
-                                className="modal-container max-w-md"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className="modal-header bg-slate-50/50">
-                                    <div className="modal-header-left">
-                                        <div className="modal-icon">
-                                            <Edit2 size={18} />
-                                        </div>
-                                        <h3 className="modal-title">Edit Reasons / Notes</h3>
+                {noteModalData.isOpen && (
+                    <div className="modal-overlay" onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="modal-container max-w-md"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="modal-header">
+                                <div className="modal-header-left">
+                                    <div className="modal-icon">
+                                        <FileText size={20} />
                                     </div>
-                                    <button onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })} className="modal-close-btn">
-                                        <X size={20} />
-                                    </button>
+                                    <div>
+                                        <h3 className="modal-title">Edit Reason / Note</h3>
+                                        <p className="modal-subtitle">Update Reason for being reported or user notes</p>
+                                    </div>
                                 </div>
-                                <div className="p-6">
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="modal-close-btn"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <div className="modal-form">
+                                <div className="form-group">
+                                    <label className="form-label">Note Content</label>
                                     <textarea
-                                        value={reasonModalData.reason}
-                                        onChange={(e) => setReasonModalData(prev => ({ ...prev, reason: e.target.value }))}
-                                        rows={4}
-                                        className="form-input h-32 w-full resize-none"
-                                        placeholder="Add reason for being reported or user notes..."
+                                        value={noteModalData.note}
+                                        onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
+                                        className="form-textarea h-32"
+                                        placeholder="Enter note here..."
                                         autoFocus
                                     />
-                                    <div className="flex justify-end gap-3 mt-6">
-                                        <button onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })} className="cancel-btn">
-                                            Cancel
-                                        </button>
-                                        <button onClick={handleSaveReason} className="submit-btn px-8">
-                                            Save Changes
-                                        </button>
-                                    </div>
                                 </div>
-                            </motion.div>
-                        </div>
-                    )}
-                </AnimatePresence>
+                            </div>
+                            <div className="modal-actions">
+                                <button
+                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    className="cancel-btn"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSaveNote}
+                                    className="submit-btn flex items-center justify-center gap-2"
+                                >
+                                    <Check size={16} />
+                                    Save Note
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             </AnimatePresence>
 
@@ -1352,12 +1367,10 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     gap: 1rem;
                 }
                 .modal-body {
-                    
                     padding: 1.5rem 1.75rem;
-                    gap: .5rem;
                     display: flex;
                     flex-direction: column;
-                    justify-content: space-between;
+                    gap: 1.25rem;
                 }
                 .modal-icon {
                     width: 44px;
@@ -1405,6 +1418,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     cursor: pointer;
                     border-radius: 8px;
                     transition: all 0.2s;
+                    background: none;
+                    border: none;
                 }
                 .modal-close-btn:hover { background: #f1f5f9; color: #475569; }
 

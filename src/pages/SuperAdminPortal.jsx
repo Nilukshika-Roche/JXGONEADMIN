@@ -38,7 +38,8 @@ import PageCSR from './PageCSR';
 import MediaHubPage from './MediaHubPage.jsx';
 import Activity from './Activity';
 import CompanyProfile from './CompanyProfile';
-import EditPage from './EditPage'; // Import EditPage (LinkedInPageEditor)
+import EditPage from './EditPage';
+import AdminProfile from './AdminProfile';
 import './CompanyProfile.css';
 
 const styles = {
@@ -180,7 +181,9 @@ const styles = {
         alignItems: 'center',
         gap: '12px',
         padding: '12px',
-        borderRadius: '12px'
+        borderRadius: '12px',
+        cursor: 'pointer',
+        transition: 'background-color 0.2s ease'
     },
     avatar: {
         width: '40px',
@@ -269,6 +272,7 @@ const SuperAdminPortal = ({ onLogout }) => {
             case 'sa-dashboard': return <SuperAdminDashboard />;
             case 'admin-mgt': return <AdminManagement />;
             case 'company-mgt': return <CompanyManagement onSelectCompany={handleCompanySelect} />;
+            case 'profile': return <AdminProfile setActiveTab={setActiveTab} />;
             case 'dashboard': return <Dashboard company={selectedCompany} />;
             case 'page-view': return <PageView companyData={selectedCompany || {}} setActiveTab={(tab) => {
                 if (tab === 'edit') setActiveTab('edit-page');
@@ -454,13 +458,27 @@ const SuperAdminPortal = ({ onLogout }) => {
                 </nav>
 
                 <div style={styles.profile}>
-                    <div style={styles.profileCard}>
+                    <div
+                        style={{
+                            ...styles.profileCard,
+                            backgroundColor: activeTab === 'profile' ? '#f8fafc' : 'transparent'
+                        }}
+                        onClick={() => setActiveTab('profile')}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = activeTab === 'profile' ? '#f8fafc' : 'transparent'}
+                    >
                         <img src="https://i.pravatar.cc/150?u=super" alt="Super Admin" style={styles.avatar} />
                         <div style={{ flex: 1 }}>
                             <p style={{ fontSize: '14px', fontWeight: 700 }}>Super User</p>
                             <p style={{ fontSize: '12px', color: '#64748b' }}>Master Access</p>
                         </div>
-                        <button onClick={onLogout} style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer' }}>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onLogout();
+                            }}
+                            style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer' }}
+                        >
                             <LogOut size={18} color="#ef4444" />
                         </button>
                     </div>
