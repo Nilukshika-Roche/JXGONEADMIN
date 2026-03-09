@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Zap, Clock, ArrowLeft } from 'lucide-react';
+import { Calendar, Zap, Clock, ArrowLeft, ChevronDown } from 'lucide-react';
 
 const VolunteerDashboard = () => {
     const [activeMenu, setActiveMenu] = useState(null);
@@ -650,14 +650,9 @@ const VolunteerDashboard = () => {
                             </div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                                 <button className="date-btn">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                        <path d="M16 2v4M8 2v4M3 10h18" />
-                                    </svg>
-                                    <span>This Month</span>
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                        <path d="M6 9l6 6 6-6" />
-                                    </svg>
+                                    <Calendar size={16} />
+                                    <span>Dec 01 - 24, 2024</span>
+                                    <ChevronDown size={12} />
                                 </button>
                                 <button
                                     style={styles.createButton}
@@ -815,26 +810,14 @@ const VolunteerDashboard = () => {
                 .date-btn {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    padding: 8px 16px;
+                    gap: 6px;
+                    padding: 8px 12px;
                     background: white;
                     border: 1px solid #e2e8f0;
-                    border-radius: 100px;
-                    font-size: 13px;
-                    font-weight: 600;
+                    border-radius: 8px;
+                    font-size: 12px;
                     color: #475569;
                     cursor: pointer;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-                }
-                .date-btn:hover {
-                    border-color: #f97316;
-                    color: #f97316;
-                    background: #fff7ed;
-                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);
-                }
-                .date-btn svg:first-child {
-                    color: #f97316;
                 }
             `}</style>
         </div>
