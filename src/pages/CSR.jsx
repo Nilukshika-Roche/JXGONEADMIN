@@ -310,6 +310,17 @@ const CSR = ({ setActiveTab: onNavigate }) => {
         });
     };
 
+    const getStatusColor = (status) => {
+        const s = status?.toLowerCase();
+        switch (s) {
+            case 'ongoing': return '#3b82f6';
+            case 'upcoming': return '#f97316';
+            case 'reported': return '#f43f5e';
+            case 'completed': return '#10b981';
+            default: return '#94a3b8';
+        }
+    };
+
     // Generate more projects
     const generateMoreProjects = () => {
         const projectTitles = [
@@ -620,21 +631,26 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span
+                                        <div
+                                            className="status-badge"
+                                            style={{
+                                                background: `${getStatusColor(item.status)}15`,
+                                                color: getStatusColor(item.status)
+                                            }}
                                             onClick={(e) => {
                                                 if (item.status === 'Reported') {
                                                     e.stopPropagation();
                                                     handleReportedClick(item);
                                                 }
                                             }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
-                                                item.status === 'Ongoing' ? 'text-blue-600' :
-                                                    item.status === 'Upcoming' ? 'text-amber-600' :
-                                                        'text-slate-600'
-                                                }`}>
+                                        >
+                                            <div
+                                                className="status-dot"
+                                                style={{ backgroundColor: getStatusColor(item.status) }}
+                                            />
                                             {item.status}
-                                            {item.status === 'Reported' && <ChevronRight size={14} />}
-                                        </span>
+                                            {item.status === 'Reported' && <ChevronRight size={14} style={{ marginLeft: '2px' }} />}
+                                        </div>
                                     </td>
                                     <td>
                                         <div
@@ -859,7 +875,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 )}
             </AnimatePresence>
 
-            {/* Preview Modal */}
+            {/* Preview & Edit Modal */}
             <AnimatePresence>
                 {previewItem && (
                     <div className="modal-overlay" onClick={() => setPreviewItem(null)}>
@@ -890,7 +906,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                             </div>
 
                             {/* Modal Body */}
-                            <div className="modal-form">
+                            <div className="modal-form"> {/* Edit Mode */}
                                 {isEditMode ? (
                                     <div className="space-y-6">
                                         <div className="form-group">
@@ -946,7 +962,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="space-y-6">
+                                    <div className="space-y-6"> {/* Preview Modal */}
                                         {/* Icon Preview */}
                                         <div className="csr-preview">
                                             <div className="text-center">
@@ -965,10 +981,20 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                                 <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.openTo}</p>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                                <p className="form-label mb-1 adequate-spacing">Status</p>
-                                                <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
+                                                <p className="adequate-spacing form-label mb-1">Status</p>
+                                                <div
+                                                    className="status-badge"
+                                                    style={{
+                                                        background: `${getStatusColor(previewItem.status)}15`,
+                                                        color: getStatusColor(previewItem.status)
+                                                    }}
+                                                >
+                                                    <div
+                                                        className="status-dot"
+                                                        style={{ backgroundColor: getStatusColor(previewItem.status) }}
+                                                    />
                                                     {previewItem.status}
-                                                </span>
+                                                </div>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Initiative Date</p>
@@ -976,9 +1002,9 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                             </div>
                                         </div>
 
-                                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                                            <p className="text-xs font-bold text-emerald-800 uppercase tracking-wide mb-2 adequate-spacing">Notes</p>
-                                            <p className="text-sm text-emerald-900 leading-relaxed adequate-spacing">{previewItem.notes}</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Notes</p>
+                                            <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.notes}</p>
                                         </div>
 
                                         <div className="modal-actions">
@@ -1005,7 +1031,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 )}
             </AnimatePresence>
 
-
+            {/*Reported Modal */}
             <AnimatePresence>
                 {reportedModalData.isOpen && reportedModalData.details && (
                     <div className="reported-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
@@ -1043,7 +1069,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                 </div>
                                 <div>
                                     <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                    <span className="px-2 py-1 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
                                 </div>
                                 <div>
                                     <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
@@ -1599,7 +1625,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #f97316;
+                    border-color: #09d454ff;
                     background: white;
                     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
                 }
@@ -1637,14 +1663,20 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 4px 12px;
-                    border-radius: 9999px;
-                    font-size: 12px;
-                    font-weight: 700;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: default;
                 }
-                .status-badge.ongoing { color: #2563eb; background: #eff6ff; }
-                .status-badge.upcoming { color: #d97706; background: #fffbeb; }
-                .status-badge.reported { color: #dc2626; background: #fef2f2; }
+                .status-badge[onClick] {
+                    cursor: pointer;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                }
 
                 /* Preserving Reported Modal (LEGACY) */
                 .reported-overlay {

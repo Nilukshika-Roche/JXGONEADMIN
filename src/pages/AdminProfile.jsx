@@ -170,25 +170,6 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 </div>
                             </section>
-
-                            <div className="bg-white rounded-[2.5rem] border border-slate-100 p-12 shadow-sm space-y-8">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="text-xs font-medium text-slate-400 uppercase tracking-widest">Trust Score</h4>
-                                    <Sparkles size={20} className="text-orange-500" />
-                                </div>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-normal text-slate-800">98</span>
-                                    <span className="text-slate-400 text-lg">/ 100</span>
-                                </div>
-                                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: '98%' }}
-                                        className="h-full bg-orange-gradient"
-                                    />
-                                </div>
-                                <p className="text-xs text-slate-500 font-normal leading-relaxed">Top 2% of platform administrators based on response time and security compliance.</p>
-                            </div>
                         </div>
 
                         {/* Right Column: Privileges & Activity */}

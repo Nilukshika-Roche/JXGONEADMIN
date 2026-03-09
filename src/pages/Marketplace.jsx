@@ -312,6 +312,17 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
         });
     };
 
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Active': return '#10b981';
+            case 'Pending': return '#f97316';
+            case 'Reported': return '#f43f5e';
+            case 'Sold': return '#64748b';
+            case 'Draft': return '#475569';
+            default: return '#94a3b8';
+        }
+    };
+
     const generateMoreItems = () => {
         const categories = ['Electronics', 'Furniture', 'Clothing', 'Vehicles', 'Sports', 'Books', 'Other'];
         const statuses = ['Active', 'Pending', 'Reported', 'Draft'];
@@ -588,24 +599,30 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                     <td><div className="text-sm font-medium text-slate-600">{item.category}</div></td>
                                     <td><div className="text-sm font-bold text-slate-800">{item.price}</div></td>
                                     <td>
-                                        <span onClick={(e) => {
-                                            if (item.status === 'Reported') {
-                                                e.stopPropagation();
-                                                handleReportedClick(item);
-                                            }
-                                        }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
-                                                item.status === 'Pending' ? 'text-amber-600' :
-                                                    item.status === 'Active' ? 'text-emerald-600' :
-                                                        'text-slate-600'
-                                                }`}>
+                                        <div
+                                            className="status-badge"
+                                            style={{
+                                                background: `${getStatusColor(item.status)}15`,
+                                                color: getStatusColor(item.status)
+                                            }}
+                                            onClick={(e) => {
+                                                if (item.status === 'Reported') {
+                                                    e.stopPropagation();
+                                                    handleReportedClick(item);
+                                                }
+                                            }}
+                                        >
+                                            <div
+                                                className="status-dot"
+                                                style={{ backgroundColor: getStatusColor(item.status) }}
+                                            />
                                             {item.status}
-                                            {item.status === 'Reported' && <ChevronRight size={14} />}
-                                        </span>
+                                            {item.status === 'Reported' && <ChevronRight size={14} style={{ marginLeft: '2px' }} />}
+                                        </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
                                         <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
-                                            {item.notes}
+                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -724,7 +741,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
             </AnimatePresence>
 
             {/* Mock Item Preview Modal */}
-            {/* Preview Modal */}
+            {/* View & Edit Modal */}
             <AnimatePresence>
                 {previewItem && (
                     <div className="modal-overlay" onClick={() => setPreviewItem(null)}>
@@ -813,7 +830,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
-                                        {/* Image Preview */}
+                                        {/* Preview Listing */}
                                         <div className="market-preview">
                                             <div className="text-center">
                                                 <ShoppingBag size={64} className="mx-auto mb-2 text-orange-600" />
@@ -828,11 +845,12 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Price</p>
-                                                <p className="text-sm font-bold text-orange-600 adequate-spacing">{previewItem.price}</p>
+                                                <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.price}</p>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Status</p>
-                                                <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
+                                                {/*clssname for bottome was previously 'status-badge' */}
+                                                <span className={`text-sm font-bold text-slate-800 adequate-spacing ${previewItem.status.toLowerCase()}`}>
                                                     {previewItem.status}
                                                 </span>
                                             </div>
@@ -842,9 +860,9 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                             </div>
                                         </div>
 
-                                        <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
-                                            <p className="text-xs font-bold text-orange-800 uppercase tracking-wide mb-2 adequate-spacing">Listing Notes</p>
-                                            <p className="text-sm text-orange-900 leading-relaxed adequate-spacing">{previewItem.notes}</p>
+                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <p className="form-label mb-1 adequate-spacing">Listing Notes</p>
+                                            <p className="text-sm font-bold text-slate-800 leading-relaxed adequate-spacing">{previewItem.notes}</p>
                                         </div>
 
                                         <div className="modal-actions">
@@ -885,7 +903,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             <div className="modal-header">
                                 <div className="modal-header-left">
                                     <div className="modal-icon">
-                                        <FileText size={20}/>
+                                        <FileText size={20} />
                                     </div>
                                     <div>
                                         <h3 className="modal-title">Edit Note</h3>
@@ -899,7 +917,6 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                     <X size={20} />
                                 </button>
                             </div>
-
                             <div className="modal-form">
                                 <div className="form-group">
                                     <label className="form-label">Note Content</label>
@@ -971,7 +988,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                 </div>
                                 <div>
                                     <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                    <span className="px-2 py-1 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
                                 </div>
                                 <div>
                                     <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
@@ -1560,16 +1577,20 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 4px 12px;
-                    border-radius: 9999px;
-                    font-size: 12px;
-                    font-weight: 700;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: default;
                 }
-                .status-badge.active { color: #059669; background: #ecfdf5; }
-                .status-badge.sold { color: #64748b; background: #f1f5f9; }
-                .status-badge.reported { color: #dc2626; background: #fef2f2; }
-                .status-badge.pending { color: #d97706; background: #fffbeb; }
-                .status-badge.draft { color: #475569; background: #f8fafc; }
+                .status-badge[onClick] {
+                    cursor: pointer;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                }
 
                 /* Preserving Reported Modal (LEGACY) */
                 .reported-overlay {

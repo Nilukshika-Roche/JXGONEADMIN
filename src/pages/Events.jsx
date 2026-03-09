@@ -310,6 +310,18 @@ const Events = ({ setActiveTab: onNavigate }) => {
         });
     };
 
+    const getStatusColor = (status) => {
+        const s = status?.toLowerCase();
+        switch (s) {
+            case 'published': return '#10b981';
+            case 'ongoing': return '#3b82f6';
+            case 'pending': return '#f97316';
+            case 'reported': return '#f43f5e';
+            case 'cancelled': return '#64748b';
+            default: return '#94a3b8';
+        }
+    };
+
     // Generate more events
     const generateMoreEvents = () => {
         const eventTitles = [
@@ -638,26 +650,30 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span
+                                        <div
+                                            className="status-badge"
+                                            style={{
+                                                background: `${getStatusColor(item.status)}15`,
+                                                color: getStatusColor(item.status)
+                                            }}
                                             onClick={(e) => {
                                                 if (item.status === 'Reported') {
                                                     e.stopPropagation();
                                                     handleReportedClick(item);
                                                 }
                                             }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
-                                                item.status === 'Published' ? 'text-emerald-600' :
-                                                    item.status === 'ongoing' ? 'text-blue-600' :
-                                                        item.status === 'pending' ? 'text-amber-600' :
-                                                            'text-slate-600'
-                                                }`}>
+                                        >
+                                            <div
+                                                className="status-dot"
+                                                style={{ backgroundColor: getStatusColor(item.status) }}
+                                            />
                                             {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                                            {item.status === 'Reported' && <ChevronRight size={14} />}
-                                        </span>
+                                            {item.status === 'Reported' && <ChevronRight size={14} style={{ marginLeft: '2px' }} />}
+                                        </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
-                                        <div className="text-xs text-slate-500 italic pr-6" title={item.notes}>
-                                            {item.notes}
+                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
+                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
                                         </div>
                                         <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Edit2 size={12} className="text-slate-400" />
@@ -748,7 +764,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
 
 
 
-            {/* Event Preview/Edit Modal */}
+            {/* Event Preview & Edit Modal */}
             <AnimatePresence>
                 {previewItem && (
                     <div className="modal-overlay" onClick={() => setPreviewItem(null)}>
@@ -785,6 +801,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                             </div>
 
                             {/* Modal Content */}
+                            {/* Edit Mode */}
                             {isEditMode ? (
                                 <div className="modal-form">
                                     <div className="form-grid">
@@ -868,7 +885,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="modal-body">
+                                <div className="modal-body"> {/* Preview Mode */}
                                     {/* Event Hero */}
                                     <div className="event-preview-hero">
                                         <div className="text-center">
@@ -888,9 +905,19 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                             <p className="form-label mb-1 adequate-spacing">Status</p>
-                                            <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
-                                                {previewItem.status}
-                                            </span>
+                                            <div
+                                                className="status-badge"
+                                                style={{
+                                                    background: `${getStatusColor(previewItem.status)}15`,
+                                                    color: getStatusColor(previewItem.status)
+                                                }}
+                                            >
+                                                <div
+                                                    className="status-dot"
+                                                    style={{ backgroundColor: getStatusColor(previewItem.status) }}
+                                                />
+                                                {previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)}
+                                            </div>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                             <p className="form-label mb-1 adequate-spacing">Event Date</p>
@@ -906,24 +933,25 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                                        <p className="form-label mb-1 adequate-spacing text-amber-800">Internal Notes</p>
-                                        <p className="text-sm text-amber-900 leading-relaxed adequate-spacing">{previewItem.notes}</p>
+                                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <p className="form-label mb-1 adequate-spacing">Internal Notes</p>
+                                        <p className="text-sm font-bold text-slate-800 adequate-spacing">{previewItem.notes}</p>
                                     </div>
 
                                     <div className="modal-actions">
                                         <button
+                                            type="button"
                                             onClick={handleStartEdit}
                                             className="cancel-btn flex items-center justify-center gap-2"
-                                            style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
                                         >
                                             <Edit2 size={16} />
                                             Edit Event
                                         </button>
+                                        {/*#1e293b color needed as the submit btn*/}
                                         <button
+                                            type="button"
                                             onClick={() => handleConfirmEvent(previewItem)}
                                             className="submit-btn flex items-center justify-center gap-2"
-                                            style={{ background: '#059669' }}
                                         >
                                             <CheckCircle2 size={16} />
                                             Confirm
@@ -975,23 +1003,23 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         autoFocus
                                     />
                                 </div>
-                            
-                            <div className="modal-actions">
-                                <button
-                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                    className="cancel-btn"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleSaveNote}
-                                    className="submit-btn flex items-center justify-center gap-2"
-                                >
-                                    <Check size={16} />
-                                    Save Note
-                                </button>
+
+                                <div className="modal-actions">
+                                    <button
+                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                        className="cancel-btn"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleSaveNote}
+                                        className="submit-btn flex items-center justify-center gap-2"
+                                    >
+                                        <Check size={16} />
+                                        Save Note
+                                    </button>
+                                </div>
                             </div>
-                        </div>
                         </motion.div>
                     </div>
                 )}
@@ -1001,57 +1029,56 @@ const Events = ({ setActiveTab: onNavigate }) => {
             {/* Reported Modal */}
             <AnimatePresence>
                 {reportedModalData.isOpen && reportedModalData.details && (
-                    <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
+                    <div className="reported-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-container"
-                            style={{ maxWidth: '400px' }}
+                            className="reported-container max-w-sm"
                             onClick={e => e.stopPropagation()}
                         >
-                            <div className="modal-header bg-red-50/50">
+                            <div className="modal-header">
                                 <div className="modal-header-left">
-                                    <div className="report-icon">
+                                    <div className="report-icon text-red-600">
                                         <AlertCircle size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="report-title">Report Reasons</h3>
+                                        <h3 className="report-title text-red-800">Report Reasons</h3>
                                         <p className="modal-subtitle">Security flagging information</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                                    className="modal-close-btn"
+                                    className="report-close-btn text-red-400"
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
                             <div className="modal-body">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="flex gap-40">
                                     <div>
-                                        <p className="analytics-stat-label">Reported By</p>
-                                        <p className="text-sm font-bold text-slate-800">{reportedModalData.details.reportedBy}</p>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
+                                        <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
                                     </div>
                                     <div>
-                                        <p className="analytics-stat-label">Reported Date</p>
-                                        <p className="text-sm font-bold text-slate-800">{reportedModalData.details.reportedDate}</p>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
+                                        <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="analytics-stat-label">Reason</p>
-                                    <span className="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-lg border border-red-200">
+                                    <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
+                                    <span className="px-2 py-1 text-red-700 text-xs font-bold rounded">
                                         {reportedModalData.details.reason}
                                     </span>
                                 </div>
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                    <p className="text-sm italic text-slate-600 leading-relaxed">
+                                <div>
+                                    <p className="text-sm italic text-slate-600">
                                         "{reportedModalData.details.description}"
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}
-                                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition-all"
+                                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors"
                                 >
                                     Close
                                 </button>
@@ -1115,12 +1142,12 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 </div>
 
-                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                     <div className="flex items-center gap-2 mb-2 adequate-spacing">
-                                        <TrendingUp size={16} className="text-blue-600" />
-                                        <p className="text-xs font-bold text-blue-800 uppercase tracking-wid">Performance Insights</p>
+                                        <TrendingUp size={16} className="text-slate-600" />
+                                        <p className="text-xs font-bold text-slate-800 uppercase tracking-wid">Performance Insights</p>
                                     </div>
-                                    <p className="text-sm text-blue-900 leading-relaxed adequate-spacing">
+                                    <p className="text-sm text-slate-900 leading-relaxed adequate-spacing">
                                         This event has seen a high interest from the <strong>{analyticsModalData.event.department}</strong>.
                                         Consider increasing the capacity for similar future events.
                                     </p>
@@ -1625,6 +1652,59 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     justify-content: center;
                     margin-bottom: 0.5rem;
                 }
+                    
+                /* Preserving Reported Modal (LEGACY) */
+                .reported-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(4px);
+                    z-index: 9998;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+                }
+                .reported-container {
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                    overflow: hidden;
+                    max-width: 500px;
+                    width: 100%;
+                }
+                .report-icon {
+                    width: 44px;
+                    height: 44px;
+                    background: #fef2f2;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ef4444;
+                    border: 1px solid #fee2e2;
+                }
+                .report-title {
+                    font-size: 20px;
+                    font-weight: 800;
+                    color: #ef4444;
+                }
+                .report-close-btn {
+                    padding: 8px;
+                    color: #d55a5aff;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                    background: none;
+                    border: none;
+                }
+                .report-close-btn:hover { background: rgba(239, 68, 68, 0.1); }
+                .modal-body {
+                    padding: 1.5rem 1.75rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.25rem;
+                }
 
                 .adequate-spacing { margin: 10px; }
                 /* Form Styles for Edit Mode */
@@ -1682,15 +1762,20 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 4px 12px;
-                    border-radius: 9999px;
-                    font-size: 12px;
-                    font-weight: 700;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: default;
                 }
-                .status-badge.published { color: #059669; background: #ecfdf5; }
-                .status-badge.ongoing { color: #2563eb; background: #eff6ff; }
-                .status-badge.pending { color: #d97706; background: #fffbeb; }
-                .status-badge.reported { color: #dc2626; background: #fef2f2; }
+                .status-badge[onClick] {
+                    cursor: pointer;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                }
 
                 .report-icon {
                     width: 44px;

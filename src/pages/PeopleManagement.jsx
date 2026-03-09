@@ -32,7 +32,12 @@ import {
     Building2,
     Lock,
     ChevronRight,
-    UserSearch
+    UserSearch,
+    FileText,
+    Check,
+    User,
+    User2,
+    User2Icon
 } from 'lucide-react';
 
 const PeopleManagement = ({ setActiveTab: onNavigate }) => {
@@ -116,6 +121,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
     const [activeTab, setActiveTab] = useState('all');
     const [selectedUser, setSelectedUser] = useState(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [reasonModalData, setReasonModalData] = useState({ isOpen: false, userId: null, reason: '' });
+    {/*const [noteModalData, setNoteModalData] = useState({ isOpen: false, userId: null, reason: '' });* changing back to reasonModal instead of noteMOdal */ }
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
@@ -145,7 +152,6 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
     const [reportedModalData, setReportedModalData] = useState({ isOpen: false, item: null, details: null });
 
-    const [reasonModalData, setReasonModalData] = useState({ isOpen: false, userId: null, reason: '' });
     const [openFilter, setOpenFilter] = useState(null);
     const [tableFilters, setTableFilters] = useState({
         department: 'All',
@@ -308,6 +314,17 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
         setIsStatusModalOpen(true);
     };
 
+    const handleReasonClick = (user) => {
+        setReasonModalData({ isOpen: true, userId: user.id, reason: user.reasons || '' });
+    };
+
+    const handleSaveReason = () => {
+        setUsers(prev => prev.map(user =>
+            user.id === reasonModalData.userId ? { ...user, reasons: reasonModalData.reason } : user
+        ));
+        setReasonModalData({ isOpen: false, userId: null, reason: '' });
+    };
+
     const handleReportedClick = (user) => {
         if (user.status !== 'Reported') return;
 
@@ -325,16 +342,16 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
         });
     };
 
-    const handleReasonClick = (user) => {
-        setReasonModalData({ isOpen: true, userId: user.id, reason: user.reasons || '' });
+    {/*const handleNoteClick = (user) => {
+        setNoteModalData({ isOpen: true, userId: user.id, reason: user.reasons || '' });
     };
 
-    const handleSaveReason = () => {
+    const handleSaveNote = () => {
         setUsers(prev => prev.map(user =>
-            user.id === reasonModalData.userId ? { ...user, reasons: reasonModalData.reason } : user
+            user.id === noteModalData.userId ? { ...user, reasons: noteModalData.reason } : user
         ));
-        setReasonModalData({ isOpen: false, userId: null, reason: '' });
-    };
+        setNoteModalData({ isOpen: false, userId: null, reason: '' });
+    }; reverting to reasonModal */}
 
     const generateMorePeople = () => {
         const roles = ['User', 'Editor', 'Content Manager', 'Admin', 'Global Admin'];
@@ -428,10 +445,16 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
     };
 
     const getStatusColor = (status) => {
-        if (status === 'Reported') return '#f43f5e';
-        return status === 'Active' ? '#10b981' : '#64748b';
+        const s = status?.toLowerCase();
+        switch (s) {
+            case 'active': return '#10b981';
+            case 'inactive': return '#64748b';
+            case 'reported': return '#f43f5e';
+            default: return '#94a3b8';
+        }
     };
 
+    {/* get role color*
     const getRoleColor = (role) => {
         switch (role) {
             case 'Global Admin': return '#f97316';
@@ -440,7 +463,14 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
             case 'Editor': return '#10b981';
             default: return '#64748b';
         }
+    };   */}
+
+    const getUserProfilePic = (name) => {
+        return `https://ui-avatars.com/api/?name=${name.replace(' ', '+')}`;
     };
+
+
+
 
     return (
         <div className="p-6 max-w-[1400px] mx-auto font-sans text-slate-800">
@@ -574,11 +604,14 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                                     </div>
                                                 )}
                                             </div>
+                                            {/* "style={{ background: getUserProfilePic(user.name) }}   w-12 h-12 rounded-lg bg-blue-100 border border-blue-200 flex-shrink-0 flex items-center justify-center" class of events*/}
+                                            {/*|| get user dp like ppl mgmgm in page */}
+                                            {/*"w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" before ppl mgmt one*/}
                                             <div
-                                                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
-                                                style={{ background: getRoleColor(user.role) }}
+                                                className="w-12 h-12 rounded-lg border border-gray-200 flex items-center justify-center"
                                             >
-                                                {user.avatar}
+                                                <User2Icon size={24} className='text-gray-600' />
+
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="font-bold text-slate-800 text-sm">{user.name}</span>
@@ -588,28 +621,35 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                     </td>
                                     <td><div className="text-sm font-medium text-slate-600">{user.department}</div></td>
                                     <td>
-                                        <span className="px-4 py-4 rounded-lg text-xs font-bold" style={{ color: getRoleColor(user.role) }}>
+                                        <span className="px-4 py-4 rounded-lg text-xs font-bold">  {/*style={{ color: getRoleColor(user.role) }}>  commented out*/}
                                             {user.role}
                                         </span>
                                     </td>
                                     <td>
                                         <div
+                                            className="status-badge"
+                                            style={{
+                                                background: `${getStatusColor(user.status)}15`,
+                                                color: getStatusColor(user.status)
+                                            }}
                                             onClick={(e) => {
                                                 if (user.status === 'Reported') {
                                                     e.stopPropagation();
                                                     handleReportedClick(user);
                                                 }
-                                            }} 
-                                            className={`flex items-center gap-1.5 ${user.status === 'Reported' ? 'cursor-pointer hover:bg-red-50 px-2 py-1 rounded-full ' : ''}`}
+                                            }}
                                         >
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(user.status) }} />
-                                            <span className="text-sm font-bold" style={{ color: getStatusColor(user.status) }}>{user.status}</span>
-                                            {user.status === 'Reported' && <ChevronRight size={14} className="text-red-500" />}
+                                            <div
+                                                className="status-dot"
+                                                style={{ backgroundColor: getStatusColor(user.status) }}
+                                            />
+                                            {user.status}
+                                            {user.status === 'Reported' && <ChevronRight size={14} style={{ marginLeft: '2px' }} />}
                                         </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleReasonClick(user); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
                                         <div className="text-sm text-slate-500 truncate max-w-[150px]" title={user.reasons}>
-                                            {user.reasons || <span className="text-slate-300 italic">No reasons...</span>}
+                                            {user.reasons || <span className="text-slate-300 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -648,8 +688,9 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
             </div>
 
 
-            {/* Modals */}
+
             <AnimatePresence>
+                {/* add and edit Modals */}
                 {(isAddModalOpen || isEditModalOpen) && (
                     <div className="modal-overlay" onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }}>
                         <motion.div
@@ -790,6 +831,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     </div>
                 )}
 
+                {/* Status Modal */}
                 {isStatusModalOpen && (
                     <div className="modal-overlay" onClick={() => setIsStatusModalOpen(false)}>
                         <motion.div
@@ -849,6 +891,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     </div>
                 )}
 
+                {/* Delete Modal */}
                 {isDeleteModalOpen && (
                     <div className="modal-overlay" onClick={() => setIsDeleteModalOpen(false)}>
                         <motion.div
@@ -903,206 +946,208 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                         </motion.div>
                     </div>
                 )}
+            </AnimatePresence>
 
-                {isResetPasswordModalOpen && (
-                    <div className="modal-overlay" onClick={() => setIsResetPasswordModalOpen(false)}>
+            {/* Reset Password Modal */}
+            {isResetPasswordModalOpen && (
+                <div className="modal-overlay" onClick={() => setIsResetPasswordModalOpen(false)}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="modal-container"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="modal-header">
+                            <div className="modal-header-left">
+                                <div className="modal-icon">
+                                    <Key size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="modal-title">Reset Password</h3>
+                                    <p className="modal-subtitle">Securely reset credentials for this member</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsResetPasswordModalOpen(false)}
+                                className="modal-close-btn"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="modal-form">
+                            <MemberInfoSummary user={currentUser} />
+
+                            <div className="reset-methods">
+                                <label className={`reset-method ${resetMethod === 'email' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="resetMethod"
+                                        value="email"
+                                        checked={resetMethod === 'email'}
+                                        onChange={() => setResetMethod('email')}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <div className="method-content">
+                                        <Mail size={16} />
+                                        <span>Send password reset link via email</span>
+                                    </div>
+                                </label>
+                                <label className={`reset-method ${resetMethod === 'temp' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="resetMethod"
+                                        value="temp"
+                                        checked={resetMethod === 'temp'}
+                                        onChange={() => setResetMethod('temp')}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <div className="method-content">
+                                        <Lock size={16} />
+                                        <span>Generate temporary password</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            {resetMethod === 'email' ? (
+                                <div className="reset-explanation">
+                                    <Link size={16} />
+                                    <span>A secure password reset link will be sent to the user's registered email.</span>
+                                </div>
+                            ) : (
+                                <div className="temp-password-section">
+                                    <div className="form-group">
+                                        <div className="password-input-wrapper">
+                                            <input
+                                                type={showTempPassword ? "text" : "password"}
+                                                value={generatedPassword}
+                                                readOnly
+                                                className="form-input"
+                                            />
+                                            <button
+                                                onClick={() => setShowTempPassword(!showTempPassword)}
+                                                className="password-toggle"
+                                            >
+                                                {showTempPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
+                                        <button onClick={generatePass} className="generate-btn">
+                                            <Zap size={16} />
+                                            <span>Generate Secure Password</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="modal-actions">
+                                <button
+                                    onClick={() => setIsResetPasswordModalOpen(false)}
+                                    className="cancel-btn"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleResetPassword}
+                                    className="submit-btn"
+                                    disabled={resetMethod === 'temp' && !generatedPassword}
+                                >
+                                    {resetMethod === 'email' ? 'Send Reset Link' : 'Set New Password'}
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
+            {/* Reported Details Modal */}
+            <AnimatePresence>
+                {reportedModalData.isOpen && reportedModalData.details && (
+                    <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="modal-container"
-                            onClick={(e) => e.stopPropagation()}
+                            className="modal-container max-w-sm"
+                            onClick={e => e.stopPropagation()}
                         >
-                            <div className="modal-header">
+                            <div className="modal-header bg-red-50">
                                 <div className="modal-header-left">
-                                    <div className="modal-icon">
-                                        <Key size={20} />
+                                    <div className="report-icon text-red-600">
+                                        <AlertCircle size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="modal-title">Reset Password</h3>
-                                        <p className="modal-subtitle">Securely reset credentials for this member</p>
+                                        <h3 className="report-title text-red-800">Report Details</h3>
+                                        <p className="modal-subtitle">Security flagging information</p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => setIsResetPasswordModalOpen(false)}
-                                    className="modal-close-btn"
-                                >
+                                <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="report-close-btn text-red-400">
                                     <X size={20} />
                                 </button>
                             </div>
-                            <div className="modal-form">
-                                <MemberInfoSummary user={currentUser} />
-
-                                <div className="reset-methods">
-                                    <label className={`reset-method ${resetMethod === 'email' ? 'active' : ''}`}>
-                                        <input
-                                            type="radio"
-                                            name="resetMethod"
-                                            value="email"
-                                            checked={resetMethod === 'email'}
-                                            onChange={() => setResetMethod('email')}
-                                            style={{ display: 'none' }}
-                                        />
-                                        <div className="method-content">
-                                            <Mail size={16} />
-                                            <span>Send password reset link via email</span>
-                                        </div>
-                                    </label>
-                                    <label className={`reset-method ${resetMethod === 'temp' ? 'active' : ''}`}>
-                                        <input
-                                            type="radio"
-                                            name="resetMethod"
-                                            value="temp"
-                                            checked={resetMethod === 'temp'}
-                                            onChange={() => setResetMethod('temp')}
-                                            style={{ display: 'none' }}
-                                        />
-                                        <div className="method-content">
-                                            <Lock size={16} />
-                                            <span>Generate temporary password</span>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                {resetMethod === 'email' ? (
-                                    <div className="reset-explanation">
-                                        <Link size={16} />
-                                        <span>A secure password reset link will be sent to the user's registered email.</span>
-                                    </div>
-                                ) : (
-                                    <div className="temp-password-section">
-                                        <div className="form-group">
-                                            <div className="password-input-wrapper">
-                                                <input
-                                                    type={showTempPassword ? "text" : "password"}
-                                                    value={generatedPassword}
-                                                    readOnly
-                                                    className="form-input"
-                                                />
-                                                <button
-                                                    onClick={() => setShowTempPassword(!showTempPassword)}
-                                                    className="password-toggle"
-                                                >
-                                                    {showTempPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                                </button>
-                                            </div>
-                                            <button onClick={generatePass} className="generate-btn">
-                                                <Zap size={16} />
-                                                <span>Generate Secure Password</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="modal-actions">
-                                    <button
-                                        onClick={() => setIsResetPasswordModalOpen(false)}
-                                        className="cancel-btn"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleResetPassword}
-                                        className="submit-btn"
-                                        disabled={resetMethod === 'temp' && !generatedPassword}
-                                    >
-                                        {resetMethod === 'email' ? 'Send Reset Link' : 'Set New Password'}
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-
-                {/* Reported Details Modal */}
-                <AnimatePresence>
-                    {reportedModalData.isOpen && reportedModalData.details && (
-                        <div className="modal-overlay" onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })}>
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="modal-container max-w-sm"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className="modal-header bg-red-50">
-                                    <div className="modal-header-left">
-                                        <div className="report-icon text-red-600">
-                                            <AlertCircle size={20} />
-                                        </div>
-                                        <div>
-                                            <h3 className="report-title text-red-800">Report Details</h3>
-                                            <p className="modal-subtitle">Security flagging information</p>
-                                        </div>
-                                    </div>
-                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="report-close-btn text-red-400">
-                                        <X size={20} />
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="flex gap-40">
-                                        <div>
-                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
-                                            <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
-                                            <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
-                                        </div>
+                            <div className="modal-body">
+                                <div className="flex gap-40">
+                                    <div>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported By</p>
+                                        <p className="text-sm font-medium">{reportedModalData.details.reportedBy}</p>
                                     </div>
                                     <div>
+                                        <p className="text-xs text-slate-500 font-semibold uppercase">Reported Date</p>
+                                        <p className="text-sm font-medium">{reportedModalData.details.reportedDate}</p>
+                                    </div>
+                                </div>
+                                <div>
                                     <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                    <span className="px-2 py-1 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
                                 </div>
                                 <div>
                                     <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
                                 </div>
-                                    <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
-                                        Close
-                                    </button>
-                                </div>
-                            </motion.div>
-                        </div>
-                    )}
-                </AnimatePresence>
-
-                {/* Filter Dropdowns */}
-                <AnimatePresence>
-                    {openFilter && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="filter-dropdown-overlay"
-                            onClick={() => setOpenFilter(null)}
-                        >
-                            <div className="filter-dropdown-card" onClick={e => e.stopPropagation()}>
-                                <div className="filter-dropdown-header">
-                                    <h4>Filter by {openFilter.charAt(0).toUpperCase() + openFilter.slice(1)}</h4>
-                                </div>
-                                <div className="filter-options">
-                                    {(openFilter === 'department' ? uniqueDepartments :
-                                        openFilter === 'role' ? uniqueRoles :
-                                            openFilter === 'status' ? uniqueStatuses :
-                                                uniqueReasons).map((val) => (
-                                                    <button
-                                                        key={val}
-                                                        className={`filter-option ${tableFilters[openFilter] === val ? 'active' : ''}`}
-                                                        onClick={() => handleFilterSelect(openFilter, val)}
-                                                    >
-                                                        {val}
-                                                    </button>
-                                                ))}
-                                </div>
+                                <button onClick={() => setReportedModalData({ isOpen: false, item: null, details: null })} className="w-full py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors">
+                                    Close
+                                </button>
                             </div>
                         </motion.div>
-                    )}
-                </AnimatePresence>
+                    </div>
+                )}
+            </AnimatePresence>
 
-                {/* Reason Edit Modal */}
-                <AnimatePresence>
-                {noteModalData.isOpen && (
-                    <div className="modal-overlay" onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}>
+            {/* Filter Dropdowns */}
+            <AnimatePresence>
+                {openFilter && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="filter-dropdown-overlay"
+                        onClick={() => setOpenFilter(null)}
+                    >
+                        <div className="filter-dropdown-card" onClick={e => e.stopPropagation()}>
+                            <div className="filter-dropdown-header">
+                                <h4>Filter by {openFilter.charAt(0).toUpperCase() + openFilter.slice(1)}</h4>
+                            </div>
+                            <div className="filter-options">
+                                {(openFilter === 'department' ? uniqueDepartments :
+                                    openFilter === 'role' ? uniqueRoles :
+                                        openFilter === 'status' ? uniqueStatuses :
+                                            uniqueReasons).map((val) => (
+                                                <button
+                                                    key={val}
+                                                    className={`filter-option ${tableFilters[openFilter] === val ? 'active' : ''}`}
+                                                    onClick={() => handleFilterSelect(openFilter, val)}
+                                                >
+                                                    {val}
+                                                </button>
+                                            ))}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Reason/note Edit Modal */}
+            <AnimatePresence>
+                {reasonModalData.isOpen && (
+                    <div className="modal-overlay" onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1121,7 +1166,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                    onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })}
                                     className="modal-close-btn"
                                 >
                                     <X size={20} />
@@ -1131,34 +1176,32 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                 <div className="form-group">
                                     <label className="form-label">Note Content</label>
                                     <textarea
-                                        value={noteModalData.note}
-                                        onChange={(e) => setNoteModalData(prev => ({ ...prev, note: e.target.value }))}
+                                        value={reasonModalData.reason}
+                                        onChange={(e) => setReasonModalData(prev => ({ ...prev, reason: e.target.value }))}
                                         className="form-textarea h-32"
-                                        placeholder="Enter note here..."
+                                        placeholder="Enter note or reason here..."
                                         autoFocus
                                     />
                                 </div>
-                            </div>
-                            <div className="modal-actions">
-                                <button
-                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                    className="cancel-btn"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleSaveNote}
-                                    className="submit-btn flex items-center justify-center gap-2"
-                                >
-                                    <Check size={16} />
-                                    Save Note
-                                </button>
+                                <div className="modal-actions">
+                                    <button
+                                        onClick={() => setReasonModalData({ isOpen: false, userId: null, reason: '' })}
+                                        className="cancel-btn"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleSaveReason}
+                                        className="submit-btn flex items-center justify-center gap-2"
+                                    >
+                                        <Check size={16} />
+                                        Save Reason
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
                 )}
-            </AnimatePresence>
-
             </AnimatePresence>
 
             {/* Export Modal */}
@@ -1328,6 +1371,26 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 }
                 .kebab-menu-item:hover { background: #f8fafc; color: #0f172a; }
                 .kebab-menu-divider { height: 1px; background: #f1f5f9; margin: 4px; }
+
+                /*.user-avatar {
+                    position: relative;
+                }
+                .user-avatar img {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    object-fit: cover;
+                }not using */
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                }
                 
                 /* Modal Styles */
                 .modal-overlay {
@@ -1427,7 +1490,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
                 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
                 .form-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
-                .form-input, .form-select {
+                .form-input, .form-select, .form-textarea {
                     padding: 12px 16px;
                     border: 2px solid #f1f5f9;
                     border-radius: 12px;
@@ -1437,12 +1500,13 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     transition: all 0.2s;
                     font-weight: 500;
                 }
-                .form-input:focus, .form-select:focus {
+                .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #f97316;
+                    border-color: #16eef9ff;
                     background: white;
                     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
                 }
+                .form-textarea{ resize: none; min-height: 100px; }
 
                 .permissions-slider {
                     display: flex;
@@ -1946,6 +2010,25 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     justify-content: space-between;
                     align-items: center;
                     padding: 16px 24px;
+                }
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: default;
+                }
+                .status-badge[onClick] {
+                    cursor: pointer;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
                 }
 
                 .edit-label {

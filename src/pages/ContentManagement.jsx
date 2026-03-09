@@ -296,6 +296,17 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
         });
     };
 
+    const getStatusColor = (status) => {
+        const s = status?.toLowerCase();
+        switch (s) {
+            case 'published': return '#10b981';
+            case 'pending': return '#f97316';
+            case 'reported': return '#f43f5e';
+            case 'draft': return '#64748b';
+            default: return '#94a3b8';
+        }
+    };
+
     // Generate more content entries
     const generateMoreContent = () => {
         const contentTypes = ['Post', 'Reel', 'Story', 'Article'];
@@ -590,25 +601,30 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                         <div className="text-sm font-medium text-slate-600">{item.type}</div>
                                     </td>
                                     <td>
-                                        <span
+                                        <div
+                                            className="status-badge"
+                                            style={{
+                                                background: `${getStatusColor(item.status)}15`,
+                                                color: getStatusColor(item.status)
+                                            }}
                                             onClick={(e) => {
                                                 if (item.status === 'Reported') {
                                                     e.stopPropagation();
                                                     handleReportedClick(item);
                                                 }
                                             }}
-                                            className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-2 rounded-full ${item.status === 'Reported' ? 'text-red-600 cursor-pointer' :
-                                                item.status === 'Pending' ? 'text-amber-600' :
-                                                    item.status === 'Published' ? 'text-emerald-600' :
-                                                        'text-slate-600'
-                                                }`}>
+                                        >
+                                            <div
+                                                className="status-dot"
+                                                style={{ backgroundColor: getStatusColor(item.status) }}
+                                            />
                                             {item.status}
-                                            {item.status === 'Reported' && <ChevronRight size={14} />}
-                                        </span>
+                                            {item.status === 'Reported' && <ChevronRight size={14} style={{ marginLeft: '2px' }} />}
+                                        </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
                                         <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
-                                            {item.notes}
+                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -713,6 +729,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                             </div>
 
                             {/* Modal Content */}
+                            {/* Edit Mode */}
                             {isEditMode ? (
                                 <div className="modal-form">
                                     <div className="form-grid">
@@ -800,7 +817,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="modal-body">
+                                <div className="modal-body"> {/* Preview Mode */}
                                     {/* Thumbnail Preview */}
                                     <div className="content-thumbnail">
                                         <div className="text-center">
@@ -823,9 +840,19 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
                                             <p className="adequate-spacing form-label mb-1">Status</p>
-                                            <span className={`status-badge ${previewItem.status.toLowerCase()}`}>
+                                            <div
+                                                className="status-badge"
+                                                style={{
+                                                    background: `${getStatusColor(previewItem.status)}15`,
+                                                    color: getStatusColor(previewItem.status)
+                                                }}
+                                            >
+                                                <div
+                                                    className="status-dot"
+                                                    style={{ backgroundColor: getStatusColor(previewItem.status) }}
+                                                />
                                                 {previewItem.status}
-                                            </span>
+                                            </div>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-lg">
                                             <p className="adequate-spacing form-label mb-1">Date Published</p>
@@ -841,9 +868,9 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
-                                        <p className="adequate-spacing form-label mb-1 text-amber-800">Internal Notes</p>
-                                        <p className="adequate-spacing text-sm text-amber-900 leading-relaxed">{previewItem.notes}</p>
+                                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                        <p className="adequate-spacing form-label mb-1">Internal Notes</p>
+                                        <p className="adequate-spacing text-sm font-bold text-slate-800">{previewItem.notes}</p>
                                     </div>
 
                                     <div className="modal-actions">
@@ -910,21 +937,21 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                         autoFocus
                                     />
                                 </div>
-                            </div>
-                            <div className="modal-actions">
-                                <button
-                                    onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
-                                    className="cancel-btn"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleSaveNote}
-                                    className="submit-btn flex items-center justify-center gap-2"
-                                >
-                                    <Check size={16} />
-                                    Save Note
-                                </button>
+                                <div className="modal-actions">
+                                    <button
+                                        onClick={() => setNoteModalData({ isOpen: false, itemId: null, note: '' })}
+                                        className="cancel-btn"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleSaveNote}
+                                        className="submit-btn flex items-center justify-center gap-2"
+                                    >
+                                        <Check size={16} />
+                                        Save Note
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
@@ -973,7 +1000,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
 
                                 <div>
                                     <p className="text-xs text-slate-500 font-semibold uppercase">Reason</p>
-                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
+                                    <span className="px-2 py-1 text-red-700 text-xs font-bold rounded">{reportedModalData.details.reason}</span>
                                 </div>
                                 <div>
                                     <p className="text-sm italic text-slate-600">"{reportedModalData.details.description}"</p>
@@ -1238,9 +1265,6 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                 }
                 .kebab-menu-item:hover {
                     background: #f8fafc;
-                }
-                .kebab-menu-item svg {
-                    flex-shrink: 0;
                 }
                 .kebab-menu-divider {
                     height: 1px;
@@ -1562,7 +1586,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     gap: 1.25rem;
                 }
 
-                .adequate-spacing { margin: 12px; }
+                .adequate-spacing { margin: 10px; }
                 /* Form Styles for Edit Mode */
                 .modal-form { padding: 1.75rem; }
                 .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
@@ -1580,7 +1604,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #f97316;
+                    border-color: #475569;
                     background: white;
                     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
                 }
@@ -1614,19 +1638,24 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                 }
                 .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3); }
 
-                .status-badge {
+                 .status-badge {
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
-                    padding: 4px 12px;
-                    border-radius: 9999px;
-                    font-size: 12px;
-                    font-weight: 700;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: default;
                 }
-                .status-badge.published { color: #059669; background: #ecfdf5; }
-                .status-badge.pending { color: #d97706; background: #fffbeb; }
-                .status-badge.reported { color: #dc2626; background: #fef2f2; }
-                .status-badge.draft { color: #64748b; background: #f8fafc; }
+                .status-badge[onClick] {
+                    cursor: pointer;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                }
             `}</style>
         </div>
     );

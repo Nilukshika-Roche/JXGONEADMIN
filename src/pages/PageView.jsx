@@ -287,9 +287,6 @@ const PageView = ({ setActiveTab, companyData }) => {
                                             alt={companyData.name}
                                             className="avatar-image"
                                         />
-                                        <div className="verified-badge">
-                                            <BadgeCheck size={20} />
-                                        </div>
                                     </div>
                                     <div className="page-actions">
                                         <button className="page-action-btn primary">
@@ -312,15 +309,6 @@ const PageView = ({ setActiveTab, companyData }) => {
                                 <div className="page-details">
                                     <div className="page-header">
                                         <h1 className="page-title">{companyData.name}</h1>
-                                        <div className="page-badges">
-                                            <span className="page-badge verified">
-                                                <BadgeCheck size={14} />
-                                                Verified
-                                            </span>
-                                            <span className="page-badge category">
-                                                Business & Technology
-                                            </span>
-                                        </div>
                                     </div>
 
                                     <div className="page-meta">
@@ -783,20 +771,7 @@ const PageView = ({ setActiveTab, companyData }) => {
                     border: 6px solid white;
                     box-shadow: 0 8px 24px rgba(0,0,0,0.1);
                 }
-                .verified-badge {
-                    position: absolute;
-                    bottom: -8px;
-                    right: -8px;
-                    width: 36px;
-                    height: 36px;
-                    background: #3b82f6;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    border: 3px solid white;
-                }
+                
                 .page-actions {
                     display: flex;
                     gap: 0.75rem;
@@ -845,29 +820,7 @@ const PageView = ({ setActiveTab, companyData }) => {
                     color: #0f172a;
                     margin: 0;
                 }
-                .page-badges {
-                    display: flex;
-                    gap: 0.5rem;
-                }
-                .page-badge {
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 11px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-                .page-badge.verified {
-                    background: #dbeafe;
-                    color: #3b82f6;
-                }
-                .page-badge.category {
-                    background: #f1f5f9;
-                    color: #64748b;
-                }
+                
                 .page-meta {
                     display: flex;
                     align-items: center;

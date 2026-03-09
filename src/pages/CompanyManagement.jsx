@@ -90,6 +90,16 @@ const CompanyManagement = ({ onSelectCompany }) => {
         setRegistrationData({ name: '', industry: 'Insurance', region: 'Colombo', plan: 'Standard' });
     };
 
+    const getStatusColor = (status) => {
+        const s = status?.toLowerCase();
+        switch (s) {
+            case 'active': return '#10b981';
+            case 'suspended': return '#ef4444';
+            case 'pending': return '#f97316';
+            default: return '#94a3b8';
+        }
+    };
+
     return (
         <div className="cm-wrapper">
 
@@ -262,10 +272,19 @@ const CompanyManagement = ({ onSelectCompany }) => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`status-pill ${company.status.toLowerCase()}`}>
-                                            <div className={company.status === 'Active' ? 'status-dot-active' : 'status-dot-suspended'} />
+                                        <div
+                                            className="status-badge"
+                                            style={{
+                                                background: `${getStatusColor(company.status)}15`,
+                                                color: getStatusColor(company.status)
+                                            }}
+                                        >
+                                            <div
+                                                className="status-dot"
+                                                style={{ backgroundColor: getStatusColor(company.status) }}
+                                            />
                                             {company.status}
-                                        </span>
+                                        </div>
                                     </td>
                                 </motion.tr>
                             ))}
@@ -392,6 +411,24 @@ const CompanyManagement = ({ onSelectCompany }) => {
                     </div>
                 )}
             </AnimatePresence>
+
+            <style jsx>{`
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    cursor: default;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                }
+            `}</style>
         </div>
     );
 };

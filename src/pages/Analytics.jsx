@@ -683,7 +683,7 @@ const Analytics = () => {
                     padding: 8px 16px;
                     background: white;
                     border: 1px solid #e2e8f0;
-                    border-radius: 100px;
+                    border-radius: 8px;
                     font-size: 13px;
                     font-weight: 600;
                     color: #475569;
