@@ -17,7 +17,8 @@ import {
     Layout,
     BarChart,
     Activity as ActivityIcon,
-    TrendingUp
+    TrendingUp,
+    ShoppingBag
 } from 'lucide-react';
 
 // Import Admin/SuperAdmin Specific pages if they are not already integrated
@@ -38,8 +39,8 @@ import PageCSR from './PageCSR';
 import MediaHubPage from './MediaHubPage.jsx';
 import Activity from './Activity';
 import CompanyProfile from './CompanyProfile';
-import EditPage from './EditPage';
-import AdminProfile from './AdminProfile';
+import EditPage from './EditPage'; // Import EditPage (LinkedInPageEditor)
+import Marketplace from './Marketplace';
 import './CompanyProfile.css';
 
 const styles = {
@@ -246,13 +247,14 @@ const SuperAdminPortal = ({ onLogout }) => {
         { id: 'events', icon: <Calendar size={20} />, label: 'Events' },
         { id: 'csr', icon: <Heart size={20} />, label: 'CSR' },
         { id: 'games', icon: <Gamepad2 size={20} />, label: 'Games' },
+        { id: 'marketplace', icon: <ShoppingBag size={20} />, label: 'Marketplace' },
     ];
 
     const subPages = [
         { id: 'page-view', label: 'Page View', icon: <Layout size={16} /> },
         { id: 'analytics', label: 'Analytics', icon: <BarChart size={16} /> },
         { id: 'page-content', label: 'Page Content', icon: <Edit3 size={16} /> },
-        { id: 'page-people', label: 'People Management', icon: <Users size={16} /> },
+        { id: 'page-people', label: 'Team', icon: <Users size={16} /> },
         { id: 'page-events', label: 'Events', icon: <Calendar size={16} /> },
         { id: 'page-csr', label: 'CSR', icon: <Heart size={16} /> },
         { id: 'activity', label: 'Activity', icon: <ActivityIcon size={16} /> },
@@ -284,6 +286,7 @@ const SuperAdminPortal = ({ onLogout }) => {
             case 'csr': return <CSR company={selectedCompany} />;
             case 'events': return <Events company={selectedCompany} />;
             case 'games': return <Games company={selectedCompany} />;
+            case 'marketplace': return <Marketplace company={selectedCompany} />;
             case 'page-events': return <PageEvents company={selectedCompany} />;
             case 'page-people': return <PagePeople company={selectedCompany} />;
             case 'page-csr': return <PageCSR company={selectedCompany} />;
@@ -489,9 +492,6 @@ const SuperAdminPortal = ({ onLogout }) => {
             <div style={styles.main}>
                 <header style={styles.header}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <h2 style={{ fontSize: '18px', fontWeight: 500, color: '#1e293b' }}>
-                            {selectedCompany ? selectedCompany.name : ''}
-                        </h2>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

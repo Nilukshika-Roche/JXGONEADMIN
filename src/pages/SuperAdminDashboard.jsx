@@ -20,12 +20,9 @@ import {
     Globe,
     Plus,
     FileText,
-    Megaphone,
     Layout,
     Download,
-    LifeBuoy,
     Sparkles,
-    Settings,
     MoreVertical,
     Filter,
     UserCheck,
@@ -46,10 +43,10 @@ const SuperAdminDashboard = () => {
         { label: 'Companies', value: '12', trend: 'Stable', color: '#f97316', icon: Building2 },
         { label: 'Total Users', value: '12,482', trend: '+12.4%', color: '#3b82f6', icon: Users },
         { label: 'Active Today', value: '1,284', trend: '+8.1%', color: '#10b981', icon: Zap },
-        { label: 'Total Posts', value: '842', trend: '+15%', color: '#8b5cf6', icon: Megaphone },
+        { label: 'Total Posts', value: '842', trend: '+15%', color: '#8b5cf6', icon: TrendingUp },
         { label: 'Engagement', value: '64.2%', trend: '+2.4%', color: '#ec4899', icon: Activity },
         { label: 'Reports', value: '12', trend: '-5.0%', color: '#ef4444', icon: AlertCircle },
-        { label: 'Pending', value: '28', trend: 'Critical', color: '#f59e0b', icon: LifeBuoy },
+        { label: 'Pending', value: '28', trend: 'Critical', color: '#f59e0b', icon: Filter },
         { label: 'Sys Health', value: 'Optimal', trend: '98.2%', color: '#06b6d4', icon: Shield },
     ];
 
@@ -94,56 +91,34 @@ const SuperAdminDashboard = () => {
                 className="sa-container"
             >
 
-                <header className="sa-hero">
-                    <div className="hero-content">
-                        <motion.div
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            className="hero-text"
-                        >
-                            <div className="hero-badge">
-                                <Shield size={14} />
-                                <span>Group-Level Admin operational</span>
-                            </div>
-                            <h1>Welcome back, <span className="highlight">John Anderson</span></h1>
-                            <p>You have <span style={{ fontWeight: 600 }}>3 priority alerts</span> requiring Group oversight.</p>
+                <header className="sa-header-simple">
+                    <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="sa-header-main"
+                    >
+                        <h1 className="welcome-title">Welcome back, <span className="welcome-highlight">John Anderson</span></h1>
+                        <p className="welcome-sub">Here is an overview of your Group platform today.</p>
+                    </motion.div>
 
-                            <div className="hero-actions">
-                                <button className="hero-btn primary">
-                                    <Building2 size={18} />
-                                    Register Company
-                                </button>
-                                <button className="hero-btn secondary">
-                                    <UserPlus size={18} />
-                                    Add Admin
-                                </button>
-                                <button className="hero-btn secondary">
-                                    <FileText size={18} />
-                                    Group Report
-                                </button>
-                            </div>
-                        </motion.div>
-                        <div className="hero-visual" style={{ width: '280px' }}>
-                            <div className="card-glass" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)', padding: '16px' }}>
-                                <div className="viz-header" style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <TrendingUp size={14} />
-                                    <span>Global Growth Trend</span>
-                                </div>
-                                <ResponsiveContainer width="100%" height={80}>
-                                    <AreaChart data={growthTrend}>
-                                        <Area
-                                            type="monotone"
-                                            dataKey="Group"
-                                            stroke="#fff"
-                                            strokeWidth={3}
-                                            fillOpacity={0.2}
-                                            fill="#fff"
-                                        />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </div>
-                    </div>
+                    <motion.div
+                        initial={{ x: 20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="sa-header-actions"
+                    >
+                        <button className="sa-action-btn primary">
+                            <Building2 size={16} />
+                            <span>Register Company</span>
+                        </button>
+                        <button className="sa-action-btn secondary">
+                            <UserPlus size={16} />
+                            <span>Add Admin</span>
+                        </button>
+                        <button className="sa-action-btn secondary">
+                            <FileText size={16} />
+                            <span>Group Report</span>
+                        </button>
+                    </motion.div>
                 </header>
 
                 {/* 2. FILTER CONTROL ROW (Relocated below Hero) */}
@@ -389,25 +364,6 @@ const SuperAdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* 5. QUICK ACTION BAR (Bottom) */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginTop: '1.5rem' }}>
-                    <motion.button whileHover={{ y: -5 }} className="card-glass" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '1.25rem', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
-                        <Megaphone size={20} color="#f97316" />
-                        <span style={{ fontWeight: 700, fontSize: '14px' }}>Post Group Msg</span>
-                    </motion.button>
-                    <motion.button whileHover={{ y: -5 }} className="card-glass" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '1.25rem', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
-                        <LifeBuoy size={20} color="#3b82f6" />
-                        <span style={{ fontWeight: 700, fontSize: '14px' }}>Audit Logs</span>
-                    </motion.button>
-                    <motion.button whileHover={{ y: -5 }} className="card-glass" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '1.25rem', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
-                        <AlertCircle size={20} color="#ef4444" />
-                        <span style={{ fontWeight: 700, fontSize: '14px' }}>Policy Engine</span>
-                    </motion.button>
-                    <motion.button whileHover={{ y: -5 }} className="card-glass" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '1.25rem', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer' }}>
-                        <Settings size={20} color="#64748b" />
-                        <span style={{ fontWeight: 700, fontSize: '14px' }}>System Config</span>
-                    </motion.button>
-                </div>
             </motion.div >
 
         </div >

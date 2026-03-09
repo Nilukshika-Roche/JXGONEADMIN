@@ -131,9 +131,9 @@ const Analytics = () => {
                                     </div>
                                     <div className="section-actions">
                                         <button className="date-btn">
-                                            <Calendar size={14} />
+                                            <Calendar size={16} />
                                             <span>Dec 01 - 24, 2024</span>
-                                            <ChevronDown size={10} />
+                                            <ChevronDown size={12} />
                                         </button>
                                         <button className="report-btn">
                                             <Download size={14} />
@@ -267,9 +267,9 @@ const Analytics = () => {
                                     </div>
                                     <div className="section-actions">
                                         <button className="date-btn">
-                                            <Calendar size={14} />
+                                            <Calendar size={16} />
                                             <span>Dec 01 - 24, 2024</span>
-                                            <ChevronDown size={10} />
+                                            <ChevronDown size={12} />
                                         </button>
                                         <button className="report-btn">
                                             <Download size={14} />
@@ -416,9 +416,9 @@ const Analytics = () => {
                                     </div>
                                     <div className="section-actions">
                                         <button className="date-btn">
-                                            <Calendar size={14} />
+                                            <Calendar size={16} />
                                             <span>Dec 01 - 24, 2024</span>
-                                            <ChevronDown size={10} />
+                                            <ChevronDown size={12} />
                                         </button>
                                         <button className="report-btn">
                                             <Download size={14} />
@@ -679,26 +679,14 @@ const Analytics = () => {
                 .date-btn {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
-                    padding: 8px 16px;
+                    gap: 6px;
+                    padding: 8px 12px;
                     background: white;
                     border: 1px solid #e2e8f0;
                     border-radius: 8px;
-                    font-size: 13px;
-                    font-weight: 600;
+                    font-size: 12px;
                     color: #475569;
                     cursor: pointer;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-                }
-                .date-btn:hover {
-                    border-color: #f97316;
-                    color: #f97316;
-                    background: #fff7ed;
-                    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);
-                }
-                .date-btn svg:first-child {
-                    color: #f97316;
                 }
                 .report-btn {
                     display: flex;
