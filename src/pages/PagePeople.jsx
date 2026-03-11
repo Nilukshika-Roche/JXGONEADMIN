@@ -12,12 +12,12 @@ import {
     Download,
     Calendar,
     Zap,
-    UserPlus
+    UserPlus,
+    UserSearch
 } from 'lucide-react';
 
 const PagePeople = () => {
     const [searchQuery, setSearchQuery] = useState('');
-
 
     const [filters, setFilters] = useState({
         department: 'All',
@@ -90,8 +90,6 @@ const PagePeople = () => {
         },
     ]);
 
-
-
     const uniqueDepartments = ['All', ...new Set(users.map(u => u.department))];
     const uniqueRoles = ['All', ...new Set(users.map(u => u.role))];
     const uniqueStatuses = ['All', ...new Set(users.map(u => u.status))];
@@ -110,19 +108,16 @@ const PagePeople = () => {
     });
 
     const getStatusColor = (status) => {
-        switch (status) {
-            case 'Active': return '#10b981';
-            case 'Inactive': return '#f43f5e';
-            case 'Pending': return '#f97316';
-            default: return '#94a3b8';
-        }
+        if (status === 'Reported') return '#f43f5e';
+        return status === 'Active' ? '#10b981' : '#64748b';
     };
 
     const getRoleColor = (role) => {
         switch (role) {
             case 'Global Admin': return '#f97316';
-            case 'Content Manager': return '#8b5cf6';
-            case 'Editor': return '#3b82f6';
+            case 'Admin': return '#8b5cf6';
+            case 'Content Manager': return '#3b82f6';
+            case 'Editor': return '#10b981';
             default: return '#64748b';
         }
     };
@@ -137,52 +132,41 @@ const PagePeople = () => {
     };
 
     return (
-        <div className="analytics-container">
+        <div className="p-6 max-w-[1400px] mx-auto font-sans text-slate-800">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="analytics-content"
             >
-
-                {/* Compact Toolbar (Ported from PeopleManagement) */}
-                <div className="compact-toolbar">
-                    <div className="toolbar-info">
-                        <div className="directory-badge">
-                            <Users size={14} />
-                            <span className="directory-title">Team Members</span>
-                            <span className="member-count">{filteredUsers.length} Members</span>
+                {/* Header Section */}
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+                    <div>
+                        <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                            Admin &gt; Team
                         </div>
-                    </div>
-
-                    <div className="toolbar-controls">
-                        <div className="search-compact">
-                            <Search size={12} />
-                            <input
-                                type="text"
-                                placeholder="Search members..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="search-input-compact"
-                            />
-                        </div>
-
-
+                        <h1 className="text-3xl font-bold text-slate-800" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            Team Members
+                        </h1>
                     </div>
                 </div>
 
-                {/* Search Bar */}
-
-
                 <div className="user-table-card">
-
-
                     <div className="table-container">
                         <table className="user-table">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <div className="table-filter-header">
-                                            User Details
+                                    <th style={{ width: '40%' }}>
+                                        <div className="table-filter-header" style={{ cursor: 'default' }}>
+                                            User
+                                            <div className="table-search-container">
+                                                <Search size={16} className="table-search-icon" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search users..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    className="table-search-input"
+                                                />
+                                            </div>
                                         </div>
                                     </th>
                                     <th>
@@ -212,53 +196,33 @@ const PagePeople = () => {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.05 }}
-                                        className="user-row"
+                                        className="user-row hover:bg-slate-50"
                                     >
-                                        <td className="user-info">
-                                            <div className="user-avatar">
-                                                <img src={user.avatar} alt={user.name} />
+                                        <td>
+                                            <div className="flex items-center gap-4">
                                                 <div
-                                                    className="status-indicator"
-                                                    style={{ backgroundColor: getStatusColor(user.status) }}
-                                                />
-                                            </div>
-                                            <div className="user-details">
-                                                <div className="user-name">{user.name}</div>
-                                                <div className="user-email">
-                                                    <Mail size={12} />
-                                                    {user.email}
+                                                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
+                                                    style={{ background: getRoleColor(user.role) }}
+                                                >
+                                                    {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-slate-800 text-sm">{user.name}</span>
+                                                    <span className="text-xs text-slate-500">{user.email}</span>
                                                 </div>
                                             </div>
                                         </td>
+                                        <td><div className="text-sm font-medium text-slate-600">{user.department}</div></td>
                                         <td>
-                                            <span className="department">{user.department}</span>
-                                        </td>
-                                        <td>
-                                            <div
-                                                className="role-badge"
-                                                style={{
-                                                    background: `${getRoleColor(user.role)}15`,
-                                                    color: getRoleColor(user.role),
-                                                    borderColor: `${getRoleColor(user.role)}30`
-                                                }}
-                                            >
-                                                {user.role === 'Global Admin' ? <ShieldCheck size={14} /> : <Shield size={14} />}
+                                            <span className="text-sm font-semibold text-slate-600">
                                                 {user.role}
-                                            </div>
+                                            </span>
                                         </td>
                                         <td>
                                             <div
-                                                className="status-badge"
-                                                style={{
-                                                    background: `${getStatusColor(user.status)}15`,
-                                                    color: getStatusColor(user.status)
-                                                }}
+                                                className="flex items-center gap-1.5"
                                             >
-                                                <div
-                                                    className="status-dot"
-                                                    style={{ backgroundColor: getStatusColor(user.status) }}
-                                                />
-                                                {user.status}
+                                                <span className="text-sm font-bold" style={{ color: getStatusColor(user.status) }}>{user.status}</span>
                                             </div>
                                         </td>
                                     </motion.tr>
@@ -270,12 +234,23 @@ const PagePeople = () => {
                     {filteredUsers.length === 0 && (
                         <div className="empty-state">
                             <div className="empty-icon">
-                                <Users size={32} />
+                                <UserSearch size={32} />
                             </div>
                             <h3>No users found</h3>
                             <p>Try adjusting your search terms</p>
                         </div>
                     )}
+
+                    <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
+                        <div>
+                            Showing {filteredUsers.length} of {users.length} results
+                        </div>
+
+                        <button className="show-more-btn">
+                            <ChevronDown size={16} />
+                            <span>Show More</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Filter Dropdowns */}
@@ -361,200 +336,15 @@ const PagePeople = () => {
             </motion.div >
 
             <style jsx>{`
-                /* Container */
-                .analytics-container {
-                    min-height: 100vh;
-                    background: #f8fafc;
-                }
-                .analytics-content {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    padding: 1rem;
-                }
-
-                /* Compact Toolbar (Ported from PeopleManagement) */
-                .compact-toolbar {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    background: white;
-                    padding: 16px;
-                    border-radius: 12px;
-                    border: 1px solid #e2e8f0;
-                    margin-bottom: 16px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                }
-                
-                @media (min-width: 768px) {
-                    .compact-toolbar {
-                        flex-direction: row;
-                        justify-content: space-between;
-                        align-items: center;
-                        padding: 12px 20px;
-                    }
-                }
-                
-                .toolbar-info {
-                    display: flex;
-                    align-items: center;
-                }
-                
-                .directory-badge {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 6px 12px;
-                    background: #fff7ed;
-                    border-radius: 8px;
-                    border: 1px solid #fed7aa;
-                }
-                
-                .directory-badge svg {
-                    color: #f97316;
-                }
-                
-                .directory-title {
-                    font-size: 14px;
-                    font-weight: 700;
-                    color: #0f172a;
-                }
-                
-                .member-count {
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: #f97316;
-                    background: white;
-                    padding: 2px 6px;
-                    border-radius: 4px;
-                    margin-left: 4px;
-                }
-                
-                .toolbar-controls {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    width: 100%;
-                }
-                
-                @media (min-width: 768px) {
-                    .toolbar-controls {
-                        flex-direction: row;
-                        align-items: center;
-                        justify-content: flex-end;
-                        width: auto;
-                        gap: 8px;
-                    }
-                }
-                
-                .search-compact {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    background: #f8fafc;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
-                    padding: 6px 12px;
-                    flex: 1;
-                    min-width: 200px;
-                    transition: all 0.2s;
-                }
-                
-                @media (min-width: 768px) {
-                    .search-compact {
-                        flex: 0 1 240px;
-                    }
-                }
-                
-                .search-compact:focus-within {
-                    background: white;
-                    border-color: #f97316;
-                    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
-                }
-                
-                .search-compact svg {
-                    color: #94a3b8;
-                    flex-shrink: 0;
-                }
-                
-                .search-input-compact {
-                    border: none;
-                    background: transparent;
-                    outline: none;
-                    font-size: 13px;
-                    color: #0f172a;
-                    width: 100%;
-                }
-                
-                .control-buttons {
-                    display: flex;
-                    gap: 8px;
-                }
-                
-                .control-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 8px 16px;
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 8px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    color: #475569;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                
-                .control-btn:hover {
-                    background: #f8fafc;
-                    border-color: #cbd5e1;
-                    color: #0f172a;
-                }
-
                 /* User Table Card Header Ported */
                 .user-table-card {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden;
+                    overflow: visible; /* Changed from hidden to allow kebab menu popup */
+                    margin-top: 1rem;
                 }
-                .table-header {
-                    padding: 1.5rem;
-                    border-bottom: 1px solid #e2e8f0;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background: #fffaf5;
-                }
-                .table-title {
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .table-subtitle {
-                    font-size: 13px;
-                    color: #64748b;
-                    margin: 4px 0 0;
-                    font-weight: 500;
-                }
-                .table-header-right {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                }
-                .date-display {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    background: white;
-                    border: 1px solid #fed7aa;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    color: #f97316;
-                }
+
                 .table-container {
                     overflow-x: auto;
                 }
@@ -583,78 +373,7 @@ const PagePeople = () => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
-                }
-
-                .user-info {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                }
-                .user-avatar {
-                    position: relative;
-                }
-                .user-avatar img {
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 10px;
-                    object-fit: cover;
-                }
-                .status-indicator {
-                    position: absolute;
-                    bottom: -2px;
-                    right: -2px;
-                    width: 12px;
-                    height: 12px;
-                    border-radius: 50%;
-                    border: 2px solid white;
-                }
-                .user-details {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                }
-                .user-name {
-                    font-weight: 600;
-                    color: #0f172a;
-                }
-                .user-email {
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                    font-size: 11px;
-                    color: #64748b;
-                }
-
-                .department {
-                    font-weight: 600;
-                    color: #475569;
-                }
-
-                .role-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    border: 1px solid;
-                }
-
-                .status-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 11px;
-                    font-weight: 600;
-                }
-                .status-dot {
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
+                    background: #f8fafc;
                 }
 
                 /* Table Filter Header */
@@ -664,13 +383,74 @@ const PagePeople = () => {
                     gap: 6px;
                     cursor: pointer;
                     user-select: none;
+                    transition: all 0.2s;
                 }
                 .table-filter-header:hover {
                     color: #f97316;
                 }
                 .table-filter-header .rotate {
                     transform: rotate(180deg);
+                }
+                .table-filter-header svg {
                     transition: transform 0.2s;
+                }
+
+                /* Table Search Bar */
+                .table-search-container {
+                    position: relative;
+                    margin-left: 1rem;
+                    flex: 1;
+                    max-width: 320px;
+                }
+                .table-search-input {
+                    width: 100%;
+                    padding: 8px 12px 8px 36px;
+                    background-color: #f1f5f9;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #1e293b;
+                    outline: none;
+                    transition: all 0.2s;
+                    font-family: inherit;
+                }
+                .table-search-input:focus {
+                    background-color: #fff;
+                    border-color: #cbd5e1;
+                    box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.5);
+                }
+                .table-search-icon {
+                    position: absolute;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #94a3b8;
+                    pointer-events: none;
+                }
+
+                /* Show More Button */
+                .show-more-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;
+                    background: transparent;
+                    color: #475569;
+                }
+                .show-more-btn:hover {
+                    background: #f1f5f9;
+                }
+                .show-more-btn svg {
+                    transition: transform 0.2s;
+                }
+                .show-more-btn:hover svg {
+                    transform: translateY(2px);
                 }
 
                 /* Filter Dropdown Overlay */
@@ -680,53 +460,101 @@ const PagePeople = () => {
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    z-index: 100;
+                    z-index: 10000;
                     display: flex;
                     align-items: flex-start;
                     justify-content: center;
-                    padding-top: 100px;
-                    background: rgba(0, 0, 0, 0.5);
+                    padding-top: 15vh;
+                    background: rgba(0, 0, 0, 0.4);
                     backdrop-filter: blur(2px);
                 }
                 .filter-dropdown-card {
                     background: white;
                     border-radius: 12px;
                     padding: 1.5rem;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-                    min-width: 200px;
-                    max-width: 300px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                    min-width: 220px;
+                    max-width: 320px;
                 }
                 .filter-dropdown-header {
                     margin-bottom: 1rem;
+                    border-bottom: 1px solid #f1f5f9;
+                    padding-bottom: 0.75rem;
                 }
                 .filter-dropdown-header h4 {
                     font-size: 14px;
                     font-weight: 700;
-                    color: #0f172a;
+                    color: #1e293b;
                     margin: 0;
                 }
                 .filter-options {
                     display: flex;
                     flex-direction: column;
-                    gap: 0.5rem;
+                    gap: 0.25rem;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    padding-right: 4px;
+                }
+                .filter-options::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .filter-options::-webkit-scrollbar-thumb {
+                    background: #cbd5e1;
+                    border-radius: 4px;
                 }
                 .filter-option {
-                    padding: 8px 12px;
+                    padding: 10px 12px;
                     background: none;
                     border: none;
-                    border-radius: 6px;
+                    border-radius: 8px;
                     font-size: 13px;
                     color: #475569;
                     text-align: left;
                     cursor: pointer;
+                    transition: all 0.2s;
                 }
                 .filter-option:hover {
                     background: #f1f5f9;
+                    color: #1e293b;
                 }
                 .filter-option.active {
                     background: #fff7ed;
                     color: #f97316;
+                    font-weight: 700;
+                }
+
+                /* Page Actions */
+                .page-actions {
+                    display: flex;
+                    gap: 0.75rem;
+                }
+                .page-action-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
                     font-weight: 600;
+                    cursor: pointer;
+                    border: none;
+                    transition: all 0.2s;
+                }
+                .page-action-btn.primary {
+                    background: linear-gradient(135deg, #f97316, #fbbf24);
+                    color: white;
+                }
+                .page-action-btn.primary:hover {
+                    opacity: 0.9;
+                    transform: translateY(-1px);
+                }
+                .page-action-btn.secondary {
+                    background: #f1f5f9;
+                    color: #475569;
+                }
+                .page-action-btn.secondary:hover {
+                    background: #e2e8f0;
+                    color: #0f172a;
                 }
 
                 /* Empty State */
@@ -757,10 +585,8 @@ const PagePeople = () => {
                     color: #64748b;
                     margin: 0;
                 }
-
-
             `}</style>
-        </div >
+        </div>
     );
 };
 
