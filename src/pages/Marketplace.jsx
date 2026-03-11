@@ -223,7 +223,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 item.id === editFormData.id ? { ...editFormData } : item
             )
         );
-        setPreviewItem(editFormData);
+        setPreviewItem(null);
         setIsEditMode(false);
     };
 
@@ -396,7 +396,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             </div>
                             <div className="metric-body">
                                 <p className="metric-label">Published Today</p>
-                                <h3 className="metric-value">{summaryStats.published_today}</h3>
+                                <h3 className="metric-value">{summaryStats.new_today}</h3>
                             </div>
                         </div>
                         <div className="metric-progress">
@@ -749,7 +749,8 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="modal-container max-w-2xl"
+                            className="modal-container"
+                            style={{ maxWidth: '600px' }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Modal Header */}
@@ -772,6 +773,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             </div>
 
                             {/* Modal Body */}
+                            {/*Edit Listing */}
                             <div className="modal-form">
                                 {isEditMode ? (
                                     <div className="space-y-6">
@@ -849,10 +851,19 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Status</p>
-                                                {/*clssname for bottome was previously 'status-badge' */}
-                                                <span className={`text-sm font-bold text-slate-800 adequate-spacing ${previewItem.status.toLowerCase()}`}>
+                                                <div
+                                                    className="status-badge"
+                                                    style={{
+                                                        background: `${getStatusColor(previewItem.status)}15`,
+                                                        color: getStatusColor(previewItem.status)
+                                                    }}
+                                                >
+                                                    <div
+                                                        className="status-dot"
+                                                        style={{ backgroundColor: getStatusColor(previewItem.status) }}
+                                                    />
                                                     {previewItem.status}
-                                                </span>
+                                                </div>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Posted Date</p>
@@ -868,14 +879,14 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                         <div className="modal-actions">
                                             <button
                                                 onClick={handleStartEdit}
-                                                className="submit-btn flex items-center justify-center gap-2"
+                                                className="cancel-btn flex items-center justify-center gap-2"
                                             >
                                                 <Edit2 size={16} />
                                                 Edit Listing
                                             </button>
                                             <button
                                                 onClick={() => handleApprove(previewItem)}
-                                                className="cancel-btn text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center gap-2"
+                                                className="submit-btn flex items-center justify-center gap-2"
                                             >
                                                 <CheckCircle2 size={16} />
                                                 Approve
@@ -1560,7 +1571,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;

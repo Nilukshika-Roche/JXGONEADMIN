@@ -677,7 +677,6 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
                     {/* Show More Button */}
                     <button
-
                         onClick={generateMorePeople}
                         className="show-more-btn"
                     >
@@ -690,7 +689,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
 
             <AnimatePresence>
-                {/* add and edit Modals */}
+                {/* add user & edit Modals */}
                 {(isAddModalOpen || isEditModalOpen) && (
                     <div className="modal-overlay" onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }}>
                         <motion.div
@@ -698,6 +697,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="modal-container"
+                            style={{ maxWidth: '600px' }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="modal-header">
@@ -1535,7 +1535,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;

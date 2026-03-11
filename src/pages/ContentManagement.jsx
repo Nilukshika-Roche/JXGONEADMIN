@@ -198,7 +198,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                 item.id === editFormData.id ? { ...editFormData } : item
             )
         );
-        setPreviewItem(editFormData);
+        setPreviewItem(null);
         setIsEditMode(false);
     };
 
@@ -810,8 +810,9 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                         <button
                                             type="button"
                                             onClick={handleSaveEdit}
-                                            className="submit-btn"
+                                            className="submit-btn flex items-center justify-center gap-2"
                                         >
+                                            <Check size={18} />
                                             Save Changes
                                         </button>
                                     </div>
@@ -875,17 +876,17 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
 
                                     <div className="modal-actions">
                                         <button
+                                            type="button"
                                             onClick={handleStartEdit}
                                             className="cancel-btn flex items-center justify-center gap-2"
-                                            style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
                                         >
                                             <Edit2 size={16} />
                                             Edit Content
                                         </button>
                                         <button
+                                            type='button'
                                             onClick={() => handleApprove(previewItem)}
                                             className="submit-btn flex items-center justify-center gap-2"
-                                            style={{ background: '#059669' }}
                                         >
                                             <CheckCircle2 size={16} />
                                             Approve
@@ -1625,7 +1626,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;

@@ -271,7 +271,7 @@ const MediaHubPage = () => {
                             <div className="feed-header-left">
                                 {/* Left side intentionally left empty or for future use */}
                             </div>
-                            <div className="feed-header-right">
+                            <div className="feed-header-right ">
                                 <div className="feed-search-bar">
                                     <Search size={16} className="feed-search-icon" />
                                     <input

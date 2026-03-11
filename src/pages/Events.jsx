@@ -22,7 +22,9 @@ import {
     TrendingUp,
     FileText,
     Calendar1,
-    CalendarSearch
+    CalendarSearch,
+    CheckIcon,
+    CheckCheck
 } from 'lucide-react';
 
 const Events = ({ setActiveTab: onNavigate }) => {
@@ -224,7 +226,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 item.id === editFormData.id ? { ...editFormData } : item
             )
         );
-        setPreviewItem(editFormData);
+        setPreviewItem(null);
         setIsEditMode(false);
     };
 
@@ -878,8 +880,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         <button
                                             type="button"
                                             onClick={handleSaveEdit}
-                                            className="submit-btn"
+                                            className="submit-btn flex items-center justify-center gap-2"
                                         >
+                                            <CheckIcon size={18} />
                                             Save Changes
                                         </button>
                                     </div>
@@ -916,7 +919,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                                     className="status-dot"
                                                     style={{ backgroundColor: getStatusColor(previewItem.status) }}
                                                 />
-                                                {previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)}
+                                                {previewItem.status}
                                             </div>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
@@ -1745,7 +1748,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;
@@ -1973,39 +1976,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     transition: transform 0.2s;
                 }
 
-                /* Table Search Bar */
-                .table-search-container {
-                    position: relative;
-                    margin-left: 1rem;
-                    flex: 1;
-                    max-width: 320px;
-                }
-                .table-search-input {
-                    width: 100%;
-                    padding: 8px 12px 8px 36px;
-                    background-color: #f1f5f9;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 12px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    color: #1e293b;
-                    outline: none;
-                    transition: all 0.2s;
-                    font-family: inherit;
-                }
-                .table-search-input:focus {
-                    background-color: #fff;
-                    border-color: #cbd5e1;
-                    box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.5);
-                }
-                .table-search-icon {
-                    position: absolute;
-                    left: 12px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: #94a3b8;
-                    pointer-events: none;
-                }
             `}</style>
 
         </div >
