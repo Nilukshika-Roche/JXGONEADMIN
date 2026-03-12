@@ -478,7 +478,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-8 gap-6">
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -531,7 +531,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         User
                                         <div className="table-search-container">
@@ -614,14 +614,14 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
 
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{user.name}</span>
-                                                <span className="text-xs text-slate-500">{user.email}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{user.name}</span>
+                                                <span className="text-xs text-slate-400">{user.email}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td><div className="text-sm font-medium text-slate-600">{user.department}</div></td>
                                     <td>
-                                        <span className="px-4 py-4 rounded-lg text-xs font-bold">  {/*style={{ color: getRoleColor(user.role) }}>  commented out*/}
+                                        <span className="text-sm font-medium text-slate-600">  {/*style={{ color: getRoleColor(user.role) }}>  commented out*/}
                                             {user.role}
                                         </span>
                                     </td>
@@ -648,8 +648,8 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleReasonClick(user); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
-                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={user.reasons}>
-                                            {user.reasons || <span className="text-slate-300 italic">No notes / reasons...</span>}
+                                        <div className="text-sm font-medium text-slate-600 truncate max-w-[150px]" title={user.reasons}>
+                                            {user.reasons || <span className="text-sm font-medium text-slate-400 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -671,11 +671,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 )}
 
                 <div className="showing">
-                    <div>
-                        Showing {filteredUsers.length > 0 ? 1 : 0} to {filteredUsers.length} of {users.length} results
-                    </div>
-
-                    {/* Show More Button */}
+                    <div>Showing {filteredUsers.length} results</div>
                     <button
                         onClick={generateMorePeople}
                         className="show-more-btn"
@@ -1313,16 +1309,20 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     align-items: center;
                 }
                 .table-header-left { display: flex; gap: 1rem; align-items: center; }
-                .user-table { width: 100%; border-collapse: collapse; }
+                .user-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
                     color: #64748b;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    text-align: left;
+                    letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
+                    text-align: left;
                 }
                 .user-table td {
                     padding: 1rem 1.5rem;
@@ -1332,7 +1332,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     vertical-align: middle;
                 }
                 .user-row { transition: all 0.2s; }
-                .user-row:hover { background: #fffaf5; }
+                .user-row:hover { background: #f8fafc; }
 
                 .kebab-menu-container { position: relative; }
                 .kebab-menu-popup {
@@ -1381,16 +1381,6 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     border-radius: 10px;
                     object-fit: cover;
                 }not using */
-
-                .status-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 11px;
-                    font-weight: 600;
-                }
                 
                 /* Modal Styles */
                 .modal-overlay {
@@ -1710,7 +1700,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1819,7 +1809,6 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 .table-filter-header svg {
                     transition: transform 0.2s;
                 }
-                
                 
                 .page-actions {
                     display: flex;
@@ -2018,7 +2007,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }
@@ -2028,7 +2017,7 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 .status-dot {
                     width: 6px;
                     height: 6px;
-                    border-radius: 50%;
+                    border-radius:50%;
                 }
 
                 .edit-label {

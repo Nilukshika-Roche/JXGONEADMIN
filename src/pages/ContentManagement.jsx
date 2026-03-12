@@ -359,7 +359,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
 
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -478,7 +478,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         Content
                                         <div className="table-search-container">
@@ -589,8 +589,8 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
 
                                             {/* Title & Date */}
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                                                <span className="text-xs text-slate-500">Published on {item.date}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{item.title}</span>
+                                                <span className="text-xs text-slate-400">Published on {item.date}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -623,8 +623,8 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
-                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
-                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
+                                        <div className="text-sm font-medium text-slate-600 truncate max-w-[150px]" title={item.notes}>
+                                            {item.notes || <span className="text-sm font-medium text-slate-400 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -646,9 +646,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
 
                 {/* Footer matching PeopleManagement logic (though PM doesn't strictly have a footer in CSS, adding one with similar style) */}
                 <div className="showing">
-                    <div>
-                        Showing {filteredContent.length > 0 ? 1 : 0} to {filteredContent.length} of {contents.length} results
-                    </div>
+                    <div>Showing {filteredContent.length} results</div>
                     <button
                         onClick={generateMoreContent}
                         className="show-more-btn"
@@ -1200,7 +1198,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
                     color: #64748b;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
@@ -1218,7 +1216,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
 
                 /* Kebab Menu Popup Styles */
@@ -1375,7 +1373,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1645,7 +1643,7 @@ const ContentManagement = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }

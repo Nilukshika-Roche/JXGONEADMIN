@@ -381,7 +381,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -501,7 +501,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         Initiative
                                         <div className="table-search-container">
@@ -613,8 +613,8 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
                                             {/* Project Details */}
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                                                <span className="text-xs text-slate-500">Created by {item.createdBy}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{item.title}</span>
+                                                <span className="text-xs text-slate-400">Created by {item.createdBy}</span>
                                                 <span className="text-xs text-slate-400">Published on {item.publishedOn}</span>
                                             </div>
                                         </div>
@@ -679,9 +679,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
                 {/* Footer */}
                 <div className="showing">
-                    <div>
-                        Showing {filteredProjects.length > 0 ? 1 : 0} to {filteredProjects.length} of {projects.length} results
-                    </div>
+                    <div>Showing {filteredProjects.length} results</div>
                     <button
                         onClick={generateMoreProjects}
                         className="show-more-btn"
@@ -1227,9 +1225,9 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden; /* Ensure menus aren't clipped */
+                    overflow: hidden;
                     margin-top: 1.5rem;
-                    
+                    border: 1px solid #e2e8f0;
                 }
                 .table-container {
                     overflow-x: auto;
@@ -1242,7 +1240,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
                     color: #64748b;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
@@ -1260,7 +1258,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
 
                 /* Kebab Menu Popup Styles */
@@ -1350,7 +1348,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1666,7 +1664,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }

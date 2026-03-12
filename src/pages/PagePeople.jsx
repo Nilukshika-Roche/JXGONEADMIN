@@ -26,6 +26,11 @@ const PagePeople = () => {
     });
 
     const [openFilter, setOpenFilter] = useState(null);
+    const [tableFilters, setTableFilters] = useState({
+        department: 'All',
+        role: 'All',
+        status: 'All'
+    });
 
     const [users, setUsers] = useState([
         {
@@ -81,7 +86,7 @@ const PagePeople = () => {
             name: 'Alex Thompson',
             email: 'alex@jxg.com',
             role: 'Editor',
-            status: 'Pending',
+            status: 'Inactive',
             joinedDate: 'Mar 10, 2024',
             avatar: 'https://i.pravatar.cc/150?u=5',
             department: 'Content',
@@ -89,6 +94,37 @@ const PagePeople = () => {
             lastActive: 'Never'
         },
     ]);
+
+    const generateMorePeople = () => {
+        const roles = ['Global Admin', 'Admin', 'Content Manager', 'Editor', 'User'];
+        const statuses = ['Active', 'Inactive'];
+        const departments = ['IT Security', 'Marketing', 'Content', 'Operations', 'Sales', 'HR', 'Finance'];
+        const names = [
+            'John Smith', 'Emily Johnson', 'Michael Brown', 'Sarah Davis', 'David Wilson',
+            'Lisa Anderson', 'James Taylor', 'Maria Garcia', 'William Lee', 'Linda Rodriguez'
+        ];
+
+        const newPeople = [];
+        const currentMaxId = Math.max(...users.map(u => u.id));
+
+        for (let i = 1; i <= 5; i++) {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            newPeople.push({
+                id: currentMaxId + i,
+                name: `${name} ${currentMaxId + i}`,
+                email: `${name.toLowerCase().replace(' ', '.')}@jxg.com`,
+                role: roles[Math.floor(Math.random() * roles.length)],
+                status: status,
+                joinedDate: new Date().toISOString().split('T')[0],
+                avatar: `https://i.pravatar.cc/150?u=${currentMaxId + i}`,
+                department: departments[Math.floor(Math.random() * departments.length)],
+                permissions: Math.floor(Math.random() * 8) + 1,
+                lastActive: 'Just now'
+            });
+        }
+        setUsers([...users, ...newPeople]);
+    };
 
     const uniqueDepartments = ['All', ...new Set(users.map(u => u.department))];
     const uniqueRoles = ['All', ...new Set(users.map(u => u.role))];
@@ -100,16 +136,16 @@ const PagePeople = () => {
             user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
             user.department.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesDept = filters.department === 'All' || user.department === filters.department;
-        const matchesRole = filters.role === 'All' || user.role === filters.role;
-        const matchesStatus = filters.status === 'All' || user.status === filters.status;
+        const matchesDept = tableFilters.department === 'All' || user.department === tableFilters.department;
+        const matchesRole = tableFilters.role === 'All' || user.role === tableFilters.role;
+        const matchesStatus = tableFilters.status === 'All' || user.status === tableFilters.status;
 
         return matchesSearch && matchesDept && matchesRole && matchesStatus;
     });
 
     const getStatusColor = (status) => {
-        if (status === 'Reported') return '#f43f5e';
-        return status === 'Active' ? '#10b981' : '#64748b';
+        if (status === 'Active') return '#10b981';
+        else return '#64748b';
     };
 
     const getRoleColor = (role) => {
@@ -127,7 +163,7 @@ const PagePeople = () => {
     };
 
     const handleFilterSelect = (type, value) => {
-        setFilters(prev => ({ ...prev, [type]: value }));
+        setTableFilters(prev => ({ ...prev, [type]: value }));
         setOpenFilter(null);
     };
 
@@ -140,7 +176,7 @@ const PagePeople = () => {
                 {/* Header Section */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
                     <div>
-                        <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                        <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                             Admin &gt; Team
                         </div>
                         <h1 className="text-3xl font-bold text-slate-800" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -207,22 +243,30 @@ const PagePeople = () => {
                                                     {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-800 text-sm">{user.name}</span>
-                                                    <span className="text-xs text-slate-500">{user.email}</span>
+                                                    <span className="font-semibold text-slate-800 text-sm">{user.name}</span>
+                                                    <span className="text-xs text-slate-400">{user.email}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td><div className="text-sm font-medium text-slate-600">{user.department}</div></td>
                                         <td>
-                                            <span className="text-sm font-semibold text-slate-600">
+                                            <span className="text-sm font-medium text-slate-600">
                                                 {user.role}
                                             </span>
                                         </td>
                                         <td>
                                             <div
-                                                className="flex items-center gap-1.5"
+                                                className="status-badge"
+                                                style={{
+                                                    background: `${getStatusColor(user.status)}15`,
+                                                    color: getStatusColor(user.status)
+                                                }}
                                             >
-                                                <span className="text-sm font-bold" style={{ color: getStatusColor(user.status) }}>{user.status}</span>
+                                                <div
+                                                    className="status-dot"
+                                                    style={{ color: getStatusColor(user.status) }}
+                                                />
+                                                {user.status}
                                             </div>
                                         </td>
                                     </motion.tr>
@@ -241,12 +285,12 @@ const PagePeople = () => {
                         </div>
                     )}
 
-                    <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
-                        <div>
-                            Showing {filteredUsers.length} of {users.length} results
-                        </div>
-
-                        <button className="show-more-btn">
+                    <div className="showing">
+                        <div>Showing {filteredUsers.length} results</div>
+                        <button
+                            onClick={generateMorePeople}
+                            className="show-more-btn"
+                        >
                             <ChevronDown size={16} />
                             <span>Show More</span>
                         </button>
@@ -255,79 +299,30 @@ const PagePeople = () => {
 
                 {/* Filter Dropdowns */}
                 <AnimatePresence>
-                    {openFilter === 'department' && (
+                    {openFilter && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
                             className="filter-dropdown-overlay"
+                            onClick={() => setOpenFilter(null)}
                         >
-                            <div className="filter-dropdown-card">
+                            <div className="filter-dropdown-card" onClick={e => e.stopPropagation()}>
                                 <div className="filter-dropdown-header">
-                                    <h4>Filter by Department</h4>
+                                    <h4>Filter by {openFilter.charAt(0).toUpperCase() + openFilter.slice(1)}</h4>
                                 </div>
                                 <div className="filter-options">
-                                    {uniqueDepartments.map((dept) => (
-                                        <button
-                                            key={dept}
-                                            className={`filter-option ${filters.department === dept ? 'active' : ''}`}
-                                            onClick={() => handleFilterSelect('department', dept)}
-                                        >
-                                            {dept}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {openFilter === 'role' && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="filter-dropdown-overlay"
-                        >
-                            <div className="filter-dropdown-card">
-                                <div className="filter-dropdown-header">
-                                    <h4>Filter by Role</h4>
-                                </div>
-                                <div className="filter-options">
-                                    {uniqueRoles.map((role) => (
-                                        <button
-                                            key={role}
-                                            className={`filter-option ${filters.role === role ? 'active' : ''}`}
-                                            onClick={() => handleFilterSelect('role', role)}
-                                        >
-                                            {role}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {openFilter === 'status' && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="filter-dropdown-overlay"
-                        >
-                            <div className="filter-dropdown-card">
-                                <div className="filter-dropdown-header">
-                                    <h4>Filter by Status</h4>
-                                </div>
-                                <div className="filter-options">
-                                    {uniqueStatuses.map((status) => (
-                                        <button
-                                            key={status}
-                                            className={`filter-option ${filters.status === status ? 'active' : ''}`}
-                                            onClick={() => handleFilterSelect('status', status)}
-                                        >
-                                            {status}
-                                        </button>
-                                    ))}
+                                    {(openFilter === 'department' ? uniqueDepartments :
+                                        openFilter === 'role' ? uniqueRoles :
+                                            uniqueStatuses).map((val) => (
+                                                <button
+                                                    key={val}
+                                                    className={`filter-option ${tableFilters[openFilter] === val ? 'active' : ''}`}
+                                                    onClick={() => handleFilterSelect(openFilter, val)}
+                                                >
+                                                    {val}
+                                                </button>
+                                            ))}
                                 </div>
                             </div>
                         </motion.div>
@@ -341,13 +336,20 @@ const PagePeople = () => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: visible; /* Changed from hidden to allow kebab menu popup */
-                    margin-top: 1rem;
+                    overflow: hidden;
+                    margin-top: 1.5rem;
+                    border: 1px solid #e2e8f0;
                 }
-
-                .table-container {
-                    overflow-x: auto;
+                .table-header {
+                    padding: 1.5rem;
+                    border-radius: 12px 12px 0 0;
+                    border-bottom: 1px solid #e2e8f0;
+                    background: #fffaf5;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                 }
+                .table-header-left { display: flex; gap: 1rem; align-items: center; }
                 .user-table {
                     width: 100%;
                     border-collapse: collapse;
@@ -356,7 +358,7 @@ const PagePeople = () => {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
                     color: #64748b;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
@@ -368,12 +370,32 @@ const PagePeople = () => {
                     border-bottom: 1px solid #f1f5f9;
                     font-size: 13px;
                     color: #334155;
+                    vertical-align: middle;
                 }
                 .user-row {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
                     background: #f8fafc;
+                }
+
+                .status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: default;
+                }
+                .status-badge[onClick] {
+                    cursor: pointer;
+                }
+                .status-dot {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
                 }
 
                 /* Table Filter Header */
@@ -408,7 +430,7 @@ const PagePeople = () => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -451,6 +473,18 @@ const PagePeople = () => {
                 }
                 .show-more-btn:hover svg {
                     transform: translateY(2px);
+                }
+
+                .showing{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;   
                 }
 
                 /* Filter Dropdown Overlay */

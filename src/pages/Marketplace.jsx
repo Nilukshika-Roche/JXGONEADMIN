@@ -361,7 +361,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
 
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -497,7 +497,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         Listing
                                         <div className="table-search-container">
@@ -590,14 +590,14 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                             </div>
 
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                                                <span className="text-xs text-slate-500">Posted on {item.date}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{item.title}</span>
+                                                <span className="text-xs text-slate-400">Posted on {item.date}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td><div className="text-sm font-medium text-slate-600">{item.seller}</div></td>
                                     <td><div className="text-sm font-medium text-slate-600">{item.category}</div></td>
-                                    <td><div className="text-sm font-bold text-slate-800">{item.price}</div></td>
+                                    <td><div className="text-sm font-medium text-slate-600">{item.price}</div></td>
                                     <td>
                                         <div
                                             className="status-badge"
@@ -621,8 +621,8 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
-                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
-                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
+                                        <div className="text-sm font-medium text-slate-600 truncate max-w-[150px]" title={item.notes}>
+                                            {item.notes || <span className="text-sm font-medium text-slate-400 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -1148,9 +1148,9 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden; /* Ensure menus aren't clipped */
+                    overflow: hidden;
                     margin-top: 1.5rem;
-                    
+                    border: 1px solid #e2e8f0;
                 }
                 .table-header {
                     padding: .5rem;
@@ -1160,15 +1160,20 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 }
                 .table-header-left { display: flex; gap: 1rem; align-items: center; }
                 .user-table { width: 100%; border-collapse: collapse; }
+                .user-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
                     color: #64748b;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    text-align: left;
+                    letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
+                    text-align: left;
                 }
                 .user-table td {
                     padding: 1rem 1.5rem;
@@ -1181,7 +1186,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
                 
                 .kebab-menu-container { position: relative; }
@@ -1221,6 +1226,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
 
                 /* Filter Toggle Bar */
                 .filter-toggle-bar {
+                    width: 20.75rem;
                     display: flex;
                     background: #f1f5f9;
                     padding: 4px;
@@ -1228,9 +1234,10 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     gap: 4px;
                 }
                 .filter-btn {
+                    width: 50%;
                     padding: 6px 16px;
                     border-radius: 8px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 600;
                     color: #64748b;
                     transition: all 0.2s;
@@ -1279,7 +1286,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1396,26 +1403,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background: #fff7ed;
                     color: #f97316;
                     font-weight: 700;
-                }
-
-                /* Table Filter Header */
-                .table-filter-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    user-select: none;
-                    transition: all 0.2s;
-                }
-                .table-filter-header:hover {
-                    color: #f97316;
-                }
-                .table-filter-header .rotate {
-                    transform: rotate(180deg);
-                }
-                .table-filter-header svg {
-                    transition: transform 0.2s;
-                }
+                }              
 
                 .show-more-btn {
                     display: flex;
@@ -1590,7 +1578,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }
