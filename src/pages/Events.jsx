@@ -1311,7 +1311,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
                     overflow: hidden;
-                    margin-top: 1.5rem;
+                    margin-top: .75rem;
                     border: 1px solid #e2e8f0;
                 }
                 .table-container {
@@ -1324,10 +1324,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
-                    color: #64748b;
+                    color: #1e293b;
                     font-size: 14px;
                     font-weight: 700;
-                    text-transform: uppercase;
                     letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
                     text-align: left;
@@ -1884,34 +1883,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 }
                 .table-container {
                     overflow-x: auto;
-                }
-                .user-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                .user-table th {
-                    padding: 1rem 1.5rem;
-                    background: #f8fafc;
-                    color: #64748b;
-                    font-size: 14px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                }
-                .user-table td {
-                    padding: 1rem 1.5rem;
-                    border-bottom: 1px solid #f1f5f9;
-                    font-size: 13px;
-                    color: #334155;
-                    vertical-align: middle;
-                }
-                .user-row {
-                    transition: background-color 0.2s;
-                }
-                .user-row:hover {
-                    background: #f8fafc;
                 }
 
                 /* Kebab Menu Popup Styles */

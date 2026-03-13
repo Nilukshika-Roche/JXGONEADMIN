@@ -1167,16 +1167,15 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
-                    color: #64748b;
+                    color: #1e293b;
                     font-size: 14px;
                     font-weight: 700;
-                    text-transform: uppercase;
                     letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
                     text-align: left;
                 }
                 .user-table td {
-                    padding: 1rem 1.5rem;
+                    padding: 1rem .75rem;
                     border-bottom: 1px solid #f1f5f9;
                     font-size: 13px;
                     color: #334155;

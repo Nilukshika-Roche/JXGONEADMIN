@@ -174,7 +174,7 @@ const PagePeople = ({ setActiveTab: onNavigate }) => {
                 animate={{ opacity: 1, y: 0 }}
             >
                 {/* Header Section */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-8 gap-6">
                     <div>
                         <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                             <span
@@ -342,7 +342,7 @@ const PagePeople = ({ setActiveTab: onNavigate }) => {
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
                     overflow: hidden;
-                    margin-top: 1.5rem;
+                    margin-top: .75rem;
                     border: 1px solid #e2e8f0;
                 }
                 .table-header {
@@ -362,10 +362,9 @@ const PagePeople = ({ setActiveTab: onNavigate }) => {
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
-                    color: #64748b;
+                    color: #1e293b;
                     font-size: 14px;
                     font-weight: 700;
-                    text-transform: uppercase;
                     letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
                     text-align: left;
