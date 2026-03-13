@@ -83,7 +83,7 @@ function AppContent() {
       case 'events': return <Events setActiveTab={handleTabChange} />;
       case 'games': return <Games />;
       case 'page-events': return <PageEvents />;
-      case 'page-people': return <PagePeople />;
+      case 'page-people': return <PagePeople setActiveTab={handleTabChange} />;
       case 'page-csr': return <PageCSR />;
       case 'marketplace': return <Marketplace setActiveTab={handleTabChange} />;
       case 'profile': return <AdminProfile setActiveTab={handleTabChange} />;

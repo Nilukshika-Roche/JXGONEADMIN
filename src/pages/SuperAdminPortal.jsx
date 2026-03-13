@@ -288,7 +288,7 @@ const SuperAdminPortal = ({ onLogout }) => {
             case 'games': return <Games company={selectedCompany} />;
             case 'marketplace': return <Marketplace company={selectedCompany} />;
             case 'page-events': return <PageEvents company={selectedCompany} />;
-            case 'page-people': return <PagePeople company={selectedCompany} />;
+            case 'page-people': return <PagePeople company={selectedCompany} setActiveTab={setActiveTab} />;
             case 'page-csr': return <PageCSR company={selectedCompany} />;
             case 'page-content': return <MediaHubPage company={selectedCompany} />;
             case 'activity': return <Activity company={selectedCompany} />;

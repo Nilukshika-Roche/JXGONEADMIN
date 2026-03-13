@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
     Calendar,
     Zap,
@@ -618,29 +619,14 @@ const PageEvents = () => {
                     <div style={styles.contentCard}>
                         {/* Header & Controls */}
                         <div style={styles.filterContainer}>
-                            <div style={styles.searchWrapper}>
-                                <svg
-                                    style={{ position: 'absolute', left: '14px', color: '#f97316' }}
-                                    width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
-                                >
-                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                            <div className="table-search-container">
+                                <Search size={16} className="table-search-icon" />
                                 <input
                                     type="text"
                                     placeholder="Search events..."
-                                    style={styles.searchInput}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    onFocus={(e) => {
-                                        e.target.style.borderColor = "#f97316";
-                                        e.target.style.backgroundColor = "white";
-                                        e.target.style.boxShadow = "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                                    }}
-                                    onBlur={(e) => {
-                                        e.target.style.borderColor = "#e2e8f0";
-                                        e.target.style.backgroundColor = "#f8fafc";
-                                        e.target.style.boxShadow = "none";
-                                    }}
+                                    className="table-search-input"
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '12px' }}>
@@ -666,6 +652,23 @@ const PageEvents = () => {
                                     Create Event
                                 </button>
                             </div>
+                        </div>
+
+                        {/* empty state */}
+                        <div className="events-feed">
+                            {filteredEvents.length === 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="empty-state"
+                                >
+                                    <div className="empty-icon">
+                                        <Search size={32} />
+                                    </div>
+                                    <h3>No Events found</h3>
+                                    <p>Try adjusting your search terms</p>
+                                </motion.div>
+                            )}
                         </div>
 
                         {/* Events Grid */}
@@ -750,10 +753,53 @@ const PageEvents = () => {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Load More */}
+                        {filteredEvents.length > 0 && (
+                            <div className="load-more">
+                                <button className="load-more-btn">
+                                    <span>Load more events</span>
+                                    <ChevronDown size={16} />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
             <style jsx>{`
+                /* Search Bar */
+                .table-search-container {
+                    position: relative;
+                    flex: 1;
+                    max-width: 320px;
+                }
+                .table-search-input {
+                    width: 100%;
+                    padding: 8px 12px 8px 36px;
+                    background-color: #f1f5f9;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #1e293b;
+                    outline: none;
+                    transition: all 0.2s;
+                    font-family: inherit;
+                }
+                .table-search-input:focus {
+                    background-color: #fff;
+                    border-color: #cbd5e1;
+                    box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.5);
+                }
+                .table-search-icon {
+                    position: absolute;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #94a3b8;
+                    pointer-events: none;
+                }
+
                 /* Tabs Row */
                 .tabs-row {
                     position: sticky;
@@ -816,6 +862,56 @@ const PageEvents = () => {
                     border: 1px solid #e2e8f0;
                     border-radius: 8px;
                     font-size: 12px;
+                    color: #475569;
+                    cursor: pointer;
+                }
+
+                /* Empty State */
+                .empty-state {
+                    text-align: center;
+                    padding: 60px 20px;
+                    background: white;
+                    border-radius: 16px;
+                    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+                }
+                .empty-icon {
+                    width: 64px;
+                    height: 64px;
+                    background: #f1f5f9;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 20px;
+                    color: #94a3b8;
+                }
+                .empty-state h3 {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0 0 8px;
+                }
+                .empty-state p {
+                    font-size: 14px;
+                    color: #64748b;
+                    margin: 0;
+                }
+
+                /* Load More */
+                .load-more {
+                    text-align: center;
+                    padding: 20px;
+                }
+                .load-more-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 24px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
                     color: #475569;
                     cursor: pointer;
                 }

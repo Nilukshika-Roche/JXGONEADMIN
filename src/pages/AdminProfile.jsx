@@ -52,7 +52,7 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-8 gap-6">
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}

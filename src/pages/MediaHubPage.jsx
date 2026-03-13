@@ -32,7 +32,33 @@ import {
     Hash
 } from 'lucide-react';
 
-
+const styles = {
+    dashboard: {
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif",
+        maxWidth: "1400px",
+        margin: "0 auto",
+        padding: "0 0.75rem 2rem 0.75rem",
+        backgroundColor: "#f8fafc",
+        minHeight: "100vh"
+    },
+    contentCard: {
+        background: "white",
+        borderRadius: "16px",
+        padding: "32px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        border: "1px solid #e2e8f0",
+        marginBottom: "32px",
+        width: "100%",
+        boxSizing: "border-box"
+    },
+    filterContainer: {
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        marginBottom: "32px",
+        justifyContent: "space-between"
+    }
+}
 
 // --- Post Card Component ---
 const PostCard = ({ post, index }) => {
@@ -259,29 +285,23 @@ const MediaHubPage = () => {
             >
 
 
-                <div className="mediahub-layout">
-                    <div className="mediahub-main">
-
-
-
-
-
+                <div style={styles.dashboard} > {/* previously className="mediahub-layout" */}
+                    <div style={styles.contentCard} > {/* previously className="mediahub-main" */}
                         {/* Feed Header */}
-                        <div className="feed-header">
-                            <div className="feed-header-left">
-                                {/* Left side intentionally left empty or for future use */}
+                        {/* Header & Controls */}
+                        <div style={styles.filterContainer}> {/* previously className="feed-header" */}
+                            {/* Left side intentionally left empty or for future use */}
+                            <div className="table-search-container">
+                                <Search size={16} className="table-search-icon" />
+                                <input
+                                    type="text"
+                                    placeholder="Search feed..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="table-search-input"
+                                />
                             </div>
                             <div className="feed-header-right ">
-                                <div className="feed-search-bar">
-                                    <Search size={16} className="feed-search-icon" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search feed..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="feed-search-input"
-                                    />
-                                </div>
                                 <button className="date-btn">
                                     <Calendar size={16} />
                                     <span>Dec 01 - 24, 2024</span>
@@ -294,7 +314,7 @@ const MediaHubPage = () => {
                             </div>
                         </div>
 
-                        {/* Posts Feed */}
+                        {/* empty state */}
                         <div className="posts-feed">
                             {filteredPosts.map((post, index) => (
                                 <PostCard key={post.id} post={post} index={index} />
@@ -512,31 +532,36 @@ const MediaHubPage = () => {
                     align-items: center;
                     gap: 0.75rem;
                 }
-                .feed-search-bar {
-                    display: flex;
-                    align-items: center;
-                    background: #f1f5f9;
-                    border-radius: 8px;
-                    padding: 8px 12px;
-                    gap: 8px;
-                    width: 300px;
-                    transition: all 0.2s;
+                .table-search-container {
+                    position: relative;
+                    flex: 1;
+                    max-width: 320px;
                 }
-                .feed-search-bar:focus-within {
-                    background: white;
-                    box-shadow: 0 0 0 2px rgba(249,115,22,0.1);
-                    width: 400px;
-                }
-                .feed-search-icon {
-                    color: #94a3b8;
-                }
-                .feed-search-input {
-                    border: none;
-                    background: none;
-                    outline: none;
-                    font-size: 13px;
-                    color: #0f172a;
+                .table-search-input {
                     width: 100%;
+                    padding: 8px 12px 8px 36px;
+                    background-color: #f1f5f9;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #1e293b;
+                    outline: none;
+                    transition: all 0.2s;
+                    font-family: inherit;
+                }
+                .table-search-input:focus {
+                    background-color: #fff;
+                    border-color: #cbd5e1;
+                    box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.5);
+                }
+                .table-search-icon {
+                    position: absolute;
+                    left: 12px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #94a3b8;
+                    pointer-events: none;
                 }
                 .date-btn {
                     display: flex;

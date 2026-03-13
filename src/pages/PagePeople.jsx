@@ -16,7 +16,7 @@ import {
     UserSearch
 } from 'lucide-react';
 
-const PagePeople = () => {
+const PagePeople = ({ setActiveTab: onNavigate }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const [filters, setFilters] = useState({
@@ -177,7 +177,12 @@ const PagePeople = () => {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
                     <div>
                         <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
-                            Admin &gt; Team
+                            <span
+                                className="hover:text-orange-500 cursor-pointer transition-colors"
+                                onClick={() => onNavigate?.('dashboard')}
+                            >
+                                Admin
+                            </span> &gt; Team Members
                         </div>
                         <h1 className="text-3xl font-bold text-slate-800" style={{ fontFamily: 'Inter, sans-serif' }}>
                             Team Members
