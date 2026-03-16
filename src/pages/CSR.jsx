@@ -102,6 +102,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editFormData, setEditFormData] = useState(null);
     const [showParticipantsModal, setShowParticipantsModal] = useState(false);
+    const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false);
     const [selectedProjectForParticipants, setSelectedProjectForParticipants] = useState(null);
     const [reportedModalData, setReportedModalData] = useState({ isOpen: false, item: null, details: null });
     const [openFilter, setOpenFilter] = useState(null);
@@ -130,16 +131,21 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
     // Mock Participants Data Generator
     const generateParticipants = (count) => {
-        const names = ['Sarah Wilson', 'Michael Chen', 'Emma Davis', 'James Wilson', 'Lisa Anderson', 'David Miller', 'Jennifer Taylor', 'Robert Martinez'];
-        const roles = ['Team Lead', 'Volunteer', 'Coordinator', 'Member', 'Organizer'];
-        const departments = ['Marketing', 'HR', 'Engineering', 'Sales', 'Finance'];
+        const names = [
+            'Sarah Wilson', 'Michael Chen', 'Emma Davis', 'James Wilson', 'Lisa Anderson',
+            'David Miller', 'Jennifer Taylor', 'Robert Martinez', 'William Garcia', 'Linda Rodriguez',
+            'Richard Lee', 'Patricia White', 'Joseph Harris', 'Susan Clark', 'Thomas Lewis',
+            'Jessica Walker', 'Charles Hall', 'Karen Allen', 'Christopher Young', 'Nancy King'
+        ];
+        const roles = ['Team Lead', 'Volunteer', 'Coordinator', 'Member', 'Organizer', 'External Advisor', 'Stakeholder'];
+        const departments = ['Marketing', 'HR', 'Engineering', 'Sales', 'Finance', 'Operations', 'Legal', 'Communications'];
 
-        return Array.from({ length: Math.min(count, 8) }, (_, i) => ({
+        return Array.from({ length: count }, (_, i) => ({
             id: i + 1,
-            name: names[i % names.length],
+            name: names[i % names.length] + (i >= names.length ? ` ${Math.floor(i / names.length)}` : ''),
             role: roles[i % roles.length],
             department: departments[i % departments.length],
-            joinedAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            joinedAt: new Date(Date.now() - Math.floor(Math.random() * 20) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             avatar: names[i % names.length].charAt(0)
         }));
     };
@@ -235,6 +241,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
         const participants = generateParticipants(count);
         setSelectedProjectForParticipants({ ...item, participantList: participants });
         setShowParticipantsModal(true);
+        setIsParticipantsExpanded(false);
         setActiveMenuId(null);
     };
 
@@ -267,7 +274,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 item.id === editFormData.id ? { ...editFormData } : item
             )
         );
-        setPreviewItem(editFormData);
+        setPreviewItem(null);
         setIsEditMode(false);
     };
 
@@ -412,7 +419,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -460,7 +467,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         Initiative
                                         <div className="table-search-container">
@@ -489,7 +496,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                 </th>
                                 <th onClick={() => toggleFilter('initiativeDate')}>
                                     <div className="table-filter-header">
-                                        <span>Initiative Date</span>
+                                        <span>Date</span>
                                         <ChevronDown size={14} className={openFilter === 'initiativeDate' ? 'rotate' : ''} />
                                     </div>
                                 </th>
@@ -572,8 +579,8 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
                                             {/* Project Details */}
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                                                <span className="text-xs text-slate-500">Created by {item.createdBy}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{item.title}</span>
+                                                <span className="text-xs text-slate-400">Created by {item.createdBy}</span>
                                                 <span className="text-xs text-slate-400">Published on {item.publishedOn}</span>
                                             </div>
                                         </div>
@@ -638,9 +645,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
                 {/* Footer */}
                 <div className="showing">
-                    <div>
-                        Showing {filteredProjects.length > 0 ? 1 : 0} to {filteredProjects.length} of {projects.length} results
-                    </div>
+                    <div>Showing {filteredProjects.length} results</div>
                     <button
                         onClick={generateMoreProjects}
                         className="show-more-btn"
@@ -687,28 +692,43 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                             <div className="modal-body overflow-y-auto max-h-[60vh]">
                                 <div className="space-y-2">
                                     {selectedProjectForParticipants.participantList.length > 0 ? (
-                                        selectedProjectForParticipants.participantList.map((user, idx) => (
-                                            <div key={idx} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                                                    {user.avatar}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="flex justify-between items-start">
-                                                        <h4 className="text-sm font-bold text-slate-700">{user.name}</h4>
-                                                        <span className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full border border-slate-200">
-                                                            {user.role}
-                                                        </span>
+                                        <>
+                                            {(isParticipantsExpanded
+                                                ? selectedProjectForParticipants.participantList
+                                                : selectedProjectForParticipants.participantList.slice(0, 12)
+                                            ).map((user, idx) => (
+                                                <div key={idx} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all">
+                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                                        {user.avatar}
                                                     </div>
-                                                    <div className="flex items-center gap-2 mt-0.5">
-                                                        <span className="text-xs text-slate-500 flex items-center gap-1">
-                                                            <Briefcase size={10} /> {user.department}
-                                                        </span>
-                                                        <span className="text-[10px] text-slate-300">•</span>
-                                                        <span className="text-xs text-slate-400">Joined {user.joinedAt}</span>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-start">
+                                                            <h4 className="text-sm font-bold text-slate-700">{user.name}</h4>
+                                                            <span className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full border border-slate-200">
+                                                                {user.role}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 mt-0.5">
+                                                            <span className="text-xs text-slate-500 flex items-center gap-1">
+                                                                <Briefcase size={10} /> {user.department}
+                                                            </span>
+                                                            <span className="text-[10px] text-slate-300">•</span>
+                                                            <span className="text-xs text-slate-400">Joined {user.joinedAt}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))
+                                            ))}
+
+                                            {!isParticipantsExpanded && selectedProjectForParticipants.participantList.length > 12 && (
+                                                <button
+                                                    onClick={() => setIsParticipantsExpanded(true)}
+                                                    className="w-full py-4 mt-2 text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50/50 rounded-xl border-2 border-dashed border-blue-100 hover:border-blue-200 transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <Users size={16} />
+                                                    Show More ({selectedProjectForParticipants.participantList.length - 12} more members)
+                                                </button>
+                                            )}
+                                        </>
                                     ) : (
                                         <div className="text-center py-10 text-slate-400">
                                             <Users size={48} className="mx-auto mb-3 opacity-20" />
@@ -842,7 +862,8 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="modal-container max-w-2xl"
+                            className="modal-container"
+                            style={{ maxWidth: '600px' }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Modal Header */}
@@ -969,14 +990,14 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                         <div className="modal-actions">
                                             <button
                                                 onClick={handleStartEdit}
-                                                className="submit-btn flex items-center justify-center gap-2"
+                                                className="cancel-btn flex items-center justify-center gap-2"
                                             >
                                                 <Edit2 size={16} />
                                                 Edit Project
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteProject(previewItem)}
-                                                className="cancel-btn text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center justify-center gap-2"
+                                                className="submit-btn text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center justify-center gap-2"
                                             >
                                                 <Trash2 size={16} />
                                                 Delete
@@ -1050,9 +1071,9 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden; /* Ensure menus aren't clipped */
-                    margin-top: 1.5rem;
-                    
+                    overflow: hidden;
+                    margin-top: .75rem;
+                    border: 1px solid #e2e8f0;
                 }
                 .table-container {
                     overflow-x: auto;
@@ -1064,10 +1085,9 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
-                    color: #64748b;
-                    font-size: 11px;
+                    color: #1e293b;
+                    font-size: 14px;
                     font-weight: 700;
-                    text-transform: uppercase;
                     letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
                     text-align: left;
@@ -1083,7 +1103,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
 
                 /* Kebab Menu Popup Styles */
@@ -1173,7 +1193,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1449,9 +1469,9 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #09d454ff;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
                 }
                 .form-textarea { resize: none; min-height: 100px; }
 
@@ -1470,7 +1490,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;
@@ -1489,7 +1509,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }

@@ -255,7 +255,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 item.id === editFormData.id ? { ...editFormData } : item
             )
         );
-        setPreviewItem(editFormData);
+        setPreviewItem(null);
         setIsEditMode(false);
     };
 
@@ -393,7 +393,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
 
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -457,7 +457,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         Listing
                                         <div className="table-search-container">
@@ -550,14 +550,14 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                             </div>
 
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                                                <span className="text-xs text-slate-500">Posted on {item.date}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{item.title}</span>
+                                                <span className="text-xs text-slate-400">Posted on {item.date}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td><div className="text-sm font-medium text-slate-600">{item.seller}</div></td>
                                     <td><div className="text-sm font-medium text-slate-600">{item.category}</div></td>
-                                    <td><div className="text-sm font-bold text-slate-800">{item.price}</div></td>
+                                    <td><div className="text-sm font-medium text-slate-600">{item.price}</div></td>
                                     <td>
                                         <div
                                             className="status-badge"
@@ -581,8 +581,8 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
-                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
-                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
+                                        <div className="text-sm font-medium text-slate-600 truncate max-w-[150px]" title={item.notes}>
+                                            {item.notes || <span className="text-sm font-medium text-slate-400 italic">No notes / reasons...</span>}
                                             <Edit2 size={12} className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-slate-400" />
                                         </div>
                                     </td>
@@ -709,7 +709,8 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="modal-container max-w-2xl"
+                            className="modal-container"
+                            style={{ maxWidth: '600px' }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Modal Header */}
@@ -732,6 +733,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                             </div>
 
                             {/* Modal Body */}
+                            {/*Edit Listing */}
                             <div className="modal-form">
                                 {isEditMode ? (
                                     <div className="space-y-6">
@@ -809,10 +811,19 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Status</p>
-                                                {/*clssname for bottome was previously 'status-badge' */}
-                                                <span className={`text-sm font-bold text-slate-800 adequate-spacing ${previewItem.status.toLowerCase()}`}>
+                                                <div
+                                                    className="status-badge"
+                                                    style={{
+                                                        background: `${getStatusColor(previewItem.status)}15`,
+                                                        color: getStatusColor(previewItem.status)
+                                                    }}
+                                                >
+                                                    <div
+                                                        className="status-dot"
+                                                        style={{ backgroundColor: getStatusColor(previewItem.status) }}
+                                                    />
                                                     {previewItem.status}
-                                                </span>
+                                                </div>
                                             </div>
                                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                                                 <p className="form-label mb-1 adequate-spacing">Posted Date</p>
@@ -828,14 +839,14 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                                         <div className="modal-actions">
                                             <button
                                                 onClick={handleStartEdit}
-                                                className="submit-btn flex items-center justify-center gap-2"
+                                                className="cancel-btn flex items-center justify-center gap-2"
                                             >
                                                 <Edit2 size={16} />
                                                 Edit Listing
                                             </button>
                                             <button
                                                 onClick={() => handleApprove(previewItem)}
-                                                className="cancel-btn text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center gap-2"
+                                                className="submit-btn flex items-center justify-center gap-2"
                                             >
                                                 <CheckCircle2 size={16} />
                                                 Approve
@@ -970,9 +981,9 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: hidden; /* Ensure menus aren't clipped */
-                    margin-top: 1.5rem;
-                    
+                    overflow: hidden;
+                    margin-top: .75rem;
+                    border: 1px solid #e2e8f0;
                 }
                 .table-header {
                     padding: .5rem;
@@ -982,18 +993,22 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 }
                 .table-header-left { display: flex; gap: 1rem; align-items: center; }
                 .user-table { width: 100%; border-collapse: collapse; }
+                .user-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
-                    color: #64748b;
-                    font-size: 11px;
+                    color: #1e293b;
+                    font-size: 14px;
                     font-weight: 700;
-                    text-transform: uppercase;
-                    text-align: left;
+                    letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
+                    text-align: left;
                 }
                 .user-table td {
-                    padding: 1rem 1.5rem;
+                    padding: 1rem .75rem;
                     border-bottom: 1px solid #f1f5f9;
                     font-size: 13px;
                     color: #334155;
@@ -1003,7 +1018,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
                 
                 .kebab-menu-container { position: relative; }
@@ -1043,6 +1058,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
 
                 /* Filter Toggle Bar */
                 .filter-toggle-bar {
+                    width: 20.75rem;
                     display: flex;
                     background: #f1f5f9;
                     padding: 4px;
@@ -1050,9 +1066,10 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     gap: 4px;
                 }
                 .filter-btn {
+                    width: 50%;
                     padding: 6px 16px;
                     border-radius: 8px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 600;
                     color: #64748b;
                     transition: all 0.2s;
@@ -1101,7 +1118,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1218,26 +1235,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     background: #fff7ed;
                     color: #f97316;
                     font-weight: 700;
-                }
-
-                /* Table Filter Header */
-                .table-filter-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    user-select: none;
-                    transition: all 0.2s;
-                }
-                .table-filter-header:hover {
-                    color: #f97316;
-                }
-                .table-filter-header .rotate {
-                    transform: rotate(180deg);
-                }
-                .table-filter-header svg {
-                    transition: transform 0.2s;
-                }
+                }              
 
                 .show-more-btn {
                     display: flex;
@@ -1372,9 +1370,9 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #f97316;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
                 }
                 .form-textarea { resize: none; min-height: 100px; }
 
@@ -1393,7 +1391,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;
@@ -1412,7 +1410,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }

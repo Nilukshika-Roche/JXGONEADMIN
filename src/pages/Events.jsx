@@ -23,7 +23,9 @@ import {
     TrendingUp,
     FileText,
     Calendar1,
-    CalendarSearch
+    CalendarSearch,
+    CheckIcon,
+    CheckCheck
 } from 'lucide-react';
 
 const Events = ({ setActiveTab: onNavigate }) => {
@@ -264,7 +266,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 item.id === editFormData.id ? { ...editFormData } : item
             )
         );
-        setPreviewItem(editFormData);
+        setPreviewItem(null);
         setIsEditMode(false);
     };
 
@@ -424,7 +426,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
 
                 {/* Left: Breadcrumbs & Title */}
                 <div>
-                    <div className="text-xs text-slate-500 font-medium mb-1 tracking-wide">
+                    <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
                         <span
                             className="hover:text-orange-500 cursor-pointer transition-colors"
                             onClick={() => onNavigate?.('dashboard')}
@@ -465,14 +467,11 @@ const Events = ({ setActiveTab: onNavigate }) => {
 
             {/* Table Section */}
             <div className="user-table-card">
-
-
-
                 <div className="table-container">
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>
+                                <th style={{ width: '30%' }}>
                                     <div className="table-filter-header" style={{ cursor: 'default' }}>
                                         Event
                                         <div className="table-search-container">
@@ -569,8 +568,8 @@ const Events = ({ setActiveTab: onNavigate }) => {
 
                                             {/* Event Details */}
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                                                <span className="text-xs text-slate-500">Created by {item.createdBy}</span>
+                                                <span className="font-semibold text-slate-800 text-sm">{item.title}</span>
+                                                <span className="text-xs text-slate-400">Created by {item.createdBy}</span>
                                                 <span className="text-xs text-slate-400">Published on {item.publishedOn}</span>
                                             </div>
                                         </div>
@@ -610,8 +609,8 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         </div>
                                     </td>
                                     <td onClick={(e) => { e.stopPropagation(); handleNoteClick(item); }} className="cursor-pointer hover:bg-slate-100 transition-colors group relative">
-                                        <div className="text-sm text-slate-500 truncate max-w-[150px]" title={item.notes}>
-                                            {item.notes || <span className="text-slate-300 italic">No notes / reasons...</span>}
+                                        <div className="text-sm font-medium text-slate-600 truncate max-w-[150px]" title={item.notes}>
+                                            {item.notes || <span className="text-sm font-medium text-slate-400 italic">No notes / reasons...</span>}
                                         </div>
                                         <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Edit2 size={12} className="text-slate-400" />
@@ -634,9 +633,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 )}
 
                 {/* Footer */}
-                <div className="flex justify-between items-center p-4 border-t border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 rounded-b-xl">
+                <div className="showing">
                     <div>
-                        Showing {filteredEvents.length > 0 ? 1 : 0} to {filteredEvents.length} of {events.length} results
+                        Showing {filteredEvents.length} results
                     </div>
                     <button
                         onClick={generateMoreEvents}
@@ -816,8 +815,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                         <button
                                             type="button"
                                             onClick={handleSaveEdit}
-                                            className="submit-btn"
+                                            className="submit-btn flex items-center justify-center gap-2"
                                         >
+                                            <CheckIcon size={18} />
                                             Save Changes
                                         </button>
                                     </div>
@@ -854,7 +854,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                                                     className="status-dot"
                                                     style={{ backgroundColor: getStatusColor(previewItem.status) }}
                                                 />
-                                                {previewItem.status.charAt(0).toUpperCase() + previewItem.status.slice(1)}
+                                                {previewItem.status}
                                             </div>
                                         </div>
                                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
@@ -1245,9 +1245,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     background: white;
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-                    overflow: visible;
-                    margin-top: 1.5rem;
-                    
+                    overflow: hidden;
+                    margin-top: .75rem;
+                    border: 1px solid #e2e8f0;
                 }
                 .table-container {
                     overflow-x: auto;
@@ -1259,10 +1259,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 .user-table th {
                     padding: 1rem 1.5rem;
                     background: #f8fafc;
-                    color: #64748b;
-                    font-size: 11px;
+                    color: #1e293b;
+                    font-size: 14px;
                     font-weight: 700;
-                    text-transform: uppercase;
                     letter-spacing: 0.5px;
                     border-bottom: 1px solid #e2e8f0;
                     text-align: left;
@@ -1278,7 +1277,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
 
                 /* Kebab Menu Popup Styles */
@@ -1438,7 +1437,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     background-color: #f1f5f9;
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
-                    font-size: 13px;
+                    font-size: 14px;
                     font-weight: 500;
                     color: #1e293b;
                     outline: none;
@@ -1507,6 +1506,18 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 }
                 .show-more-btn:hover svg {
                     transform: translateY(-2px);
+                }
+
+                .showing{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 16px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    border: none;   
                 }
 
                 /* Standardized Modal Styles */
@@ -1662,9 +1673,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #3b82f6;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);                    
                 }
                 .form-textarea { resize: none; min-height: 100px; }
 
@@ -1683,7 +1694,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 .cancel-btn:hover { background: #e2e8f0; color: #0f172a; }
                 
                 .submit-btn {
-                    flex: 1.2;
+                    flex: 1;
                     padding: 12px;
                     font-size: 14px; font-weight: 700;
                     color: white;
@@ -1702,7 +1713,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     gap: 6px;
                     padding: 6px 12px;
                     border-radius: 20px;
-                    font-size: 11px;
+                    font-size: 14px;
                     font-weight: 600;
                     cursor: default;
                 }
@@ -1808,34 +1819,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 .table-container {
                     overflow-x: auto;
                 }
-                .user-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                .user-table th {
-                    padding: 1rem 1.5rem;
-                    background: #f8fafc;
-                    color: #64748b;
-                    font-size: 11px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                }
-                .user-table td {
-                    padding: 1rem 1.5rem;
-                    border-bottom: 1px solid #f1f5f9;
-                    font-size: 13px;
-                    color: #334155;
-                    vertical-align: middle;
-                }
-                .user-row {
-                    transition: background-color 0.2s;
-                }
-                .user-row:hover {
-                    background: #fffaf5;
-                }
 
                 /* Kebab Menu Popup Styles */
                 .kebab-menu-container {
@@ -1911,39 +1894,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     transition: transform 0.2s;
                 }
 
-                /* Table Search Bar */
-                .table-search-container {
-                    position: relative;
-                    margin-left: 1rem;
-                    flex: 1;
-                    max-width: 320px;
-                }
-                .table-search-input {
-                    width: 100%;
-                    padding: 8px 12px 8px 36px;
-                    background-color: #f1f5f9;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 12px;
-                    font-size: 13px;
-                    font-weight: 500;
-                    color: #1e293b;
-                    outline: none;
-                    transition: all 0.2s;
-                    font-family: inherit;
-                }
-                .table-search-input:focus {
-                    background-color: #fff;
-                    border-color: #cbd5e1;
-                    box-shadow: 0 0 0 4px rgba(241, 245, 249, 0.5);
-                }
-                .table-search-icon {
-                    position: absolute;
-                    left: 12px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: #94a3b8;
-                    pointer-events: none;
-                }
             `}</style>
 
         </div >

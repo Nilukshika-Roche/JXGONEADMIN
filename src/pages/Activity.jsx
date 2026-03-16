@@ -414,7 +414,7 @@ const ActivityDashboard = () => {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    background: linear-gradient(to right, #fff, #fff7ed);
+                    background: linear-gradient(to right, #fff );
                 }
                 .feed-header-left {
                     display: flex;
@@ -458,7 +458,7 @@ const ActivityDashboard = () => {
                     border-left: 3px solid transparent;
                 }
                 .activity-card:hover {
-                    background: #fff7ed;
+                    background: #f8fafc;
                     border-left-color: #f97316;
                     transform: translateX(2px);
                 }
