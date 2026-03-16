@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import './SuperAdminDashboard.css';
 import {
     Search,
     Clock,
@@ -182,6 +183,36 @@ const CSR = ({ setActiveTab: onNavigate }) => {
             reported: projects.filter(e => e.status === 'Reported').length
         };
     }, [projects]);
+
+    const stats = [
+        {
+            label: 'Ongoing Initiatives',
+            value: summaryStats.ongoing,
+            icon: Clock,
+            bg: 'rgba(59, 130, 246, 0.1)',
+            color: '#3b82f6',
+            trend: '+8%',
+            tab: 'ongoing'
+        },
+        {
+            label: 'Upcoming Initiatives',
+            value: summaryStats.upcoming,
+            icon: Calendar,
+            bg: 'rgba(245, 158, 11, 0.1)',
+            color: '#f59e0b',
+            trend: '+15%',
+            tab: 'upcoming'
+        },
+        {
+            label: 'Reported',
+            value: summaryStats.reported,
+            icon: AlertCircle,
+            bg: 'rgba(239, 68, 68, 0.1)',
+            color: '#ef4444',
+            trend: '+0%',
+            tab: 'reported'
+        }
+    ];
 
     const toggleMenu = (id) => {
         setActiveMenuId(activeMenuId === id ? null : id);
@@ -395,100 +426,28 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 </div>
 
                 {/* Right: Summary Cards */}
-                {/* Right: Summary Cards */}
-                <div className="metrics ml-auto">
-                    {/* Ongoing Initiatives Card - Blue */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'ongoing' ? 'all' : 'ongoing')}
-                        className={`metric blue ${activeTab === 'ongoing' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <Clock size={16} />
+                <div className="management-stats-flex ml-auto">
+                    {stats.map((s, idx) => (
+                        <motion.div
+                            key={idx}
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            onClick={() => setActiveTab(activeTab === s.tab ? 'all' : s.tab)}
+                            className={`card-premium-mini management-card-fixed ${activeTab === s.tab ? 'active' : ''}`}
+                        >
+                            <div className="kpi-icon-row">
+                                <div className="kpi-icon-bg" style={{ backgroundColor: s.bg, color: s.color }}>
+                                    <s.icon size={14} />
                                 </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+8%</span>
+                                <div className="kpi-trend-pill-mini" style={{ color: s.color }}>
+                                    {s.trend}
                                 </div>
                             </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Ongoing Initiatives</p>
-                                <h3 className="metric-value">{summaryStats.ongoing}</h3>
+                            <div className="kpi-info-wrap">
+                                <div className="kpi-label-xsmall">{s.label}</div>
+                                <div className="kpi-value-small">{s.value}</div>
                             </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "65%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
-
-                    {/* Upcoming Initiatives Card - Amber */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'upcoming' ? 'all' : 'upcoming')}
-                        className={`metric amber ${activeTab === 'upcoming' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <Calendar size={16} />
-                                </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+15%</span>
-                                </div>
-                            </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Upcoming Initiatives</p>
-                                <h3 className="metric-value">{summaryStats.upcoming}</h3>
-                            </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "40%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
-
-                    {/* Reported Card - Red */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'reported' ? 'all' : 'reported')}
-                        className={`metric red ${activeTab === 'reported' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <AlertCircle size={16} />
-                                </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+0%</span>
-                                </div>
-                            </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Reported</p>
-                                <h3 className="metric-value">{summaryStats.reported}</h3>
-                            </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "10%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
 
@@ -1085,141 +1044,6 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
             <style>{`
                 /* Copied Styles from ContentManagement.jsx */
-                .metrics {
-                    display: grid;
-                    grid-template-columns: repeat(3, minmax(140px, 1fr));
-                    gap: 0.5rem;
-                    width: 100%;
-                    max-width: 540px;
-                }
-                .metric {
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 10px;
-                    padding: 0.75rem;
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 90px;
-                }
-                .metric:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-                }
-                .metric.active {
-                    border-width: 2px;
-                }
-                
-                /* Color Variants */
-                .metric.emerald { background: #f0fdf4; border-color: #bbf7d0; }
-                .metric.emerald.active { border-color: #10b981; }
-                .metric.amber { background: #fffbeb; border-color: #fde68a; }
-                .metric.amber.active { border-color: #f59e0b; }
-                .metric.red { background: #fef2f2; border-color: #fecaca; }
-                .metric.red.active { border-color: #ef4444; }
-
-                /* Blue Variant for CSR */
-                .metric.blue { background: #eff6ff; border-color: #bfdbfe; }
-                .metric.blue.active { border-color: #3b82f6; }
-
-                .metric-bg {
-                    position: absolute;
-                    top: -20px;
-                    right: -20px;
-                    width: 60px;
-                    height: 60px;
-                    border-radius: 50%;
-                    filter: blur(10px);
-                    opacity: 0.5;
-                }
-                .metric.emerald .metric-bg { background: rgba(16, 185, 129, 0.2); }
-                .metric.amber .metric-bg { background: rgba(245, 158, 11, 0.2); }
-                .metric.red .metric-bg { background: rgba(239, 68, 68, 0.2); }
-                .metric.blue .metric-bg { background: rgba(59, 130, 246, 0.2); }
-
-                .metric-content {
-                    position: relative;
-                    z-index: 1;
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                }
-                .metric-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 4px;
-                }
-                .metric-icon {
-                    padding: 6px;
-                    border-radius: 6px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .metric.emerald .metric-icon { background: #dcfce7; color: #059669; }
-                .metric.amber .metric-icon { background: #fef3c7; color: #d97706; }
-                .metric.red .metric-icon { background: #fee2e2; color: #dc2626; }
-                .metric.blue .metric-icon { background: #dbeafe; color: #2563eb; }
-
-                .metric-icon svg {
-                    width: 16px;
-                    height: 16px;
-                }
-                .metric-trend {
-                    display: flex;
-                    align-items: center;
-                    gap: 3px;
-                    padding: 2px 6px;
-                    border-radius: 20px;
-                    font-size: 10px;
-                    font-weight: 700;
-                }
-                .metric.emerald .metric-trend { background: #d1fae5; color: #065f46; }
-                .metric.amber .metric-trend { background: #ffedd5; color: #9a3412; }
-                .metric.red .metric-trend { background: #fee2e2; color: #991b1b; }
-                .metric.blue .metric-trend { background: #dbeafe; color: #1e40af; }
-
-                .metric-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0px;
-                }
-                .metric-label {
-                    font-size: 10px;
-                    font-weight: 600;
-                    color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin: 0;
-                }
-                .metric-value {
-                    font-size: 20px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .metric-progress {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 3px;
-                    background: rgba(0,0,0,0.05);
-                }
-                .metric-progress-fill {
-                    height: 100%;
-                    transition: width 1s ease-out;
-                }
-                .metric.emerald .metric-progress-fill { background: #10b981; }
-                .metric.amber .metric-progress-fill { background: #f59e0b; }
-                .metric.red .metric-progress-fill { background: #ef4444; }
-                .metric.blue .metric-progress-fill { background: #3b82f6; }
 
                 /* User Table Card Styles */
                 .user-table-card {

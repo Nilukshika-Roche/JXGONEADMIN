@@ -125,3 +125,36 @@
   scrollbar-width: none;
 }
 
+
+/* --- Global Premium Mini KPI Card Styles --- */
+.stats-bento-grid-mini {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 0px;
+}
+
+/* Specific Layout for Management Pages (CSR, Marketplace, etc.) */
+.management-stats-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.management-card-fixed {
+  width: 200px;
+}
+
+@media (max-width: 1024px) {
+  .stats-bento-grid-mini {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-bento-grid-mini {
+    grid-template-columns: 1fr;
+  }
+}

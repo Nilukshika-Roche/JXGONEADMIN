@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import './SuperAdminDashboard.css';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar, Cell
@@ -40,13 +41,13 @@ const Dashboard = () => {
     ];
 
     const stats = [
-        { label: 'Total Users', value: '45,284', trend: '+12.4%', color: '#3b82f6', icon: <Users size={18} /> },
-        { label: 'Active Now', value: '1,284', trend: '+8.1%', color: '#f59e0b', icon: <Activity size={18} /> },
-        { label: 'Platform Content', value: '8.4k', trend: '+2.4%', color: '#8b5cf6', icon: <Sparkles size={18} /> },
-        { label: 'Avg Engagement', value: '74%', trend: '+5.2%', color: '#ec4899', icon: <Activity size={18} /> },
-        { label: 'Marketplace Volume', value: '$12.8k', trend: '+15.2%', color: '#f97316', icon: <TrendingUp size={18} /> },
-        { label: 'Active CSR', value: '8', trend: 'Stable', color: '#10b981', icon: <Sparkles size={18} /> },
-        { label: 'Active Events', value: '12', trend: '+3', color: '#06b6d4', icon: <Calendar size={18} /> },
+        { label: 'Total Users', value: '45,284', trend: '+12.4%', color: '#3b82f6', icon: Users },
+        { label: 'Active Now', value: '1,284', trend: '+8.1%', color: '#f59e0b', icon: Activity },
+        { label: 'Platform Content', value: '8.4k', trend: '+2.4%', color: '#8b5cf6', icon: Sparkles },
+        { label: 'Avg Engagement', value: '74%', trend: '+5.2%', color: '#ec4899', icon: Activity },
+        { label: 'Marketplace Volume', value: '$12.8k', trend: '+15.2%', color: '#f97316', icon: TrendingUp },
+        { label: 'Active CSR', value: '8', trend: 'Stable', color: '#10b981', icon: Sparkles },
+        { label: 'Active Events', value: '12', trend: '+3', color: '#06b6d4', icon: Calendar },
     ];
 
     const shortcuts = [
@@ -86,13 +87,13 @@ const Dashboard = () => {
                         <motion.div
                             key={idx}
                             whileHover={{ scale: 1.05, y: -2 }}
-                            className="stat-card-premium-mini card-glass"
+                            className="kpi-card-bento card-premium-mini"
                         >
                             <div className="kpi-icon-row">
                                 <div className="kpi-icon-bg" style={{ backgroundColor: `${s.color}15`, color: s.color }}>
-                                    {s.icon}
+                                    <s.icon size={14} />
                                 </div>
-                                <div className="kpi-trend-pill-mini" style={{ color: s.color }}>
+                                <div className={`kpi-trend-pill-mini ${s.trend.includes('+') ? 'up' : s.trend === 'Critical' ? 'down' : ''}`} style={{ color: s.color }}>
                                     {s.trend}
                                 </div>
                             </div>
@@ -382,18 +383,26 @@ const Dashboard = () => {
                     gap: 2rem;
                 }
                 .card-glass {
-                    background: white;
-                    border: 1px solid #f1f5f9;
-                    border-radius: 16px;
-                    padding: 2rem;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-                    transition: all 0.3s ease;
+                    background: rgba(255, 255, 255, 0.9);
+                    backdrop-filter: blur(12px);
+                    border: 1px solid rgba(226, 232, 240, 0.8);
+                    border-radius: 12px;
+                    padding: 0.65rem;
+                    box-shadow:
+                        0 1px 2px rgba(0, 0, 0, 0.02),
+                        0 4px 6px -1px rgba(0, 0, 0, 0.03),
+                        0 10px 15px -3px rgba(0, 0, 0, 0.04);
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
                 .card-glass.compact {
-                    padding: 1.5rem;
+                    padding: 0.65rem;
                 }
                 .card-glass:hover {
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+                    transform: translateY(-2px);
+                    box-shadow:
+                        0 10px 25px -5px rgba(0, 0, 0, 0.05),
+                        0 8px 10px -6px rgba(0, 0, 0, 0.05);
+                    border-color: rgba(249, 115, 22, 0.2);
                 }
 
                 .bento-row {
@@ -743,7 +752,7 @@ const Dashboard = () => {
                 }
                 .feed-avatar-small { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; }
                 .feed-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
-
+                
                 /* STATS GRID MINI */
                 .stats-bento-grid-mini {
                     display: grid;
@@ -751,64 +760,6 @@ const Dashboard = () => {
                     gap: 0.75rem;
                     margin-top: 0px;
                     margin-bottom: 1.5rem;
-                }
-                .stat-card-premium-mini {
-                    background: white;
-                    border: 1px solid #f1f5f9;
-                    border-radius: 10px;
-                    padding: 0.65rem 0.9rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02), 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                    border-left: 3px solid transparent;
-                    min-height: 65px;
-                }
-                .stat-card-premium-mini:hover {
-                    border-left-color: #f97316;
-                    background: #fffcf9;
-                    transform: translateY(-2px);
-                    box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.1);
-                }
-                .kpi-icon-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    width: 100%;
-                }
-                .kpi-icon-bg {
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 6px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .kpi-icon-bg svg {
-                    width: 14px;
-                    height: 14px;
-                }
-                .kpi-label-xsmall {
-                    font-size: 9px;
-                    font-weight: 700;
-                    color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
-                }
-                .kpi-value-small {
-                    font-size: 1.15rem;
-                    font-weight: 600;
-                    color: #0f172a;
-                    line-height: 1;
-                    margin: 2px 0 0 0;
-                }
-                .kpi-trend-pill-mini {
-                    font-size: 8px;
-                    font-weight: 800;
-                    padding: 2px 5px;
-                    border-radius: 4px;
-                    background: rgba(241, 245, 249, 0.5);
                 }
 
                 @media (max-width: 1200px) {

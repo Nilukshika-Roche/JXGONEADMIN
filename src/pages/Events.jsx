@@ -1,5 +1,6 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import './SuperAdminDashboard.css';
 import {
     Search,
     Clock,
@@ -178,6 +179,45 @@ const Events = ({ setActiveTab: onNavigate }) => {
             reported: events.filter(e => e.status === 'Reported').length
         };
     }, [events]);
+
+    const stats = [
+        {
+            label: 'Published Today',
+            value: summaryStats.published_today,
+            icon: CheckCircle2,
+            bg: 'rgba(16, 185, 129, 0.1)',
+            color: '#10b981',
+            trend: '+12%',
+            tab: 'published_today'
+        },
+        {
+            label: 'Ongoing Events',
+            value: summaryStats.ongoing,
+            icon: Clock,
+            bg: 'rgba(59, 130, 246, 0.1)',
+            color: '#3b82f6',
+            trend: '+8%',
+            tab: 'ongoing'
+        },
+        {
+            label: 'Pending Reviews',
+            value: summaryStats.pending,
+            icon: AlertCircle,
+            bg: 'rgba(245, 158, 11, 0.1)',
+            color: '#f59e0b',
+            trend: '+5%',
+            tab: 'pending'
+        },
+        {
+            label: 'Reported',
+            value: summaryStats.reported,
+            icon: AlertCircle,
+            bg: 'rgba(239, 68, 68, 0.1)',
+            color: '#ef4444',
+            trend: '+0%',
+            tab: 'reported'
+        }
+    ];
 
     const toggleMenu = (id) => {
         setActiveMenuId(activeMenuId === id ? null : id);
@@ -398,130 +438,28 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 </div>
 
                 {/* Right: Summary Cards */}
-                <div className="metrics ml-auto">
-                    {/* Published Today Card */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'published_today' ? 'all' : 'published_today')}
-                        className={`metric emerald ${activeTab === 'published_today' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <CheckCircle2 size={16} />
+                <div className="management-stats-flex ml-auto">
+                    {stats.map((s, idx) => (
+                        <motion.div
+                            key={idx}
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            onClick={() => setActiveTab(activeTab === s.tab ? 'all' : s.tab)}
+                            className={`card-premium-mini management-card-fixed ${activeTab === s.tab ? 'active' : ''}`}
+                        >
+                            <div className="kpi-icon-row">
+                                <div className="kpi-icon-bg" style={{ backgroundColor: s.bg, color: s.color }}>
+                                    <s.icon size={14} />
                                 </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+12%</span>
+                                <div className="kpi-trend-pill-mini" style={{ color: s.color }}>
+                                    {s.trend}
                                 </div>
                             </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Published Today</p>
-                                <h3 className="metric-value">{summaryStats.published_today}</h3>
+                            <div className="kpi-info-wrap">
+                                <div className="kpi-label-xsmall">{s.label}</div>
+                                <div className="kpi-value-small">{s.value}</div>
                             </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "70%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
-
-                    {/* Ongoing Events Card */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'ongoing' ? 'all' : 'ongoing')}
-                        className={`metric blue ${activeTab === 'ongoing' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <Clock size={16} />
-                                </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+8%</span>
-                                </div>
-                            </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Ongoing Events</p>
-                                <h3 className="metric-value">{summaryStats.ongoing}</h3>
-                            </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "55%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
-
-                    {/* Pending Reviews Card */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'pending' ? 'all' : 'pending')}
-                        className={`metric amber ${activeTab === 'pending' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <AlertCircle size={16} />
-                                </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+5%</span>
-                                </div>
-                            </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Pending Reviews</p>
-                                <h3 className="metric-value">{summaryStats.pending}</h3>
-                            </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "45%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
-
-                    {/* Reported Events Card */}
-                    <motion.div
-                        whileHover={{ y: -4 }}
-                        onClick={() => setActiveTab(activeTab === 'reported' ? 'all' : 'reported')}
-                        className={`metric red ${activeTab === 'reported' ? 'active' : ''}`}
-                    >
-                        <div className="metric-bg"></div>
-                        <div className="metric-content">
-                            <div className="metric-header">
-                                <div className="metric-icon">
-                                    <X size={16} />
-                                </div>
-                                <div className="metric-trend">
-                                    <TrendingUp size={12} />
-                                    <span>+2%</span>
-                                </div>
-                            </div>
-                            <div className="metric-body">
-                                <p className="metric-label">Reported Events</p>
-                                <h3 className="metric-value">{summaryStats.reported}</h3>
-                            </div>
-                        </div>
-                        <div className="metric-progress">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: "15%" }}
-                                className="metric-progress-fill"
-                            />
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
 
