@@ -529,9 +529,6 @@ const Events = ({ setActiveTab: onNavigate }) => {
 
             {/* Table Section */}
             <div className="user-table-card">
-
-
-
                 <div className="table-container">
                     <table className="user-table">
                         <thead>
@@ -1342,7 +1339,7 @@ const Events = ({ setActiveTab: onNavigate }) => {
                     transition: background-color 0.2s;
                 }
                 .user-row:hover {
-                    background: #fffaf5;
+                    background: #f8fafc;
                 }
 
                 /* Kebab Menu Popup Styles */
@@ -1738,9 +1735,9 @@ const Events = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #3b82f6;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);                    
                 }
                 .form-textarea { resize: none; min-height: 100px; }
 

@@ -101,6 +101,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editFormData, setEditFormData] = useState(null);
     const [showParticipantsModal, setShowParticipantsModal] = useState(false);
+    const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false);
     const [selectedProjectForParticipants, setSelectedProjectForParticipants] = useState(null);
     const [reportedModalData, setReportedModalData] = useState({ isOpen: false, item: null, details: null });
     const [openFilter, setOpenFilter] = useState(null);
@@ -129,16 +130,21 @@ const CSR = ({ setActiveTab: onNavigate }) => {
 
     // Mock Participants Data Generator
     const generateParticipants = (count) => {
-        const names = ['Sarah Wilson', 'Michael Chen', 'Emma Davis', 'James Wilson', 'Lisa Anderson', 'David Miller', 'Jennifer Taylor', 'Robert Martinez'];
-        const roles = ['Team Lead', 'Volunteer', 'Coordinator', 'Member', 'Organizer'];
-        const departments = ['Marketing', 'HR', 'Engineering', 'Sales', 'Finance'];
+        const names = [
+            'Sarah Wilson', 'Michael Chen', 'Emma Davis', 'James Wilson', 'Lisa Anderson',
+            'David Miller', 'Jennifer Taylor', 'Robert Martinez', 'William Garcia', 'Linda Rodriguez',
+            'Richard Lee', 'Patricia White', 'Joseph Harris', 'Susan Clark', 'Thomas Lewis',
+            'Jessica Walker', 'Charles Hall', 'Karen Allen', 'Christopher Young', 'Nancy King'
+        ];
+        const roles = ['Team Lead', 'Volunteer', 'Coordinator', 'Member', 'Organizer', 'External Advisor', 'Stakeholder'];
+        const departments = ['Marketing', 'HR', 'Engineering', 'Sales', 'Finance', 'Operations', 'Legal', 'Communications'];
 
-        return Array.from({ length: Math.min(count, 8) }, (_, i) => ({
+        return Array.from({ length: count }, (_, i) => ({
             id: i + 1,
-            name: names[i % names.length],
+            name: names[i % names.length] + (i >= names.length ? ` ${Math.floor(i / names.length)}` : ''),
             role: roles[i % roles.length],
             department: departments[i % departments.length],
-            joinedAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            joinedAt: new Date(Date.now() - Math.floor(Math.random() * 20) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             avatar: names[i % names.length].charAt(0)
         }));
     };
@@ -204,6 +210,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
         const participants = generateParticipants(count);
         setSelectedProjectForParticipants({ ...item, participantList: participants });
         setShowParticipantsModal(true);
+        setIsParticipantsExpanded(false);
         setActiveMenuId(null);
     };
 
@@ -530,7 +537,7 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                                 </th>
                                 <th onClick={() => toggleFilter('initiativeDate')}>
                                     <div className="table-filter-header">
-                                        <span>Initiative Date</span>
+                                        <span>Date</span>
                                         <ChevronDown size={14} className={openFilter === 'initiativeDate' ? 'rotate' : ''} />
                                     </div>
                                 </th>
@@ -726,28 +733,43 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                             <div className="modal-body overflow-y-auto max-h-[60vh]">
                                 <div className="space-y-2">
                                     {selectedProjectForParticipants.participantList.length > 0 ? (
-                                        selectedProjectForParticipants.participantList.map((user, idx) => (
-                                            <div key={idx} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                                                    {user.avatar}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="flex justify-between items-start">
-                                                        <h4 className="text-sm font-bold text-slate-700">{user.name}</h4>
-                                                        <span className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full border border-slate-200">
-                                                            {user.role}
-                                                        </span>
+                                        <>
+                                            {(isParticipantsExpanded
+                                                ? selectedProjectForParticipants.participantList
+                                                : selectedProjectForParticipants.participantList.slice(0, 12)
+                                            ).map((user, idx) => (
+                                                <div key={idx} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl border border-transparent hover:border-slate-100 transition-all">
+                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                                        {user.avatar}
                                                     </div>
-                                                    <div className="flex items-center gap-2 mt-0.5">
-                                                        <span className="text-xs text-slate-500 flex items-center gap-1">
-                                                            <Briefcase size={10} /> {user.department}
-                                                        </span>
-                                                        <span className="text-[10px] text-slate-300">•</span>
-                                                        <span className="text-xs text-slate-400">Joined {user.joinedAt}</span>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-start">
+                                                            <h4 className="text-sm font-bold text-slate-700">{user.name}</h4>
+                                                            <span className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full border border-slate-200">
+                                                                {user.role}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 mt-0.5">
+                                                            <span className="text-xs text-slate-500 flex items-center gap-1">
+                                                                <Briefcase size={10} /> {user.department}
+                                                            </span>
+                                                            <span className="text-[10px] text-slate-300">•</span>
+                                                            <span className="text-xs text-slate-400">Joined {user.joinedAt}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))
+                                            ))}
+
+                                            {!isParticipantsExpanded && selectedProjectForParticipants.participantList.length > 12 && (
+                                                <button
+                                                    onClick={() => setIsParticipantsExpanded(true)}
+                                                    className="w-full py-4 mt-2 text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50/50 rounded-xl border-2 border-dashed border-blue-100 hover:border-blue-200 transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <Users size={16} />
+                                                    Show More ({selectedProjectForParticipants.participantList.length - 12} more members)
+                                                </button>
+                                            )}
+                                        </>
                                     ) : (
                                         <div className="text-center py-10 text-slate-400">
                                             <Users size={48} className="mx-auto mb-3 opacity-20" />
@@ -1623,9 +1645,9 @@ const CSR = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #09d454ff;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
                 }
                 .form-textarea { resize: none; min-height: 100px; }
 

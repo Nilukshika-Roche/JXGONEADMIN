@@ -1491,9 +1491,9 @@ const PeopleManagement = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #16eef9ff;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
                 }
                 .form-textarea{ resize: none; min-height: 100px; }
 

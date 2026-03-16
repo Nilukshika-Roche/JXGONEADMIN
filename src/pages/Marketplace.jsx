@@ -375,7 +375,6 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 </div>
 
                 {/* Right: Summary Cards */}
-                {/* Right: Summary Cards */}
                 <div className="metrics ml-auto">
                     {/* New Today Card */}
                     <motion.div
@@ -1149,7 +1148,7 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                     border-radius: 12px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
                     overflow: hidden;
-                    margin-top: 1.5rem;
+                    margin-top: .75rem;
                     border: 1px solid #e2e8f0;
                 }
                 .table-header {
@@ -1537,9 +1536,9 @@ const Marketplace = ({ setActiveTab: onNavigate }) => {
                 }
                 .form-input:focus, .form-select:focus, .form-textarea:focus {
                     outline: none;
-                    border-color: #f97316;
+                    border-color: #64748b;
                     background: white;
-                    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
                 }
                 .form-textarea { resize: none; min-height: 100px; }
 

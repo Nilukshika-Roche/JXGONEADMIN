@@ -73,8 +73,6 @@ const PostCard = ({ post, index }) => {
             transition={{ delay: index * 0.1 }}
             className="post-card"
         >
-            <div className="post-card-bg"></div>
-
             <div className="post-header">
                 <div className="post-author">
                     <div className="post-avatar">
@@ -605,15 +603,6 @@ const MediaHubPage = () => {
                     overflow: hidden;
                     box-shadow: 0 2px 12px rgba(0,0,0,0.05);
                 }
-                .post-card-bg {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 100px;
-                    height: 100px;
-                    background: linear-gradient(135deg, rgba(249,115,22,0.05), rgba(251,191,36,0.05));
-                    border-radius: 0 16px 0 100px;
-                }
                 .post-header {
                     display: flex;
                     justify-content: space-between;
@@ -941,9 +930,6 @@ const MediaHubPage = () => {
                     color: #475569;
                     cursor: pointer;
                 }
-
-
-
 
             `}</style>
         </div>
