@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import './SuperAdminDashboard.css';
 import {
     AreaChart,
     Area,
@@ -70,20 +71,20 @@ const Analytics = () => {
     ];
 
     const contentHighlights = [
-        { label: 'Impressions', value: '125,480', trend: '+12.5%', icon: <Eye size={18} />, color: 'orange' },
-        { label: 'Reactions', value: '45,210', trend: '+8.2%', icon: <Heart size={18} />, color: 'rose' },
-        { label: 'Comments', value: '12,845', trend: '+15.4%', icon: <MessageSquare size={18} />, color: 'amber' },
-        { label: 'Posts', value: '840', trend: '+2.1%', icon: <BarChart3 size={18} />, color: 'emerald' },
+        { label: 'Impressions', value: '125,480', trend: '+12.5%', icon: <Eye size={18} />, color: '#f97316' },
+        { label: 'Reactions', value: '45,210', trend: '+8.2%', icon: <Heart size={18} />, color: '#ec4899' },
+        { label: 'Comments', value: '12,845', trend: '+15.4%', icon: <MessageSquare size={18} />, color: '#f59e0b' },
+        { label: 'Posts', value: '840', trend: '+2.1%', icon: <BarChart3 size={18} />, color: '#10b981' },
     ];
 
     const followerHighlights = [
-        { label: 'Total Followers', value: '12,840', trend: '+5.2%', icon: <Users size={18} />, color: 'orange' },
-        { label: 'New Followers', value: '1,245', trend: '+12.8%', icon: <TrendingUp size={18} />, color: 'emerald' },
+        { label: 'Total Followers', value: '12,840', trend: '+5.2%', icon: <Users size={18} />, color: '#f97316' },
+        { label: 'New Followers', value: '1,245', trend: '+12.8%', icon: <TrendingUp size={18} />, color: '#10b981' },
     ];
 
     const visitorHighlights = [
-        { label: 'Page Views', value: '15,240', trend: '+18.2%', icon: <Eye size={18} />, color: 'orange' },
-        { label: 'Unique Visitors', value: '4,850', trend: '+12.4%', icon: <Users size={18} />, color: 'amber' },
+        { label: 'Page Views', value: '15,240', trend: '+18.2%', icon: <Eye size={18} />, color: '#f97316' },
+        { label: 'Unique Visitors', value: '4,850', trend: '+12.4%', icon: <Users size={18} />, color: '#f59e0b' },
     ];
 
     return (
@@ -142,35 +143,24 @@ const Analytics = () => {
                                     </div>
                                 </div>
 
-                                <div className="metrics">
+                                <div className="stats-bento-grid-mini">
                                     {contentHighlights.map((metric, i) => (
                                         <motion.div
                                             key={i}
-                                            whileHover={{ y: -4 }}
-                                            className={`metric ${metric.color}`}
+                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            className="kpi-card-bento card-premium-mini"
                                         >
-                                            <div className="metric-bg"></div>
-                                            <div className="metric-content">
-                                                <div className="metric-header">
-                                                    <div className="metric-icon">
-                                                        {metric.icon}
-                                                    </div>
-                                                    <div className="metric-trend">
-                                                        <TrendingUp size={12} />
-                                                        <span>{metric.trend}</span>
-                                                    </div>
+                                            <div className="kpi-icon-row">
+                                                <div className={`kpi-icon-bg ${metric.color}`} style={{ backgroundColor: `${metric.color}15`, color: metric.color }}>
+                                                    {metric.icon}
                                                 </div>
-                                                <div className="metric-body">
-                                                    <p className="metric-label">{metric.label}</p>
-                                                    <h3 className="metric-value">{metric.value}</h3>
+                                                <div className="kpi-trend-pill-mini up">
+                                                    {metric.trend}
                                                 </div>
                                             </div>
-                                            <div className="metric-progress">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: "70%" }}
-                                                    className="metric-progress-fill"
-                                                />
+                                            <div className="kpi-info-wrap">
+                                                <span className="kpi-label-xsmall">{metric.label}</span>
+                                                <h4 className="kpi-value-small">{metric.value}</h4>
                                             </div>
                                         </motion.div>
                                     ))}
@@ -278,35 +268,24 @@ const Analytics = () => {
                                     </div>
                                 </div>
 
-                                <div className="metrics visitor-metrics">
+                                <div className="stats-bento-grid-mini">
                                     {visitorHighlights.map((metric, i) => (
                                         <motion.div
                                             key={i}
-                                            whileHover={{ y: -4 }}
-                                            className={`metric ${metric.color}`}
+                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            className="kpi-card-bento card-premium-mini"
                                         >
-                                            <div className="metric-bg"></div>
-                                            <div className="metric-content">
-                                                <div className="metric-header">
-                                                    <div className="metric-icon">
-                                                        {metric.icon}
-                                                    </div>
-                                                    <div className="metric-trend">
-                                                        <TrendingUp size={12} />
-                                                        <span>{metric.trend}</span>
-                                                    </div>
+                                            <div className="kpi-icon-row">
+                                                <div className={`kpi-icon-bg ${metric.color}`} style={{ backgroundColor: `${metric.color}15`, color: metric.color }}>
+                                                    {metric.icon}
                                                 </div>
-                                                <div className="metric-body">
-                                                    <p className="metric-label">{metric.label}</p>
-                                                    <h3 className="metric-value">{metric.value}</h3>
+                                                <div className="kpi-trend-pill-mini up">
+                                                    {metric.trend}
                                                 </div>
                                             </div>
-                                            <div className="metric-progress">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: "85%" }}
-                                                    className="metric-progress-fill"
-                                                />
+                                            <div className="kpi-info-wrap">
+                                                <span className="kpi-label-xsmall">{metric.label}</span>
+                                                <h4 className="kpi-value-small">{metric.value}</h4>
                                             </div>
                                         </motion.div>
                                     ))}
@@ -427,35 +406,24 @@ const Analytics = () => {
                                     </div>
                                 </div>
 
-                                <div className="metrics visitor-metrics">
+                                <div className="stats-bento-grid-mini">
                                     {followerHighlights.map((metric, i) => (
                                         <motion.div
                                             key={i}
-                                            whileHover={{ y: -4 }}
-                                            className={`metric ${metric.color}`}
+                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            className="kpi-card-bento card-premium-mini"
                                         >
-                                            <div className="metric-bg"></div>
-                                            <div className="metric-content">
-                                                <div className="metric-header">
-                                                    <div className="metric-icon">
-                                                        {metric.icon}
-                                                    </div>
-                                                    <div className="metric-trend">
-                                                        <TrendingUp size={12} />
-                                                        <span>{metric.trend}</span>
-                                                    </div>
+                                            <div className="kpi-icon-row">
+                                                <div className={`kpi-icon-bg ${metric.color}`} style={{ backgroundColor: `${metric.color}15`, color: metric.color }}>
+                                                    {metric.icon}
                                                 </div>
-                                                <div className="metric-body">
-                                                    <p className="metric-label">{metric.label}</p>
-                                                    <h3 className="metric-value">{metric.value}</h3>
+                                                <div className="kpi-trend-pill-mini up">
+                                                    {metric.trend}
                                                 </div>
                                             </div>
-                                            <div className="metric-progress">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: "92%" }}
-                                                    className="metric-progress-fill"
-                                                />
+                                            <div className="kpi-info-wrap">
+                                                <span className="kpi-label-xsmall">{metric.label}</span>
+                                                <h4 className="kpi-value-small">{metric.value}</h4>
                                             </div>
                                         </motion.div>
                                     ))}
@@ -716,119 +684,6 @@ const Analytics = () => {
                 .visitor-metrics {
                     grid-template-columns: repeat(2, 1fr);
                 }
-                .metric {
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 12px;
-                    padding: 0.75rem;
-                    position: relative;
-                    overflow: hidden;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                }
-                .metric:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-                }
-
-                /* Color Variants */
-                .metric.emerald { background: #f0fdf4; border-color: #bbf7d0; }
-                .metric.amber { background: #fffbeb; border-color: #fde68a; }
-                .metric.orange { background: #fff7ed; border-color: #fed7aa; }
-                .metric.rose { background: #fff1f2; border-color: #fecdd3; }
-
-                .metric-bg {
-                    position: absolute;
-                    top: -20px;
-                    right: -20px;
-                    width: 60px;
-                    height: 60px;
-                    border-radius: 50%;
-                    filter: blur(10px);
-                    opacity: 0.5;
-                }
-                .metric.emerald .metric-bg { background: rgba(16, 185, 129, 0.2); }
-                .metric.amber .metric-bg { background: rgba(251, 191, 36, 0.2); }
-                .metric.orange .metric-bg { background: rgba(249, 115, 22, 0.2); }
-                .metric.rose .metric-bg { background: rgba(244, 63, 94, 0.2); }
-
-                .metric-content {
-                    position: relative;
-                    z-index: 1;
-                }
-                .metric-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 0.5rem;
-                }
-                .metric-icon {
-                    padding: 6px;
-                    border-radius: 6px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .metric.emerald .metric-icon { background: #dcfce7; color: #10b981; }
-                .metric.amber .metric-icon { background: #fef3c7; color: #fbbf24; }
-                .metric.orange .metric-icon { background: #ffedd5; color: #f97316; }
-                .metric.rose .metric-icon { background: #ffe4e6; color: #f43f5e; }
-
-                .metric-icon svg {
-                    width: 16px;
-                    height: 16px;
-                }
-                .metric-trend {
-                    display: flex;
-                    align-items: center;
-                    gap: 3px;
-                    padding: 2px 6px;
-                    border-radius: 20px;
-                    font-size: 10px;
-                    font-weight: 700;
-                }
-                .metric.emerald .metric-trend { background: #d1fae5; color: #065f46; }
-                .metric.amber .metric-trend { background: #ffedd5; color: #92400e; }
-                .metric.orange .metric-trend { background: #ffedd5; color: #9a3412; }
-                .metric.rose .metric-trend { background: #ffe4e6; color: #9f1239; }
-
-                .metric-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                }
-                .metric-label {
-                    font-size: 10px;
-                    font-weight: 600;
-                    color: #64748b;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin: 0;
-                }
-                .metric-value {
-                    font-size: 20px;
-                    font-weight: 800;
-                    color: #0f172a;
-                    margin: 0;
-                }
-                .metric-progress {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 3px;
-                    background: rgba(0,0,0,0.05);
-                }
-                .metric-progress-fill {
-                    height: 100%;
-                    transition: width 1s ease-out; 
-                }
-                .metric.emerald .metric-progress-fill { background: #10b981; }
-                .metric.amber .metric-progress-fill { background: #fbbf24; }
-                .metric.orange .metric-progress-fill { background: #f97316; }
-                .metric.rose .metric-progress-fill { background: #f43f5e; }
-
                 /* Chart */
                 .chart {
                     background: white;
