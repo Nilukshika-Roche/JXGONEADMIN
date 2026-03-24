@@ -59,7 +59,7 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
         <div className="p-6 max-w-[1400px] mx-auto font-sans text-slate-800">
 
             {/* Header Section */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-8 gap-6">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center lg:min-h-[103px] mb-16 gap-6">
                 {/* Left: Breadcrumbs & Title */}
                 <div>
                     <div className="text-sm text-slate-500 font-medium mb-1 tracking-wide">
@@ -85,9 +85,9 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
                 >
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
                         {/* 🔷 Left Column: Profile, Bio & Details */}
-                        <div className="space-y-12">
+                        <div className="space-y-20 bg-white rounded-3xl p-8">
                             {/* Profile Header Card */}
-                            <div className="flex flex-col items-center md:items-start gap-8 py-4">
+                            <div className="flex flex-col items-center md:items-start gap-12 py-10 ">
                                 <motion.div
                                     initial={{ scale: 0.8, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
@@ -122,67 +122,64 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
                                     </div>
                                 </div>
                             </div>
-
                             {/* Bio Section */}
-                            <section className="space-y-8 pt-6">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-xs font-medium text-slate-400 theme-heading uppercase tracking-widest flex items-center gap-3">
-                                        <User size={18} className="text-orange-500" />
-                                        Admin Overview
-                                    </h3>
-                                    <button
-                                        onClick={() => { setEditForm({ ...adminData }); setIsEditModalOpen(true); }}
-                                        className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
-                                    >
-                                        <Edit3 size={14} />
-                                    </button>
-                                </div>
-                                <div className="space-y-8">
-                                    <p className="text-slate-600 text-lg leading-relaxed font-normal italic border-l-2 border-orange-200 pl-8 py-2">
-                                        "{adminData.bio}"
-                                    </p>
+                            <div>
+                                <section className="space-y-16 pt-12">
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-xs font-medium text-slate-400 theme-heading uppercase tracking-widest flex items-center gap-3">
+                                            <User size={18} className="text-orange-500" />
+                                            Admin Overview
+                                        </h3>
+                                        <button
+                                            onClick={() => { setEditForm({ ...adminData }); setIsEditModalOpen(true); }}
+                                            className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
+                                        >
+                                            <Edit3 size={14} />
+                                        </button>
+                                    </div>
+                                    <div className="space-y-12">
+                                        <p className="text-slate-600 text-lg leading-relaxed font-normal italic border-l-2 border-orange-200 pl-8 py-2">
+                                            "{adminData.bio}"
+                                        </p>
 
-                                    <div className="grid gap-10 pt-4">
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shadow-sm">
-                                                <Mail size={22} />
+                                        <div className="grid gap-6 pt-8">
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shadow-sm">
+                                                    <Mail size={22} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
+                                                    <p className="text-slate-800 font-normal text-lg">{adminData.email}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
-                                                <p className="text-slate-800 font-normal text-lg">{adminData.email}</p>
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shadow-sm">
+                                                    <Phone size={22} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Direct Line</p>
+                                                    <p className="text-slate-800 font-normal text-lg">{adminData.phone}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shadow-sm">
-                                                <Phone size={22} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Direct Line</p>
-                                                <p className="text-slate-800 font-normal text-lg">{adminData.phone}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-14 h-14 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center shadow-sm">
-                                                <MapPin size={22} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Work Location</p>
-                                                <p className="text-slate-800 font-normal text-lg">{adminData.location}</p>
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-14 h-14 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center shadow-sm">
+                                                    <MapPin size={22} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Work Location</p>
+                                                    <p className="text-slate-800 font-normal text-lg">{adminData.location}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </section>
-
-                            {/*<button onClick={() => { }} className="px-6 py-3 bg-white text-red-500 border border-red-100 rounded-2xl font-medium text-sm transition-all hover:bg-red-50 active:scale-95 flex items-center gap-2 mt-8">
-                                <LogOut size={16} /> Sign Out
-                            </button>  previous. sign out button*/}
+                                </section>
+                            </div>
                         </div>
 
                         {/* 🔷 Right Column: Privileges & Activity */}
-                        <div className="space-y-20">
+                        <div className="space-y-32">
                             {/* Privileges Section */}
-                            <section className="space-y-10">
+                            <section className="space-y-24">
                                 <div className="flex justify-between items-end">
                                     <div className="space-y-2">
                                         <h3 className="text-xs font-medium text-slate-400 uppercase tracking-widest flex items-center gap-3">
@@ -214,7 +211,7 @@ const AdminProfile = ({ setActiveTab: onNavigate }) => {
                             </section>
 
                             {/* Activity Section */}
-                            <section className="space-y-10">
+                            <section className="space-y-24">
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-xs font-medium text-slate-400 uppercase tracking-widest flex items-center gap-3">
                                         <Activity size={18} className="text-orange-500" />
